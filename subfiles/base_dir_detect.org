@@ -1,0 +1,99 @@
+#+title:   BASE_DIR detection
+#+author:  Brent Goodrick
+#+STARTUP: hideblocks
+
+* Requirements
+
+Do not require invoking scripts (or users from command lines) to set
+the $PATH to include the directory where source-able (meaning using
+the "." operator) utility Bourne shell scripts live.  This is so as
+to allow other users that do not have the current users $HOME/bin
+directory in their path to simply invoke 
+
+#+BEGIN_EXAMPLE
+/home/thisuser/bin/something.sh
+#+END_EXAMPLE
+
+such that something.sh should be able to detect that directory:
+
+#+BEGIN_EXAMPLE
+/home/thisuser/bin/
+#+END_EXAMPLE
+
+and use it as the base directory for sourcing via:
+
+#+BEGIN_EXAMPLE
+. $BASE_DIR/some_other_utility_file.sh
+#+END_EXAMPLE
+
+BASE_DIR needs to be determined to allow scripts such as
+some_other_utility_file.sh to refer to other files (hence it cannot
+simply be put into the PATH).
+
+Allow for the case where we have multiple directories, each of which
+need to refer to files in those directories in their scripts
+$BASE_DIR, so we cannot export BASE_DIR into the environment.
+
+* Troubles with basing sourced Bourne shell utility files
+
+Suppose we source a Bourne shell file called
+some_other_utility_file.sh like this:
+
+#+BEGIN_EXAMPLE
+. some_directory_path_here/some_other_utility_file.sh
+#+END_EXAMPLE
+
+The key constraint here is that some_other_utility_file.sh is not in
+a directory located in the PATH. Suppose also that, inside
+some_other_utility_file.sh, we wish to determine the directory where
+some_other_utility_file.sh is located, and in this case, that
+directory happens to be "some_directory_path_here/".
+
+This happens when sourcing the file from a script in another
+directory. 
+
+* Current workaround to the above problem:
+
+Arrange for the ~/.profile (and all invoking scripts that are going
+to be executed versus sourced) to set a variable called BASE_DIR to
+point to the directory where some_other_utility_file.sh lives. Then
+source the files in that directory via:
+
+  . $BASE_DIR/some_other_utility_file.sh
+
+We cannot simply add BASE_DIR to the PATH since
+some_other_utility_file.sh may need to refer to files inside
+$BASE_DIR.
+
+Detect when BASE_DIR is not set and if it is then use this heuristic
+to determine it. BASE_DIR should never be exported into the
+environment because that would defeat the purpose of allowing different
+BASE_DIR values for scripts in different directories:
+
+#+BEGIN_EXAMPLE
+if [ -z "$BASE_DIR" ]
+then
+  # Find the base directory while avoiding subtle variations in $0:
+  dollar0=`which $0`;
+  BASE_DIR=`dirname $dollar0` # NEVER export BASE_DIR
+fi
+#+END_EXAMPLE
+
+* Reusable code snippets
+
+** Code snippet to use in executable scripts
+
+Scripts executed, not sourced (via "." operator):
+
+#+BEGIN_EXAMPLE
+# Find the base directory while avoiding subtle variations in $0:
+dollar0=`which $0`; BASE_DIR=`dirname $dollar0`
+#+END_EXAMPLE
+
+** Code snippet to use in source-able scripts
+
+#+BEGIN_EXAMPLE
+if [ -z "$BASE_DIR" ]; then echo "ASSERTION FAILED: Calling script always has to dynamically determine and set the BASE_DIR variable."; exit 1 ; fi # see ./base_dir_detect.org
+#+END_EXAMPLE
+
+
