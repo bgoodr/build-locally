@@ -93,7 +93,7 @@ dollar0=`which $0`; TOOL_DIR=`dirname $dollar0`
 ** Code snippet to use in source-able scripts
 
 #+BEGIN_EXAMPLE
-if [ -z "$TOOL_DIR" ]; then echo "ASSERTION FAILED: Calling script always has to dynamically determine and set the TOOL_DIR variable."; exit 1 ; fi # see ./TOOL_DIR_detect.org
+if [ -z "$TOOL_DIR" ]; then echo "ASSERTION FAILED: Calling script always has to dynamically determine and set the TOOL_DIR variable."; exit 1 ; fi # see ./tool_dir_detect.org
 #+END_EXAMPLE
 
 
