@@ -11,7 +11,7 @@ PrintRun ()
 }
 
 TestPrintRun () {
-  cmd="$1"
+  local cmd="$1"
   eval "
     PrintRun $cmd; \
     if [ \"\$?\" != \"0\" ]; then \
