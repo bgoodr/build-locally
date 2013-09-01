@@ -105,8 +105,3 @@ All build programs should be able to refer to, and build, dependent
 tool by way of relative file reference. This typically requires the
 full build-locally project to be checked out.
 
-* TODO Create include directory
-
-Put the sourceable scripts into a directory that can be reused by all
-building scripts.
-
