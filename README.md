@@ -25,7 +25,7 @@ Instructions to build the ficticious "example-tool" on Linux are:
     mkdir bgoodr
     cd bgoodr
     gitw clone https://github.com/bgoodr/build-locally.git
-    $HOME/bgoodr/build-locally/example-tool/linux/build.example-tool.bash
+    $HOME/bgoodr/build-locally/tools/example-tool/linux/build.example-tool.bash
 
 To build the other tools, just change "example-tool" to the name of
 the tool to build in all places in the above path.
@@ -35,7 +35,7 @@ What is included
 
 List of tools provided are in subdirectories:
 
-* [example-tool](example-tool/README.md): An example directory to serve
+* [example-tool](tools/example-tool/README.md): An example directory to serve
 as a template for adding more tools to be built by this project.
 
 ... more to come! ...
