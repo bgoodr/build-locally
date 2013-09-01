@@ -5,9 +5,9 @@
 if [ -z "$TOOL_DIR" ]; then echo "ASSERTION FAILED: Calling script always has to dynamically determine and set the TOOL_DIR variable."; exit 1 ; fi # see ./tool_dir_detect.org
 
 # Set defaults for BUILD_DIR and INSTALL_DIR environment variables:
-. $TOOL_DIR/../../../subfiles/set_build_install_dir_paths.sh
+. $TOOL_DIR/../../../support-files/set_build_install_dir_paths.sh
 # Get the PrintRun utility defined:
-. $TOOL_DIR/../../../subfiles/printrun.sh
+. $TOOL_DIR/../../../support-files/printrun.sh
 
 
 builddep () {

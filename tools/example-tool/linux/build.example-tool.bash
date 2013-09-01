@@ -6,7 +6,7 @@ dollar0=`which $0`; TOOL_DIR=`dirname $dollar0`
 
 # Set defaults for BUILD_DIR and INSTALL_DIR environment variables and
 # utility functions such as builddep:
-. $TOOL_DIR/../../../subfiles/build_platform_util.sh
+. $TOOL_DIR/../../../support-files/build_platform_util.sh
 
 usage () {
   cat <<EOF
