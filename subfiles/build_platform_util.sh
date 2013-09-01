@@ -2,12 +2,12 @@
 # -*-mode: Shell-script; indent-tabs-mode: nil; sh-basic-offset: 2 -*-
 # This script must be in Bash since we make use of local function variables herein.
 
-if [ -z "$BASE_DIR" ]; then echo "ASSERTION FAILED: Calling script always has to dynamically determine and set the BASE_DIR variable."; exit 1 ; fi # see ./base_dir_detect.org
+if [ -z "$TOOL_DIR" ]; then echo "ASSERTION FAILED: Calling script always has to dynamically determine and set the TOOL_DIR variable."; exit 1 ; fi # see ./tool_dir_detect.org
 
 # Set defaults for BUILD_DIR and INSTALL_DIR environment variables:
-. $BASE_DIR/../../subfiles/set_build_install_dir_paths.sh
+. $TOOL_DIR/../../../subfiles/set_build_install_dir_paths.sh
 # Get the PrintRun utility defined:
-. $BASE_DIR/../../subfiles/printrun.sh
+. $TOOL_DIR/../../../subfiles/printrun.sh
 
 
 builddep () {

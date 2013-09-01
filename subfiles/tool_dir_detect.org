@@ -1,4 +1,4 @@
-#+title:   BASE_DIR detection
+#+title:   TOOL_DIR detection
 #+author:  Brent Goodrick
 #+STARTUP: hideblocks
 
@@ -23,16 +23,16 @@ such that something.sh should be able to detect that directory:
 and use it as the base directory for sourcing via:
 
 #+BEGIN_EXAMPLE
-. $BASE_DIR/some_other_utility_file.sh
+. $TOOL_DIR/some_other_utility_file.sh
 #+END_EXAMPLE
 
-BASE_DIR needs to be determined to allow scripts such as
+TOOL_DIR needs to be determined to allow scripts such as
 some_other_utility_file.sh to refer to other files (hence it cannot
 simply be put into the PATH).
 
 Allow for the case where we have multiple directories, each of which
 need to refer to files in those directories in their scripts
-$BASE_DIR, so we cannot export BASE_DIR into the environment.
+$TOOL_DIR, so we cannot export TOOL_DIR into the environment.
 
 * Troubles with basing sourced Bourne shell utility files
 
@@ -55,27 +55,27 @@ directory.
 * Current workaround to the above problem:
 
 Arrange for the ~/.profile (and all invoking scripts that are going
-to be executed versus sourced) to set a variable called BASE_DIR to
+to be executed versus sourced) to set a variable called TOOL_DIR to
 point to the directory where some_other_utility_file.sh lives. Then
 source the files in that directory via:
 
-  . $BASE_DIR/some_other_utility_file.sh
+  . $TOOL_DIR/some_other_utility_file.sh
 
-We cannot simply add BASE_DIR to the PATH since
+We cannot simply add TOOL_DIR to the PATH since
 some_other_utility_file.sh may need to refer to files inside
-$BASE_DIR.
+$TOOL_DIR.
 
-Detect when BASE_DIR is not set and if it is then use this heuristic
-to determine it. BASE_DIR should never be exported into the
+Detect when TOOL_DIR is not set and if it is then use this heuristic
+to determine it. TOOL_DIR should never be exported into the
 environment because that would defeat the purpose of allowing different
-BASE_DIR values for scripts in different directories:
+TOOL_DIR values for scripts in different directories:
 
 #+BEGIN_EXAMPLE
-if [ -z "$BASE_DIR" ]
+if [ -z "$TOOL_DIR" ]
 then
   # Find the base directory while avoiding subtle variations in $0:
   dollar0=`which $0`;
-  BASE_DIR=`dirname $dollar0` # NEVER export BASE_DIR
+  TOOL_DIR=`dirname $dollar0` # NEVER export TOOL_DIR
 fi
 #+END_EXAMPLE
 
@@ -87,13 +87,13 @@ Scripts executed, not sourced (via "." operator):
 
 #+BEGIN_EXAMPLE
 # Find the base directory while avoiding subtle variations in $0:
-dollar0=`which $0`; BASE_DIR=`dirname $dollar0`
+dollar0=`which $0`; TOOL_DIR=`dirname $dollar0`
 #+END_EXAMPLE
 
 ** Code snippet to use in source-able scripts
 
 #+BEGIN_EXAMPLE
-if [ -z "$BASE_DIR" ]; then echo "ASSERTION FAILED: Calling script always has to dynamically determine and set the BASE_DIR variable."; exit 1 ; fi # see ./base_dir_detect.org
+if [ -z "$TOOL_DIR" ]; then echo "ASSERTION FAILED: Calling script always has to dynamically determine and set the TOOL_DIR variable."; exit 1 ; fi # see ./TOOL_DIR_detect.org
 #+END_EXAMPLE
 
 
