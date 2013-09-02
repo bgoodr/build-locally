@@ -32,15 +32,10 @@ Options are:
 
   Build from scratch.
   
-[ -test ]
-
-  Run some tests.
-
 EOF
 }
 
 CLEAN=0
-TEST=0
 
 while [ $# -gt 0 ]
 do
@@ -56,9 +51,6 @@ echo "dollar1 is $1"
   elif [ "$1" = "-clean" ]
   then
     CLEAN=1
-  elif [ "$1" = "-test" ]
-  then
-    TEST=1
   elif [ "$1" = "-h" ]
   then
     usage
@@ -167,57 +159,54 @@ PrintRun make install
 # exists, and will splice in the info for this package into that dir
 # file.
 
-if [ "$TEST" = 1 ]
+# --------------------------------------------------------------------------------
+# Testing:
+# --------------------------------------------------------------------------------
+echo "Testing ..."
+if [ ! -d "$INSTALL_DIR" ]
 then
-  # --------------------------------------------------------------------------------
-  # Testing:
-  # --------------------------------------------------------------------------------
-  echo "Testing ..."
-  if [ ! -d "$INSTALL_DIR" ]
-  then
-    echo "ERROR: $INSTALL_DIR does not exist. You must build it first."
-    exit 1
-  fi
-  echo "Running tests on this package ..."
-  tmpdir="/tmp/tmptest"
-  set -x -e
-  rm -rf $tmpdir
-  mkdir -p $tmpdir
-  populate () {
-    mkdir -p $tmpdir/$1/dir1/CVS
-    mkdir -p $tmpdir/$1/dir2
-    echo "void dir2foo();" >$tmpdir/$1/dir2/dir2file.c
-    echo "void dir1foo();" >$tmpdir/$1/dir1/dir1file.c
-    echo "void cvsfunc();" >$tmpdir/$1/dir1/CVS/cvsfile.c
-  }
-  populate local
-  populate remote
-  ln -s $tmpdir/remote/dir2 $tmpdir/local/dir1/some_link
-  find $tmpdir | xargs -n1 ls -ld
-  PATH="$INSTALL_DIR/bin:$PATH"; export PATH; echo PATH $PATH
-  set +x +e
-
-  cd $tmpdir/local;
-  MKID_AVOID_NAME=some_link mkid
-  cd $tmpdir/local/dir1/
-  dir1foo_result=`lid dir1foo | grep 'dir1foo *dir1file.c'`
-  if [ -z "$dir1foo_result" ]
-  then
-    echo "TEST FAILED: Did not see expected result for dir1foo"
-    exit 1
-  fi
-  dir2foo_result=`lid dir2foo | grep some_link/`
-  if [ -n "$dir2foo_result" ]
-  then
-    echo "TEST FAILED: Got an some_link in the results: $dir2foo_result"
-    exit 1
-  fi
-  cvsfunc_result=`lid cvsfunc`
-  if [ -n "$cvsfunc_result" ]
-  then
-    echo "TEST FAILED: Got cvsfunc result: $cvsfunc_result"
-    exit 1
-  fi
-  echo "TEST PASSED."
-  exit 0
+  echo "ERROR: $INSTALL_DIR does not exist. You must build it first."
+  exit 1
 fi
+echo "Running tests on this package ..."
+tmpdir="/tmp/tmptest"
+set -x -e
+rm -rf $tmpdir
+mkdir -p $tmpdir
+populate () {
+  mkdir -p $tmpdir/$1/dir1/CVS
+  mkdir -p $tmpdir/$1/dir2
+  echo "void dir2foo();" >$tmpdir/$1/dir2/dir2file.c
+  echo "void dir1foo();" >$tmpdir/$1/dir1/dir1file.c
+  echo "void cvsfunc();" >$tmpdir/$1/dir1/CVS/cvsfile.c
+}
+populate local
+populate remote
+ln -s $tmpdir/remote/dir2 $tmpdir/local/dir1/some_link
+find $tmpdir | xargs -n1 ls -ld
+PATH="$INSTALL_DIR/bin:$PATH"; export PATH; echo PATH $PATH
+set +x +e
+
+cd $tmpdir/local;
+MKID_AVOID_NAME=some_link mkid
+cd $tmpdir/local/dir1/
+dir1foo_result=`lid dir1foo | grep 'dir1foo *dir1file.c'`
+if [ -z "$dir1foo_result" ]
+then
+  echo "TEST FAILED: Did not see expected result for dir1foo"
+  exit 1
+fi
+dir2foo_result=`lid dir2foo | grep some_link/`
+if [ -n "$dir2foo_result" ]
+then
+  echo "TEST FAILED: Got an some_link in the results: $dir2foo_result"
+  exit 1
+fi
+cvsfunc_result=`lid cvsfunc`
+if [ -n "$cvsfunc_result" ]
+then
+  echo "TEST FAILED: Got cvsfunc result: $cvsfunc_result"
+  exit 1
+fi
+echo "TEST PASSED."
+exit 0
