@@ -74,15 +74,10 @@ Options are:
 
   Run some tests.
 
-[ -build 0 | 1 ]
-
-  Enable or disable building.
-
 EOF
 }
 
 CLEAN=0
-UPDATE=0
 TEST=0
 
 while [ $# -gt 0 ]
@@ -98,9 +93,6 @@ do
   elif [ "$1" = "-clean" ]
   then
     CLEAN=1
-  elif [ "$1" = "-upd" ]
-  then
-    UPDATE=1
   elif [ "$1" = "-test" ]
   then
     TEST=1
@@ -143,7 +135,7 @@ if [ "$CLEAN" = 1 ]
 then
   PrintRun rm -rf "$version_subdir"
 fi
-if [ ! -d "$version_subdir" -o "$UPDATE" = 1 ]
+if [ ! -d "$version_subdir" ]
 then
   PrintRun cvs -d:pserver:anonymous@cvs.savannah.gnu.org:/sources/idutils co idutils
   if [ ! -d "$version_subdir" ]
