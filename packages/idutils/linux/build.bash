@@ -144,8 +144,7 @@ ApplyPatch $PACKAGE_DIR/idutils_texinfo.patch
 echo "Building ..."
 if [ ! -f ./configure ]
 then
-
-  echo "Creating ./configure file ..."
+s  echo "Creating ./configure file ..."
   PrintRun ./autogen.sh
   if [ ! -f ./configure ]
   then
@@ -199,7 +198,7 @@ then
   set +x +e
 
   cd $tmpdir/local;
-  mkid
+  MKID_AVOID_NAME=some_link mkid
   cd $tmpdir/local/dir1/
   dir1foo_result=`lid dir1foo | grep 'dir1foo *dir1file.c'`
   if [ -z "$dir1foo_result" ]
