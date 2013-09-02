@@ -170,6 +170,7 @@ fi
 # Patch:
 # --------------------------------------------------------------------------------
 echo "Patching ..."
+PrintRun cd $version_subdir
 # Apply a patch to build logic files to make it just work!:
 # Reference http://mail-archives.apache.org/mod_mbox/qpid-dev/200812.mbox/<87fxko4gfy.fsf@rho.meyering.net>
 ApplyPatch $PACKAGE_DIR/hack_old_AC_USE_SYSTEM_EXTENSIONS_def_patch.patch
@@ -185,7 +186,6 @@ ApplyPatch $PACKAGE_DIR/idutils_texinfo.patch
 # Build:
 # --------------------------------------------------------------------------------
 echo "Building ..."
-PrintRun cd $version_subdir
 if [ ! -f ./configure ]
 then
 
