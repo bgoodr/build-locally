@@ -11,44 +11,6 @@ dollar0=`which $0`; PACKAGE_DIR=`dirname $dollar0`
 # Define source patching utilities:
 . $PACKAGE_DIR/../../../support-files/patch_util.bash
 
-usage () {
-  cat <<EOF
-USAGE: $0 ... options ...
-
-Options are:
-
-[ -builddir BUILD_DIR ]
-
-  Override the BUILD_DIR default, which is $BUILD_DIR.
-
-[ -installdir INSTALL_DIR ]
-
-  Override the INSTALL_DIR default, which is $INSTALL_DIR.
-
-EOF
-}
-
-while [ $# -gt 0 ]
-do
-  if [ "$1" = "-builddir" ]
-  then
-    BUILDDIR="$2"
-    shift
-  elif [ "$1" = "-installdir" ]
-  then
-    INSTALLDIR="$2"
-    shift
-  elif [ "$1" = "-h" ]
-  then
-    usage
-    exit 0
-  else
-    echo "Undefined parameter $1"
-    exit 1
-  fi
-  shift
-done
-
 # --------------------------------------------------------------------------------
 # Usage
 # --------------------------------------------------------------------------------
@@ -82,6 +44,7 @@ TEST=0
 
 while [ $# -gt 0 ]
 do
+echo "dollar1 is $1"
   if [ "$1" = "-builddir" ]
   then
     BUILD_DIR="$2"
