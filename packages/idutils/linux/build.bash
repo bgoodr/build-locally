@@ -144,7 +144,7 @@ ApplyPatch $PACKAGE_DIR/idutils_texinfo.patch
 echo "Building ..."
 if [ ! -f ./configure ]
 then
-s  echo "Creating ./configure file ..."
+  echo "Creating ./configure file ..."
   PrintRun ./autogen.sh
   if [ ! -f ./configure ]
   then
