@@ -6,15 +6,15 @@ that allow automatic downloading, building, and installing (locally)
 source packages onto existing systems, typically in a users HOME
 directory. This is needed in one or more of the following situations:
 
-# It is difficult to install or upgrade packages using standard
+- It is difficult to install or upgrade packages using standard
   mechanisms (e.g., Apt, Yum).
 
-# The package does is not provided by the base operating system.
+- The package does is not provided by the base operating system.
 
-# It is desired to build the package without disturbing the
+- It is desired to build the package without disturbing the
   configuration of the system, which may be in use by multiple users.
 
-# A more recent package is desired, whereas the operating system
+- A more recent package is desired, whereas the operating system
   provided package is too old.
 
 After building, it is intended that the user prepend to the resulting
@@ -36,7 +36,7 @@ Instructions to build the ficticious "example-package" on Linux are:
     cd $HOME  # typically
     mkdir bgoodr
     cd bgoodr
-    gitw clone https://github.com/bgoodr/build-locally.git
+    git clone https://github.com/bgoodr/build-locally.git
     $HOME/bgoodr/build-locally/packages/example-package/linux/build.example-package.bash
 
 To build the other packages, just change "example-package" to the name of
