@@ -39,7 +39,6 @@ CLEAN=0
 
 while [ $# -gt 0 ]
 do
-echo "dollar1 is $1"
   if [ "$1" = "-builddir" ]
   then
     BUILD_DIR="$2"
@@ -100,7 +99,6 @@ then
   fi
 else
   echo "$version_subdir already exists."
-  echo "Not updating (use -upd if you wish to update sources from the remote repository)."
 fi
 if [ -z "$version_subdir" ]
 then
