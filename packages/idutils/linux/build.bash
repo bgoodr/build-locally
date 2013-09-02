@@ -174,14 +174,13 @@ then
   # Testing:
   # --------------------------------------------------------------------------------
   echo "Testing ..."
-  PrintRun make install
   if [ ! -d "$INSTALL_DIR" ]
   then
     echo "ERROR: $INSTALL_DIR does not exist. You must build it first."
     exit 1
   fi
-  echo "Running some tests on this package in $INSTALL_DIR ..."
-  tmpdir="$HEAD_DIR/tmptest"
+  echo "Running tests on this package ..."
+  tmpdir="/tmp/tmptest"
   set -x -e
   rm -rf $tmpdir
   mkdir -p $tmpdir
@@ -194,7 +193,7 @@ then
   }
   populate local
   populate remote
-  ln -s $tmpdir/remote/dir2 $tmpdir/local/dir1/Isrc
+  ln -s $tmpdir/remote/dir2 $tmpdir/local/dir1/some_link
   find $tmpdir | xargs -n1 ls -ld
   PATH="$INSTALL_DIR/bin:$PATH"; export PATH; echo PATH $PATH
   set +x +e
@@ -208,10 +207,10 @@ then
     echo "TEST FAILED: Did not see expected result for dir1foo"
     exit 1
   fi
-  dir2foo_result=`lid dir2foo | grep Isrc/`
+  dir2foo_result=`lid dir2foo | grep some_link/`
   if [ -n "$dir2foo_result" ]
   then
-    echo "TEST FAILED: Got an Isrc in the results: $dir2foo_result"
+    echo "TEST FAILED: Got an some_link in the results: $dir2foo_result"
     exit 1
   fi
   cvsfunc_result=`lid cvsfunc`
