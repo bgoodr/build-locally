@@ -38,7 +38,7 @@ then
   RELEASE_SUBDIR="${release_type}.${release_num}.${release_machine_type}"; export RELEASE_SUBDIR
 fi
 
-if [ "$BUILD_DIR" ]
+if [ -z "$BUILD_DIR" ]
 then
   BUILD_DIR="$HOME/build/$RELEASE_SUBDIR"; export BUILD_DIR
 fi
