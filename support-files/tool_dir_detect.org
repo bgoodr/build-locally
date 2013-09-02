@@ -74,8 +74,7 @@ PACKAGE_DIR values for scripts in different directories:
 if [ -z "$PACKAGE_DIR" ]
 then
   # Find the base directory while avoiding subtle variations in $0:
-  dollar0=`which $0`;
-  PACKAGE_DIR=`dirname $dollar0` # NEVER export PACKAGE_DIR
+  dollar0=`which $0`; PACKAGE_DIR=$(cd $(dirname $dollar0); pwd) # NEVER export PACKAGE_DIR
 fi
 #+END_EXAMPLE
 
@@ -87,7 +86,7 @@ Scripts executed, not sourced (via "." operator):
 
 #+BEGIN_EXAMPLE
 # Find the base directory while avoiding subtle variations in $0:
-dollar0=`which $0`; PACKAGE_DIR=`dirname $dollar0`
+dollar0=`which $0`; PACKAGE_DIR=$(cd $(dirname $dollar0); pwd) # NEVER export PACKAGE_DIR
 #+END_EXAMPLE
 
 ** Code snippet to use in source-able scripts

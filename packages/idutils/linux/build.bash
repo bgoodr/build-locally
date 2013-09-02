@@ -2,7 +2,7 @@
 # -*-mode: Shell-script; indent-tabs-mode: nil; sh-basic-offset: 2 -*-
 
 # Find the base directory while avoiding subtle variations in $0:
-dollar0=`which $0`; PACKAGE_DIR=`dirname $dollar0`
+dollar0=`which $0`; PACKAGE_DIR=$(cd $(dirname $dollar0); pwd) # NEVER export PACKAGE_DIR
 
 # Set defaults for BUILD_DIR and INSTALL_DIR environment variables and
 # define utility functions such as BuildDependentPackage:
