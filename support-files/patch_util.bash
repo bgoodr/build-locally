@@ -4,7 +4,7 @@
 
 ApplyPatch () {
   local patchFile="$1"
-  local toBePatchedFiles=$(sed 's%^--- \([^ ]*\) .*$%\1%gp' <$patchFile)
+  local toBePatchedFiles=$(sed -n 's%^--- \([^ 	]*\)[ 	]*.*$%\1%gp' <$patchFile)
   local toBePatchedFile=""
   for toBePatchedFile in $toBePatchedFiles
   do
