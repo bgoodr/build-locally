@@ -2,11 +2,11 @@
 # -*-mode: Shell-script; indent-tabs-mode: nil; sh-basic-offset: 2 -*-
 
 # Find the base directory while avoiding subtle variations in $0:
-dollar0=`which $0`; TOOL_DIR=`dirname $dollar0`
+dollar0=`which $0`; PACKAGE_DIR=`dirname $dollar0`
 
 # Set defaults for BUILD_DIR and INSTALL_DIR environment variables and
 # utility functions such as builddep:
-. $TOOL_DIR/../../../support-files/build_platform_util.bash
+. $PACKAGE_DIR/../../../support-files/build_platform_util.bash
 
 usage () {
   cat <<EOF

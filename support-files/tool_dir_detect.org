@@ -1,4 +1,4 @@
-#+title:   TOOL_DIR detection
+#+title:   PACKAGE_DIR detection
 #+author:  Brent Goodrick
 #+STARTUP: hideblocks
 
@@ -23,16 +23,16 @@ such that something.sh should be able to detect that directory:
 and use it as the base directory for sourcing via:
 
 #+BEGIN_EXAMPLE
-. $TOOL_DIR/some_other_utility_file.sh
+. $PACKAGE_DIR/some_other_utility_file.sh
 #+END_EXAMPLE
 
-TOOL_DIR needs to be determined to allow scripts such as
+PACKAGE_DIR needs to be determined to allow scripts such as
 some_other_utility_file.sh to refer to other files (hence it cannot
 simply be put into the PATH).
 
 Allow for the case where we have multiple directories, each of which
 need to refer to files in those directories in their scripts
-$TOOL_DIR, so we cannot export TOOL_DIR into the environment.
+$PACKAGE_DIR, so we cannot export PACKAGE_DIR into the environment.
 
 * Troubles with basing sourced Bourne shell utility files
 
@@ -55,27 +55,27 @@ directory.
 * Current workaround to the above problem:
 
 Arrange for the ~/.profile (and all invoking scripts that are going
-to be executed versus sourced) to set a variable called TOOL_DIR to
+to be executed versus sourced) to set a variable called PACKAGE_DIR to
 point to the directory where some_other_utility_file.sh lives. Then
 source the files in that directory via:
 
-  . $TOOL_DIR/some_other_utility_file.sh
+  . $PACKAGE_DIR/some_other_utility_file.sh
 
-We cannot simply add TOOL_DIR to the PATH since
+We cannot simply add PACKAGE_DIR to the PATH since
 some_other_utility_file.sh may need to refer to files inside
-$TOOL_DIR.
+$PACKAGE_DIR.
 
-Detect when TOOL_DIR is not set and if it is then use this heuristic
-to determine it. TOOL_DIR should never be exported into the
+Detect when PACKAGE_DIR is not set and if it is then use this heuristic
+to determine it. PACKAGE_DIR should never be exported into the
 environment because that would defeat the purpose of allowing different
-TOOL_DIR values for scripts in different directories:
+PACKAGE_DIR values for scripts in different directories:
 
 #+BEGIN_EXAMPLE
-if [ -z "$TOOL_DIR" ]
+if [ -z "$PACKAGE_DIR" ]
 then
   # Find the base directory while avoiding subtle variations in $0:
   dollar0=`which $0`;
-  TOOL_DIR=`dirname $dollar0` # NEVER export TOOL_DIR
+  PACKAGE_DIR=`dirname $dollar0` # NEVER export PACKAGE_DIR
 fi
 #+END_EXAMPLE
 
@@ -87,13 +87,13 @@ Scripts executed, not sourced (via "." operator):
 
 #+BEGIN_EXAMPLE
 # Find the base directory while avoiding subtle variations in $0:
-dollar0=`which $0`; TOOL_DIR=`dirname $dollar0`
+dollar0=`which $0`; PACKAGE_DIR=`dirname $dollar0`
 #+END_EXAMPLE
 
 ** Code snippet to use in source-able scripts
 
 #+BEGIN_EXAMPLE
-if [ -z "$TOOL_DIR" ]; then echo "ASSERTION FAILED: Calling script always has to dynamically determine and set the TOOL_DIR variable."; exit 1 ; fi # see ./tool_dir_detect.org
+if [ -z "$PACKAGE_DIR" ]; then echo "ASSERTION FAILED: Calling script always has to dynamically determine and set the PACKAGE_DIR variable."; exit 1 ; fi # see ./PACKAGE_DIR_detect.org
 #+END_EXAMPLE
 
 

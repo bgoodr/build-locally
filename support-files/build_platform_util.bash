@@ -2,12 +2,12 @@
 # -*-mode: Shell-script; indent-tabs-mode: nil; sh-basic-offset: 2 -*-
 # This script must be in Bash since we make use of local function variables herein.
 
-if [ -z "$TOOL_DIR" ]; then echo "ASSERTION FAILED: Calling script always has to dynamically determine and set the TOOL_DIR variable."; exit 1 ; fi # see ./tool_dir_detect.org
+if [ -z "$PACKAGE_DIR" ]; then echo "ASSERTION FAILED: Calling script always has to dynamically determine and set the PACKAGE_DIR variable."; exit 1 ; fi # see ./PACKAGE_DIR_detect.org
 
 # Set defaults for BUILD_DIR and INSTALL_DIR environment variables:
-. $TOOL_DIR/../../../support-files/init_vars.bash
+. $PACKAGE_DIR/../../../support-files/init_vars.bash
 # Get the PrintRun utility defined:
-. $TOOL_DIR/../../../support-files/printrun.bash
+. $PACKAGE_DIR/../../../support-files/printrun.bash
 
 
 builddep () {
@@ -18,7 +18,7 @@ builddep () {
   if [ -z "$files" ]
   then
     echo "( BEGIN BUILDING DEPENDENCY: $installBase provided by $dependentPackage"
-    $TOOL_DIR/../../../tools/${dependentPackage}/$PLATFORM/build.${dependentPackage}.bash
+    $PACKAGE_DIR/../../../tools/${dependentPackage}/$PLATFORM/build.${dependentPackage}.bash
     exitcode=$?
     echo ") END BUILDING DEPENDENCY: $installBase provided by $dependentPackage"
     if [ "$exitcode" != 0 ]
