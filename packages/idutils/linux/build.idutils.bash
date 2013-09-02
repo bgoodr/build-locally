@@ -171,6 +171,7 @@ fi
 # --------------------------------------------------------------------------------
 echo "Patching ..."
 PrintRun cd $version_subdir
+echo "version_subdir==\"${version_subdir}\""
 # Apply a patch to build logic files to make it just work!:
 # Reference http://mail-archives.apache.org/mod_mbox/qpid-dev/200812.mbox/<87fxko4gfy.fsf@rho.meyering.net>
 ApplyPatch $PACKAGE_DIR/hack_old_AC_USE_SYSTEM_EXTENSIONS_def_patch.patch
@@ -212,15 +213,13 @@ PrintRun make install
 # exists, and will splice in the info for this package into that dir
 # file.
 
-
-
-
-
-
-
-
 if [ "$TEST" = 1 ]
 then
+  # --------------------------------------------------------------------------------
+  # Testing:
+  # --------------------------------------------------------------------------------
+  echo "Testing ..."
+  PrintRun make install
   if [ ! -d "$INSTALL_DIR" ]
   then
     echo "ERROR: $INSTALL_DIR does not exist. You must build it first."
