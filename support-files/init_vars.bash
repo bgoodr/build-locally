@@ -3,7 +3,7 @@
 # This script sets and exports the following environment variables:
 #
 # PLATFORM:       Identifies the general name of the platform without any embedded version information.
-# RELEASE_SUBDIR: Identifies the specific platform and version upon which the tool is being built.
+# RELEASE_SUBDIR: Identifies the specific platform and version upon which the package is being built.
 # INSTALL_DIR:    Installation directory
 # BUILD_DIR:      Where the sources are downloaded and built.
 

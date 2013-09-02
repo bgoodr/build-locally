@@ -53,7 +53,7 @@ done
 echo "Creating build directory structure ..."
 
 # --------------------------------------------------------------------------------
-# Download the source for example-tool into the build directory:
+# Download the source for example-package into the build directory:
 # --------------------------------------------------------------------------------
 echo "Downloading ..."
 

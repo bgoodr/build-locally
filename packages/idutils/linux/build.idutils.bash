@@ -226,7 +226,7 @@ then
     echo "ERROR: $INSTALL_DIR does not exist. You must build it first."
     exit 1
   fi
-  echo "Running some tests on idtools in $INSTALL_DIR ..."
+  echo "Running some tests on this package in $INSTALL_DIR ..."
   tmpdir="$HEAD_DIR/tmptest"
   set -x -e
   rm -rf $tmpdir

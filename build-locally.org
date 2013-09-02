@@ -10,12 +10,12 @@ do. See the ./README.md file for end-user usage.
 
 * Definitions
 
-Tool: The tool being built by the build program defined herein.
+Package: The package being built by the build program defined herein.
 
 Build Program: The script, batch file, or other executable that will
-build the tool.
+build the package.
 
-Target operating system: The system upon which the tool will be built.
+Target operating system: The system upon which the package will be built.
 
 * Requirements
 ** Hard requirements
@@ -33,11 +33,11 @@ security review.
 *** Fully Unattended builds
 
 Fully unattended building means that when a build program is executed,
-it does whatever it takes to build that tool WITHOUT ANY PROMPTS, such
+it does whatever it takes to build that package WITHOUT ANY PROMPTS, such
 that the build program can be run in the background and not "hang"
 waiting for a response from a user on standard input.
 
-As a consequence, the tool being built must be downloadable directly
+As a consequence, the package being built must be downloadable directly
 from the Internet without prompting for login prompts. If special
 usernames or passwords are required, then the build program must take
 them from command-line arguments.
@@ -68,17 +68,17 @@ to change over time, and operating systems change as well.
 * File and directory structure
 
 "<HEAD>" below means the directory in which this file resides is
-located. "<tool>" is a name of a tool that is to be downloaded.
+located. "<package>" is a name of a package that is to be downloaded.
 
 <HEAD>/support-files: Directory where subfunction files such as
 sourceable shell scripts are stored so as to avoid file duplication.
 
-<HEAD>/<tool>: Where the build program files for the given <tool> are
+<HEAD>/<package>: Where the build program files for the given <package> are
 located.
 
-One or more of the following may exist for a given <tool>:
+One or more of the following may exist for a given <package>:
 
-<HEAD>/<tool>/<platform>/build.<tool>.<ext>: A build program written
+<HEAD>/<package>/<platform>/build.<package>.<ext>: A build program written
 in some scripting language given by <ext> and intendedf be built on
 any flavor of <platform>. This requires that the scripting language
 given by <ext> must be installed by default on the given <platform>.
@@ -102,6 +102,6 @@ mswindows: Any version of Microsoft Windows
 * Relative referencing
 
 All build programs should be able to refer to, and build, dependent
-tool by way of relative file reference. This typically requires the
+package by way of relative file reference. This typically requires the
 full build-locally project to be checked out.
 

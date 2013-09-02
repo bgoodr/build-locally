@@ -3,4 +3,4 @@ texinfo
 
 Parent: [build-locally](../../README.md)
 
-Builds the texinfo tool.
+Builds the texinfo package.

@@ -18,7 +18,7 @@ builddep () {
   if [ -z "$files" ]
   then
     echo "( BEGIN BUILDING DEPENDENCY: $installBase provided by $dependentPackage"
-    $PACKAGE_DIR/../../../tools/${dependentPackage}/$PLATFORM/build.${dependentPackage}.bash
+    $PACKAGE_DIR/../../../packages/${dependentPackage}/$PLATFORM/build.${dependentPackage}.bash
     exitcode=$?
     echo ") END BUILDING DEPENDENCY: $installBase provided by $dependentPackage"
     if [ "$exitcode" != 0 ]
