@@ -22,5 +22,5 @@ ApplyPatch () {
   set -x -e
   cat ${toBePatchedFile}.orig > ${toBePatchedFile}
   # Patch the files:
-  patch -t -p0 $patchFile
+  patch -t -p0 <$patchFile
 }
