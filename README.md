@@ -1,9 +1,21 @@
 build-locally
 =============
 
-Build programs that allow automatic downloading and building of
-Internet-provided source packages locally, typically in a users HOME
-directory.
+This package provides build programs (typically just shell scripts)
+that allow automatic downloading, building, and installing (locally)
+source packages onto existing systems, typically in a users HOME
+directory. This is needed in one or more of the following situations:
+
+# It is difficult to install or upgrade packages using standard
+  mechanisms (e.g., Apt, Yum).
+
+# The package does is not provided by the base operating system.
+
+# It is desired to build the package without disturbing the
+  configuration of the system, which may be in use by multiple users.
+
+# A more recent package is desired, whereas the operating system
+  provided package is too old.
 
 After building, it is intended that the user prepend to the resulting
 installation bin directory to their PATH. This will override the
@@ -13,8 +25,8 @@ package is invoked from the UNIX/Linux shell command prompt.
 
 These build programs are intensionally limited to building only those
 packages whose build logic that can be coerced (typically via dynamic
-build logic patching) into *not* prompting for anything, and that can
-be downloaded from source directly from the Internet.
+build logic patching) into *not* prompting, and that can be downloaded
+from source directly from the Internet.
 
 Usage
 =====
@@ -30,15 +42,17 @@ Instructions to build the ficticious "example-package" on Linux are:
 To build the other packages, just change "example-package" to the name of
 the package to build in all places in the above path.
 
-What is included
-================
+Packages
+========
 
 The following is a list of packages whose build programs are provided by this package:
 
 * [example-package](packages/example-package/README.md): An example directory to serve
 as a template for adding more packages to be built by this project.
 
-* [texinfo](packages/texinfo/README.md): Building the Texinfo package.
+* [texinfo](packages/texinfo/README.md): Building the texinfo package.
+
+* [idutils](packages/idutils/README.md): Building the idutils package.
 
 ... more to come! ...
 
