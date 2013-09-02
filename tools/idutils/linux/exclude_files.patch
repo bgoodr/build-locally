@@ -1,0 +1,43 @@
+--- libidu/walker.c	17 Aug 2007 22:50:41 -0000	1.17
++++ libidu/walker.c	31 Mar 2012 15:58:36 -0000
+@@ -166,20 +166,40 @@
+ 	total_scannable_files += scannable_files;
+     }
+   return total_scannable_files;
+ }
+ 
++static int g_toAvoidChecked = 0;
++static char * g_toAvoid = 0;
++
+ void
+ walk_flink (struct file_link *flink, struct dynvec *sub_dirs_vec)
+ {
+   struct stat st;
+   unsigned int old_flags;
+   unsigned int new_flags;
+ 
+   new_flags = classify_link (flink, &st);
+   if (new_flags == 0)
+     return;
++  if (strcmp(flink->fl_name,"CVS") == 0)
++  {
++      return;
++  }
++  if (!g_toAvoidChecked)
++  {
++      g_toAvoidChecked=1;
++      g_toAvoid = getenv("MKID_AVOID_NAME");
++  }
++  else
++  {
++      if (g_toAvoid && strcmp(flink->fl_name, g_toAvoid) == 0)
++      {
++          return;
++      }
++  }
++
+ 
+   old_flags = flink->fl_flags;
+   if ((old_flags & FL_TYPE_MASK)
+       && (old_flags & FL_TYPE_MASK) != (new_flags & FL_TYPE_MASK))
+     {

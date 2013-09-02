@@ -38,6 +38,8 @@ List of tools provided are in subdirectories:
 * [example-tool](tools/example-tool/README.md): An example directory to serve
 as a template for adding more tools to be built by this project.
 
+* [texinfo](tools/texinfo/README.md): Building the Texinfo package.
+
 ... more to come! ...
 
 Development

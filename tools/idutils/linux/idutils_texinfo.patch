@@ -1,0 +1,61 @@
+Index: doc/idutils.texi
+===================================================================
+RCS file: /sources/idutils/idutils/doc/idutils.texi,v
+retrieving revision 1.8
+diff -u -r1.8 idutils.texi
+--- doc/idutils.texi	22 Aug 2006 17:15:06 -0000	1.8
++++ doc/idutils.texi	26 Aug 2013 06:17:27 -0000
+@@ -165,23 +165,29 @@
+ @node Quick start
+ @chapter Quick Start Procedure
+ 
+-@table @bullet
++@itemize @bullet
+ 
++@item
+ Unpack the distribution.
+ 
++@item
+ Type @file{./configure}
+ 
++@item
+ Type @samp{make}
+ 
++@item
+ Type @samp{make install} as a user with the appropriate privileges
+ (e.g., @samp{bin} or perhaps even @samp{root}).
+ 
++@item
+ Type @samp{cd /usr/include; mkid} to build an ID database covering
+ all of the system header files.
+ 
++@item
+ Type @samp{lid FILE}, then @samp{gid strtok}, then @samp{aid stdout}.
+ 
+-@end table
++@end itemize
+ 
+ You have just built, installed and used the most common commands of the
+ GNU ID utilities.  If you ever need help remembering which system header
+@@ -1320,16 +1326,19 @@
+ @cindex future
+ Future releases of @code{idutils} might include:
+ 
+-@table @bullet
++@itemize @bullet
+ 
++@item
+ an optional coupling with GNU @code{grep}, so that @code{grep} can use
+ an ID database for hints
+ 
++@item
+ a @code{cscope} work-alike query interface
+ 
++@item
+ incremental update of the ID database.
+ 
+-@end table
++@end itemize
+ 
+ @c ***************************************************************************
+ @node Index

@@ -11,19 +11,19 @@ if [ -z "$TOOL_DIR" ]; then echo "ASSERTION FAILED: Calling script always has to
 
 
 builddep () {
-  local dep="$1"
+  local dependentPackage="$1"
   local installBase="$2"
   # Allow globbing in $installBase by exploiting ls:
   local files=$(ls $INSTALL_DIR/$installBase 2>/dev/null)
   if [ -z "$files" ]
   then
-    echo "( BEGIN BUILDING DEPENDENCY: $installBase provided by $dep"
-    ../../$PLATFORM/${dep}/build.${dep}.bash
+    echo "( BEGIN BUILDING DEPENDENCY: $installBase provided by $dependentPackage"
+    $TOOL_DIR/../../../tools/${dependentPackage}/$PLATFORM/build.${dependentPackage}.bash
     exitcode=$?
-    echo ") END BUILDING DEPENDENCY: $installBase provided by $dep"
+    echo ") END BUILDING DEPENDENCY: $installBase provided by $dependentPackage"
     if [ "$exitcode" != 0 ]
     then
-      echo "ERROR: build_${dep}.sh failed"
+      echo "ERROR: build_${dependentPackage}.sh failed"
       exit 1
     fi
   fi
