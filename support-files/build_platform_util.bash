@@ -9,7 +9,6 @@ if [ -z "$PACKAGE_DIR" ]; then echo "ASSERTION FAILED: Calling script always has
 # Get the PrintRun utility defined:
 . $PACKAGE_DIR/../../../support-files/printrun.bash
 
-
 BuildDependentPackage () {
   local dependentPackage="$1"
   local installBase="$2"
@@ -18,7 +17,7 @@ BuildDependentPackage () {
   if [ -z "$files" ]
   then
     echo "( BEGIN BUILDING DEPENDENCY: $installBase provided by $dependentPackage"
-    $PACKAGE_DIR/../../../packages/${dependentPackage}/$PLATFORM/build.${dependentPackage}.bash
+    $PACKAGE_DIR/../../../packages/${dependentPackage}/$PLATFORM/build.bash
     exitcode=$?
     echo ") END BUILDING DEPENDENCY: $installBase provided by $dependentPackage"
     if [ "$exitcode" != 0 ]

@@ -78,10 +78,11 @@ located.
 
 One or more of the following may exist for a given <package>:
 
-<HEAD>/<package>/<platform>/build.<package>.<ext>: A build program written
-in some scripting language given by <ext> and intendedf be built on
-any flavor of <platform>. This requires that the scripting language
-given by <ext> must be installed by default on the given <platform>.
+<HEAD>/<package>/<platform>/build.<ext>: A build program written in
+some scripting language given by <ext> and intended be built on any
+flavor of <platform>. This requires that the scripting language given
+by <ext> must be installed by default on the given <platform>. This
+program both builds and installs the package.
 
 ** Extensions:
 
@@ -98,6 +99,9 @@ js: Microsoft Windows JScript command files.
 
 linux: Any version of Linux
 mswindows: Any version of Microsoft Windows
+
+More platforms can be added when the need arises (via GitHub forking
+and submitting changes).
 
 * Relative referencing
 
