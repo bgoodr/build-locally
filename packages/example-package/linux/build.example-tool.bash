@@ -10,15 +10,15 @@ dollar0=`which $0`; PACKAGE_DIR=`dirname $dollar0`
 
 usage () {
   cat <<EOF
-USAGE: $0 [ -builddir BUILD_DIR ] [ -installdir INSTALL_DIR ]
+USAGE: $0 ... options ...
 
 Options are:
 
--builddir BUILD_DIR
+[ -builddir BUILD_DIR ]
 
   Override the BUILD_DIR default, which is $BUILD_DIR.
 
--installdir INSTALL_DIR
+[ -installdir INSTALL_DIR ]
 
   Override the INSTALL_DIR default, which is $INSTALL_DIR.
 
