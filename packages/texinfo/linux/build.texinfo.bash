@@ -5,7 +5,7 @@
 dollar0=`which $0`; PACKAGE_DIR=`dirname $dollar0`
 
 # Set defaults for BUILD_DIR and INSTALL_DIR environment variables and
-# utility functions such as builddep:
+# utility functions such as BuildDependentPackage:
 . $PACKAGE_DIR/../../../support-files/build_platform_util.bash
 
 usage ()

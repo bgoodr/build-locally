@@ -5,7 +5,7 @@
 dollar0=`which $0`; PACKAGE_DIR=`dirname $dollar0`
 
 # Set defaults for BUILD_DIR and INSTALL_DIR environment variables and
-# define utility functions such as builddep:
+# define utility functions such as BuildDependentPackage:
 . $PACKAGE_DIR/../../../support-files/build_platform_util.bash
 
 # Define source patching utilities:
@@ -118,7 +118,7 @@ done
 # --------------------------------------------------------------------------------
 # Build required dependent packages:
 # --------------------------------------------------------------------------------
-builddep texinfo bin/makeinfo
+BuildDependentPackage texinfo bin/makeinfo
 
 # --------------------------------------------------------------------------------
 # Create build directory structure:

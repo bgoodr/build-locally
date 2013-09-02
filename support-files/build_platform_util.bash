@@ -10,7 +10,7 @@ if [ -z "$PACKAGE_DIR" ]; then echo "ASSERTION FAILED: Calling script always has
 . $PACKAGE_DIR/../../../support-files/printrun.bash
 
 
-builddep () {
+BuildDependentPackage () {
   local dependentPackage="$1"
   local installBase="$2"
   # Allow globbing in $installBase by exploiting ls:
