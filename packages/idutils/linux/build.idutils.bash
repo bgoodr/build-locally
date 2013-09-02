@@ -170,16 +170,16 @@ fi
 # Patch:
 # --------------------------------------------------------------------------------
 echo "Patching ..."
-  # Apply a patch to build logic files to make it just work!:
-  # Reference http://mail-archives.apache.org/mod_mbox/qpid-dev/200812.mbox/<87fxko4gfy.fsf@rho.meyering.net>
-  ApplyPatch hack_old_AC_USE_SYSTEM_EXTENSIONS_def_patch.patch
+# Apply a patch to build logic files to make it just work!:
+# Reference http://mail-archives.apache.org/mod_mbox/qpid-dev/200812.mbox/<87fxko4gfy.fsf@rho.meyering.net>
+ApplyPatch $PACKAGE_DIR/hack_old_AC_USE_SYSTEM_EXTENSIONS_def_patch.patch
 # Apply a patch to allow skipping of certain files/directories in
 # the build environment.  TODO: This should not be here. It, or an
 # equivalent change, should be applied upstream to the idutils
 # source:
-ApplyPatch exclude_files.patch
+ApplyPatch $PACKAGE_DIR/exclude_files.patch
 # Apply a patch so that the Info manual can be generated properly:
-ApplyPatch idutils_texinfo.patch
+ApplyPatch $PACKAGE_DIR/idutils_texinfo.patch
 
 # --------------------------------------------------------------------------------
 # Build:
