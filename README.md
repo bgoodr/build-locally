@@ -37,7 +37,7 @@ Instructions to build the ficticious "example-package" on Linux are:
     mkdir bgoodr
     cd bgoodr
     git clone https://github.com/bgoodr/build-locally.git
-    $HOME/bgoodr/build-locally/packages/example-package/linux/build.example-package.bash
+    $HOME/bgoodr/build-locally/packages/example-package/linux/build.bash
 
 To build the other packages, just change "example-package" to the name of
 the package to build in all places in the above path.
