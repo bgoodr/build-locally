@@ -54,6 +54,8 @@ as a template for adding more packages to be built by this project.
 
 * [idutils](packages/idutils/README.md): Building the idutils package.
 
+* [python](packages/python/README.md): Building the Python language system.
+
 ... more to come! ...
 
 Development
