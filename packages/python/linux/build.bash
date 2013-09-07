@@ -132,6 +132,46 @@ then
 fi
 
 # --------------------------------------------------------------------------------
+# Documentation:
+# --------------------------------------------------------------------------------
+# Docs should be installed locally to avoid having to browse to a web
+# page on some remote web server each and every time just to lookup
+# syntax for Python syntax:
+InstallDocs () {
+  local docType="$1"
+  local savedir="$(pwd)"
+  local docBase="python-${version}-docs-${docType}.tar.bz2"
+  local docTarBallPath="$savedir/$docBase"
+  local docDir="$INSTALL_DIR/share/doc/$version_subdir"
+  local docInstallDir="$docDir/python-${version}-docs-$docType"
+  echo "Note: Installing $docType docs into $docDir ..."
+  if [ ! -f "$docBase" ]
+  then
+    local docURL="http://docs.python.org/$MAJOR_VERSION/archives/$docBase"
+    PrintRun wget -O "$docBase" "$docURL"
+    if [ ! -f "$docBase" ]
+    then
+      echo "ERROR: Failed to download docs from $docURL"
+      exit 1
+    fi
+  fi
+  if [ ! -d "$docInstallDir" ]
+  then
+    PrintRun mkdir -p "$docDir"
+    PrintRun cd "$docDir"
+    PrintRun tar xvf "$docTarBallPath"
+    PrintRun cd "$savedir"
+  else
+    echo "Note: $docInstallDir already exists."
+  fi
+}
+
+InstallDocs text
+InstallDocs html
+
+exit
+
+# --------------------------------------------------------------------------------
 # Build:
 # --------------------------------------------------------------------------------
 echo "Building ..."
@@ -150,38 +190,6 @@ PrintRun make
 # --------------------------------------------------------------------------------
 echo "Installing ..."
 PrintRun make install
-
-# --------------------------------------------------------------------------------
-# Documentation:
-# --------------------------------------------------------------------------------
-# Docs should be installed locally to avoid having to browse to a web
-# page on some remote web server each and every time just to lookup
-# syntax for Python syntax:
-echo "Note: Installing text docs into $docDir ..."
-docBase="python-${version}-docs-text.tar.bz2"
-if [ ! -f "$docBase" ]
-then
-  docURL="http://docs.python.org/2/archives/$docBase"
-  PrintRun wget -O "$docBase" "$docURL"
-  if [ ! -f "$docBase" ]
-  then
-    echo "ERROR: Failed to download docs from $docURL"
-    exit 1
-   fi
-fi
-savedir="$(pwd)"
-docTarBafllPath="$savedir/$docBase"
-docDir="$INSTALL_DIR/share/doc/$version_subdir"
-docTextInstallDir="$docDir/python-${version}-docs-text"
-if [ ! -d "$docTextInstallDir" ]
-then
-  PrintRun mkdir -p "$docDir"
-  PrintRun cd "$docDir"
-  PrintRun tar xvf "$docTarBallPath"
-  PrintRun cd "$savedir"
-else
-  echo "Note: $docTextInstallDir already exists."
-fi
 
 # --------------------------------------------------------------------------------
 # Testing:
