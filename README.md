@@ -56,6 +56,8 @@ as a template for adding more packages to be built by this project.
 
 * [python](packages/python/README.md): Building the Python language system.
 
+* [qt](packages/qt/README.md): Building the Qt framework.
+
 ... more to come! ...
 
 Development

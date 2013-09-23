@@ -1,0 +1,70 @@
+* DONE Figure out how to download specific versions using Git
+
+Figure how to get the latest 4.8.x branch of Qt via Git:
+
+I see this at http://qt-project.org/wiki/Setting-up-Gerrit:
+ 
+Note that Qt4 does not have a master branch (since no 4.9 is
+planned). So, you should push changes to the 4.8 branch.
+
+I don't want to push changes, I just want to get a specific stable
+version via git clone and switching to a specific branch.
+
+Tried downloading using git and it is too slow so give up on that and just use the direct download via wget:
+
+http://download.qt-project.org/official_releases/qt/4.8/4.8.5/qt-everywhere-opensource-src-4.8.5.tar.gz
+
+* DONE Get build instructions
+
+See "Building Qt" section inside
+http://qt-project.org/wiki/Get_The_Source. leads to
+http://qt-project.org/doc/qt/install-x11.html.
+
+http://qt-project.org/wiki/Build_Qt_For_Linux has the dependencies and
+configuration switches.
+
+http://qt-project.org/doc/search/qt-5.1?search=requirements-x11.html
+
+reveals http://qt-project.org/doc/qt-4.8/requirements-x11.html
+
+* DONE License file
+
+For now we will not install a license file since
+http://qt-project.org/doc/qt-4.8/install-x11.html states "For the open
+source version you do not need a license file."
+
+* DONE Determine configure options
+
+Run ./configure -help to find the options.
+
+From http://qt-project.org/wiki/Build_Qt_For_Linux :
+
+Add these to the default value of CONFIGURE_OPTIONS in the build.bash script:
+
+ - Add "-plugin-sql-sqlite" for sqlite3.
+ - Add "-opensource"
+ - Do I have to specify "-platform target" or is it smart enough to
+   automatically determine the target?
+ - Do I have to specify one or more of "-make <part>" parts or are
+   they all turned on by default?
+ - Add "-verbose" for debugging configure
+ - Optional:
+   - May have to add "-no-rpath" but save for later if need be (I'm not
+     planning on distributing runtimes yet).
+   - May have to use -qt-zlib on RHEL.
+   - "-no-xvideo"
+   - "-no-xinerama"
+
+* DONE Build from scratch
+
+Getting this error:
+
+#+BEGIN_EXAMPLE
+g++: error: unrecognized command line option ‘-fuse-ld=gold’
+#+END_EXAMPLE
+
+g++ being used is 4.7.2. Search the web for the answer.
+
+https://bugs.webkit.org/show_bug.cgi?id=89312 is the bug we have to
+hackaround as version 4.8.5 tarball did not have that fixed.
+
