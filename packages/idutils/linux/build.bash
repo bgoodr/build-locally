@@ -69,12 +69,7 @@ BuildDependentPackage texinfo bin/makeinfo
 # --------------------------------------------------------------------------------
 # Create build directory structure:
 # --------------------------------------------------------------------------------
-echo "Creating build directory structure ..."
-HEAD_DIR=$BUILD_DIR/idutils
-mkdir -p $BUILD_DIR
-mkdir -p $INSTALL_DIR
-mkdir -p $HEAD_DIR
-PrintRun cd $HEAD_DIR
+CreateAndChdirIntoBuildDir idutils
 
 # --------------------------------------------------------------------------------
 # Download the source into the build directory:
@@ -206,5 +201,5 @@ then
   echo "TEST FAILED: Got cvsfunc result: $cvsfunc_result"
   exit 1
 fi
-echo "TEST PASSED."
+echo "Note: All installation tests passed."
 exit 0

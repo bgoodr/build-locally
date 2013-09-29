@@ -50,7 +50,7 @@ done
 # --------------------------------------------------------------------------------
 # Create build directory structure:
 # --------------------------------------------------------------------------------
-echo "Creating build directory structure ..."
+CreateAndChdirIntoBuildDir example-package
 
 # --------------------------------------------------------------------------------
 # Download the source for example-package into the build directory:

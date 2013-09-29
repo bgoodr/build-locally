@@ -51,19 +51,16 @@ do
   shift
 done
 
-
 # --------------------------------------------------------------------------------
 # Create build directory structure:
 # --------------------------------------------------------------------------------
-echo "Creating build directory structure ..."
-HEAD_DIR=$BUILD_DIR/texinfo
+CreateAndChdirIntoBuildDir texinfo
+
 if [ "$CLEAN" = 1 ]
 then
   PrintRun rm -rf $HEAD_DIR
+  PrintRun mkdir -p $HEAD_DIR
 fi
-# Get the source code:
-PrintRun mkdir -p "$HEAD_DIR"
-PrintRun cd "$HEAD_DIR"
 
 
 # --------------------------------------------------------------------------------

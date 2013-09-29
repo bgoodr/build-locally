@@ -4,15 +4,23 @@ build-locally
 This package provides build programs (typically just shell scripts)
 that allow automatic downloading, building, and installing (locally)
 source packages onto existing systems, typically in a users HOME
-directory. This is needed in one or more of the following situations:
+directory. Building locally in this context includes either full
+compilation or just downloading and installing packages that do not
+require compilation (but the goal is to always build from sources
+where possible (some exceptions will be allowed).
+
+This is needed in one or more of the following situations:
 
 - It is difficult to install or upgrade packages using standard
   mechanisms (e.g., Apt, Yum).
 
-- The package does is not provided by the base operating system.
+- The package is not provided by the base operating system.
 
 - It is desired to build the package without disturbing the
-  configuration of the system, which may be in use by multiple users.
+  configuration of the system, which may be in use by multiple
+  users. Or you do not have system administrator (root) permissions
+  and desire not to obtain those permissions just to install packages
+  for your local use.
 
 - A more recent package is desired, whereas the operating system
   provided package is too old.
@@ -28,35 +36,36 @@ packages whose build logic that can be coerced (typically via dynamic
 build logic patching) into *not* prompting, and that can be downloaded
 from source directly from the Internet.
 
+
 Usage
 =====
 
-Instructions to build the ficticious "example-package" on Linux are:
+The following is an example of building the ficticious
+"example-package" on Linux, assuming that "whynot" is the GitHub user
+name that contains these files (e.g., GitHub cloning):
 
     cd $HOME  # typically
-    mkdir bgoodr
-    cd bgoodr
-    git clone https://github.com/bgoodr/build-locally.git
-    $HOME/bgoodr/build-locally/packages/example-package/linux/build.bash
+    mkdir whynot
+    cd whynot
+    git clone https://github.com/whynot/build-locally.git
+    $HOME/whynot/build-locally/packages/example-package/linux/build.bash
 
 To build the other packages, just change "example-package" to the name of
-the package to build in all places in the above path.
+the package to build above.
 
 Packages
 ========
 
 The following is a list of packages whose build programs are provided by this package:
 
-* [example-package](packages/example-package/README.md): An example directory to serve
-as a template for adding more packages to be built by this project.
-
-* [texinfo](packages/texinfo/README.md): Building the texinfo package.
-
+* [example-package](packages/example-package/README.md): An example directory to serve as a template for adding more packages to be built by this project.
 * [idutils](packages/idutils/README.md): Building the idutils package.
-
+* [jira-python](packages/jira-python/README.md): Building the jira-python package into the Python installation tree.
+* [python-pip](packages/python-pip/README.md): Building the python-pip package into the Python installation tree.
+* [python-setuptools](packages/python-setuptools/README.md): Building the python-setuptools package into the Python installation tree.
 * [python](packages/python/README.md): Building the Python language system.
-
 * [qt](packages/qt/README.md): Building the Qt framework.
+* [texinfo](packages/texinfo/README.md): Building the texinfo package.
 
 ... more to come! ...
 

@@ -81,12 +81,7 @@ done
 # --------------------------------------------------------------------------------
 # Create build directory structure:
 # --------------------------------------------------------------------------------
-echo "Note: Creating build directory structure ..."
-HEAD_DIR=$BUILD_DIR/qt
-mkdir -p $BUILD_DIR
-mkdir -p $INSTALL_DIR
-mkdir -p $HEAD_DIR
-PrintRun cd $HEAD_DIR
+CreateAndChdirIntoBuildDir qt
 
 # --------------------------------------------------------------------------------
 # Download the source into the build directory:

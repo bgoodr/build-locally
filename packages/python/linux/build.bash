@@ -71,12 +71,7 @@ done
 # --------------------------------------------------------------------------------
 # Create build directory structure:
 # --------------------------------------------------------------------------------
-echo "Creating build directory structure ..."
-HEAD_DIR=$BUILD_DIR/python
-mkdir -p $BUILD_DIR
-mkdir -p $INSTALL_DIR
-mkdir -p $HEAD_DIR
-PrintRun cd $HEAD_DIR
+CreateAndChdirIntoBuildDir python
 
 # --------------------------------------------------------------------------------
 # Download the source into the build directory:
@@ -206,5 +201,5 @@ then
   echo "ERROR: Build must have failed because the version under $INSTALL_DIR/bin was not found. Got $runtime_version instead"
   exit 1
 fi
-echo "TEST PASSED."
+echo "Note: All installation tests passed."
 exit 0
