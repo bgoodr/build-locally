@@ -9,6 +9,28 @@ if [ -z "$PACKAGE_DIR" ]; then echo "ASSERTION FAILED: Calling script always has
 # Get the PrintRun utility defined:
 . $PACKAGE_DIR/../../../support-files/printrun.bash
 
+EmitStandardUsage () {
+  cat <<EOF
+USAGE: $0 ... options ...
+
+Options are:
+
+[ -builddir BUILD_DIR ]
+
+  Override the BUILD_DIR default, which is $BUILD_DIR.
+
+[ -installdir INSTALL_DIR ]
+
+  Override the INSTALL_DIR default, which is $INSTALL_DIR.
+
+[ -clean ]
+
+  Build from scratch.
+
+EOF
+
+}
+
 BuildDependentPackage () {
   local dependentPackage="$1"
   local installBase="$2"

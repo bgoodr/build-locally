@@ -36,7 +36,6 @@ Options are:
   Build the version of Qt whose major version is given by
   MAJOR_VERSION. MAJOR_VERSION defaults to "$MAJOR_VERSION"
 
-
 [ -configureopts CONFIGURE_OPTIONS ]
 
   Options to pass to ./configure. Defaults to "$CONFIGURE_OPTIONS"

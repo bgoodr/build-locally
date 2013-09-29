@@ -9,32 +9,6 @@ dollar0=`which $0`; PACKAGE_DIR=$(cd $(dirname $dollar0); pwd) # NEVER export PA
 . $PACKAGE_DIR/../../../support-files/build_platform_util.bash
 . $PACKAGE_DIR/../../../support-files/python_util.bash
 
-# --------------------------------------------------------------------------------
-# Usage
-# --------------------------------------------------------------------------------
-MAJOR_VERSION=2
-usage () {
-  cat <<EOF
-USAGE: $0 ... options ...
-
-Options are:
-
-[ -builddir BUILD_DIR ]
-
-  Override the BUILD_DIR default, which is $BUILD_DIR.
-
-[ -installdir INSTALL_DIR ]
-
-  Override the INSTALL_DIR default, which is $INSTALL_DIR.
-
-[ -clean ]
-
-  Build from scratch.
-
-EOF
-
-}
-
 CLEAN=0
 while [ $# -gt 0 ]
 do
@@ -51,7 +25,7 @@ do
     CLEAN=1
   elif [ "$1" = "-h" ]
   then
-    usage
+    EmitStandardUsage
     exit 0
   else
     echo "Undefined parameter $1"
@@ -60,13 +34,16 @@ do
   shift
 done
 
-# python is a dependency, obviously:
+# --------------------------------------------------------------------------------
+# Build required dependent packages:
+# --------------------------------------------------------------------------------
+# setuptools depends upon python:
 BuildDependentPackage python bin/python
 
 # --------------------------------------------------------------------------------
 # Create build directory structure:
 # --------------------------------------------------------------------------------
-CreateAndChdirIntoBuildDir python-setuptools
+CreateAndChdirIntoBuildDir python--setuptools
 
 if [ "$CLEAN" = 1 ]
 then

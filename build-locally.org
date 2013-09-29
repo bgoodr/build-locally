@@ -106,17 +106,20 @@ and submitting changes).
 ** Subpackage Nomenclature
 
 If a package A has an add-on, or subcomponent, or subpackage called
-package B, then the naming of the <package> name will be A-B. Building
-package A-B implies that package A is a prerequisite to building A-B.
-By extrapolation if package A-B has a subpackage C then the package
-name will be A-B-C.
+package B, then the naming of the <package> name will be
+A--B. Building package A--B implies that package A is a prerequisite
+to building A--B.  By extension, if package A--B has a subpackage C
+then the package name will be A--B--C.  The double dashes are to
+handle cases where the real package name contains dashes (e.g., the
+jira-python package that is to be installed into a Python
+installation is thus given a name of python--jira-python).
 
 ** Versions
 
 Little to no provision for versions is defined, so the build-locally
 package just downloads and installs the latest stable version of the
 specified package.  If more is needed then the approach taken by
-python-pip and others will be considered, notably the requirements
+python--pip and others will be considered, notably the requirements
 files that bundle up a fabric of version metadata to be installed as a
 bundle.
 

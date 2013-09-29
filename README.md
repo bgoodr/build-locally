@@ -60,14 +60,12 @@ The following is a list of packages whose build programs are provided by this pa
 
 * [example-package](packages/example-package/README.md): An example directory to serve as a template for adding more packages to be built by this project.
 * [idutils](packages/idutils/README.md): Building the idutils package.
-* [jira-python](packages/jira-python/README.md): Building the jira-python package into the Python installation tree.
-* [python-pip](packages/python-pip/README.md): Building the python-pip package into the Python installation tree.
-* [python-setuptools](packages/python-setuptools/README.md): Building the python-setuptools package into the Python installation tree.
+* [python--jira-python](packages/python--jira-python/README.md): Building the jira-python package into the Python installation tree.
+* [python--pip](packages/python--pip/README.md): Building the pip Python package into the Python installation tree.
+* [python--setuptools](packages/python--setuptools/README.md): Building the setuptools package into the Python installation tree.
 * [python](packages/python/README.md): Building the Python language system.
 * [qt](packages/qt/README.md): Building the Qt framework.
 * [texinfo](packages/texinfo/README.md): Building the texinfo package.
-
-... more to come! ...
 
 Development
 ===========

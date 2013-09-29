@@ -10,7 +10,7 @@ if [ -z "$PACKAGE_DIR" ]; then echo "ASSERTION FAILED: Calling script always has
 . $PACKAGE_DIR/../../../support-files/printrun.bash
 
 PythonDownloadAndRunBootstrapScript () {
-  local bootstrapURL="https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py"
+  local bootstrapURL="$1"
   # bootstrapScript is exposed to the caller:
   bootstrapScript=$(basename "$bootstrapURL")
   rm -f $bootstrapScript
