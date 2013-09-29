@@ -44,7 +44,7 @@ BuildDependentPackage () {
     echo ") END BUILDING DEPENDENCY: $installBase provided by $dependentPackage"
     if [ "$exitcode" != 0 ]
     then
-      echo "ERROR: build_${dependentPackage}.sh failed"
+      echo "ERROR: ${dependentPackage} failed."
       exit 1
     fi
   fi
