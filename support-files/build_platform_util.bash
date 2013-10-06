@@ -91,51 +91,50 @@ indicate_missing_system_packages ()
   eval "$var=\"\$$var $pkg\""
 }
 
-GetOrInstallDebianSystemPackage () {
-  local package="$1"
-  sudo dpkg-query --status ${package} 2>/dev/null | grep "Status:" | grep "install ok installed" >/dev/null || {
-    # the --fix-missing is to hack around this oddity:
-    #
-    # Err http://ftp.us.debian.org/debian/ wheezy/main libglu1-mesa-dev amd64 7.11.2-1
-    #   404  Not Found [IP: 35.9.37.225 80]
-    # Failed to fetch http://ftp.us.debian.org/debian/pool/main/m/mesa/libglu1-mesa-dev_7.11.2-1_amd64.deb  404  Not Found [IP: 35.9.37.225 80]
-    #
-    PrintRun sudo apt-get --fix-missing -y install ${package}
-  }
-  sudo dpkg-query --status ${package} 2>/dev/null | grep "Status:" | grep "install ok installed" >/dev/null || {
-    echo "ASSERTION FAILED: Could not install ${package}"
-    exit 1
-  }
-}
-
-GetOrInstallOperatingSystemPackages ()
+GetOrInstallSystemPackage ()
 {
-  if [ "$release_type" = "Debian" ]
+  local expected_release_type="$1"
+  local package="$2"
+  if [ "$expected_release_type" = "Debian" ]
   then
-    for debianPackage in $*
-    do
-      GetOrInstallDebianSystemPackage $debianPackage
-    done
+    sudo dpkg-query --status ${package} 2>/dev/null | grep "Status:" | grep "install ok installed" >/dev/null || {
+      # the --fix-missing is to hack around this oddity:
+      #
+      # Err http://ftp.us.debian.org/debian/ wheezy/main libglu1-mesa-dev amd64 7.11.2-1
+      #   404  Not Found [IP: 35.9.37.225 80]
+      # Failed to fetch http://ftp.us.debian.org/debian/pool/main/m/mesa/libglu1-mesa-dev_7.11.2-1_amd64.deb  404  Not Found [IP: 35.9.37.225 80]
+      #
+      PrintRun sudo apt-get --fix-missing -y install ${package}
+    }
+    sudo dpkg-query --status ${package} 2>/dev/null | grep "Status:" | grep "install ok installed" >/dev/null || {
+      echo "ASSERTION FAILED: Could not install ${package}"
+      exit 1
+    }
   else
-    echo "ASSERTION FAILED: GetOrInstallOperatingSystemPackages is not yet implemented for release_type==\"${release_type}\""
+    echo "ASSERTION FAILED: GetOrInstallSystemPackage not yet implemented on $expected_release_type."
     exit 1
   fi
+
 }
 
 GetOrInstallOperatingSystemPackageContainingFile ()
 {
-  local package="$1"
-  local neededFile="$2"
-  if [ ! -f "$neededFile" ]
+  local expected_release_type="$1"
+  local package="$2"
+  local needed_file="$3"
+  if [ "$expected_release_type" = "$release_type" ]
   then
-    GetOrInstallOperatingSystemPackages "$package"
-    if [ ! -f "$neededFile" ]
+    if [ ! -f "$needed_file" ]
     then
-      echo "ERROR: Failed to install package \"${package}\" because file \"${neededFile}\" still does not exist."
-      exit 1
+      GetOrInstallSystemPackage "$expected_release_type" "$package"
+      if [ ! -f "$needed_file" ]
+      then
+        echo "ERROR: Failed to install package \"${package}\" because file \"${needed_file}\" still does not exist."
+        exit 1
+      fi
+    else
+      echo "Note: No need to install package \"${package}\" because file \"${needed_file}\" already exists."
     fi
-  else
-    echo "Note: No need to install package \"${package}\" because file \"${neededFile}\" already exists."
   fi
 }
 
