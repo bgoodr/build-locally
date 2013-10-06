@@ -7,6 +7,7 @@ dollar0=`which $0`; PACKAGE_DIR=$(cd $(dirname $dollar0); pwd) # NEVER export PA
 # Set defaults for BUILD_DIR and INSTALL_DIR environment variables and
 # define utility functions such as BuildDependentPackage:
 . $PACKAGE_DIR/../../../support-files/build_platform_util.bash
+# Define python utility functions:
 . $PACKAGE_DIR/../../../support-files/python_util.bash
 
 CLEAN=0
