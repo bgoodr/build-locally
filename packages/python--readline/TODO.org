@@ -1,0 +1,31 @@
+#+title:    TODO Org file for building python--readline
+#+author:   Brent Goodrick
+#+STARTUP:  hideblocks
+
+* Overview
+
+This is the detailed Org mode file to track todo items and design
+notes for the build-locally project, but specifically for building the
+readline package of Python. Items marked as TODO are yet to do. See
+the ../../README.md file for end-user usage.
+
+* DONE Install readline
+
+Create a python--readline package and install it via tips found at
+http://stackoverflow.com/questions/7375545/ipython-complaining-about-readline
+(but that is MacOS-specific and right now we have not consider that platform).
+
+The new "hotness" is pip as explained in
+http://stackoverflow.com/questions/3220404/why-use-pip-over-easy-install
+
+And we see 
+http://guide.python-distribute.org/installation.html#pip-installs-python-pip says:
+
+#+BEGIN_EXAMPLE
+The pip application is a replacement for easy_install. It uses mostly the same techniques for finding packages, so
+packages that were made easy_installable should be pip-installable as well.
+#+END_EXAMPLE
+
+Therefore try using pip.
+
+
