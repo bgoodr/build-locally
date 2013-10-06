@@ -21,3 +21,17 @@ PythonDownloadAndRunBootstrapScript () {
     exit 1
   fi
 }
+
+VerifyPythonWith () {
+  local test_expr="$1"
+  local python_expr="$2"
+  echo "Note: $test_expr ..."
+  if ! python -c "$python_expr"
+  then
+    echo "ERROR: Failed verification test: $test_expr"
+    exit 1
+  else
+    echo "Note: Verification test passed: $test_expr"
+  fi
+}
+
