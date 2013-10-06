@@ -73,52 +73,22 @@ ValidateFileInInstallBinDir () {
   fi
 }
 
-indicate_missing_system_packages ()
-{
-  local releaseType="$1"
-  local pkg="$2"
-  if [ -z "$releaseType" ]
-  then
-    echo "ASSERTION FAILED: releaseType argument is mandatory"
-    exit 1
-  fi
-  if [ -z "$pkg" ]
-  then
-    echo "ASSERTION FAILED: pkg argument is mandatory"
-    exit 1
-  fi
-  local var="needed_${releaseType}_packages"
-  eval "$var=\"\$$var $pkg\""
-}
-
-GetOrInstallSystemPackage ()
-{
+VerifySystemPackage () {
   local expected_release_type="$1"
   local package="$2"
   if [ "$expected_release_type" = "Debian" ]
   then
-    sudo dpkg-query --status ${package} 2>/dev/null | grep "Status:" | grep "install ok installed" >/dev/null || {
-      # the --fix-missing is to hack around this oddity:
-      #
-      # Err http://ftp.us.debian.org/debian/ wheezy/main libglu1-mesa-dev amd64 7.11.2-1
-      #   404  Not Found [IP: 35.9.37.225 80]
-      # Failed to fetch http://ftp.us.debian.org/debian/pool/main/m/mesa/libglu1-mesa-dev_7.11.2-1_amd64.deb  404  Not Found [IP: 35.9.37.225 80]
-      #
-      PrintRun sudo apt-get --fix-missing -y install ${package}
-    }
-    sudo dpkg-query --status ${package} 2>/dev/null | grep "Status:" | grep "install ok installed" >/dev/null || {
-      echo "ASSERTION FAILED: Could not install ${package}"
+    dpkg-query --status ${package} 2>/dev/null | grep "Status:" | grep "install ok installed" >/dev/null || {
+      echo "ERROR: You must install system package $package under root before proceeding."
       exit 1
     }
   else
-    echo "ASSERTION FAILED: GetOrInstallSystemPackage not yet implemented on $expected_release_type."
+    echo "ASSERTION FAILED: VerifySystemPackage not yet implemented on $expected_release_type."
     exit 1
   fi
-
 }
 
-GetOrInstallOperatingSystemPackageContainingFile ()
-{
+VerifyOperatingSystemPackageContainingFile () {
   local expected_release_type="$1"
   local package="$2"
   local needed_file="$3"
@@ -126,20 +96,14 @@ GetOrInstallOperatingSystemPackageContainingFile ()
   then
     if [ ! -f "$needed_file" ]
     then
-      GetOrInstallSystemPackage "$expected_release_type" "$package"
-      if [ ! -f "$needed_file" ]
-      then
-        echo "ERROR: Failed to install package \"${package}\" because file \"${needed_file}\" still does not exist."
-        exit 1
-      fi
+      VerifySystemPackage "$expected_release_type" "$package"
     else
       echo "Note: No need to install package \"${package}\" because file \"${needed_file}\" already exists."
     fi
   fi
 }
 
-GetDebianSourcePackageTarBalls ()
-{
+GetDebianSourcePackageTarBalls () {
   local tarballURLPage="$1"
   local downloadFile=`echo "$tarballURLPage" | sed 's%\([^a-zA-Z0-9_-]\)%_%g' `
   if [ ! -f $downloadFile ]
@@ -176,8 +140,7 @@ grep tar.gz`
   done
 }
 
-ExtractTarBall ()
-{
+ExtractTarBall () {
   local tarball="$1"
   local expectedFiles="$2"
   local actualFiles=`ls -d $expectedFiles 2>/dev/null`
@@ -196,8 +159,7 @@ ExtractTarBall ()
   ExtractTarBall_return="$actualFiles"
 }
 
-ExtractDebianSourcePackageTarBalls ()
-{
+ExtractDebianSourcePackageTarBalls () {
   local tarballs="$1"
   local expectedFilesOrDirs="$2"
   ExtractDebianSourcePackageTarBalls_returnDebianFileOrDirs=""
@@ -234,8 +196,7 @@ AssertNumFilesOrDirs ()
   fi
 }
 
-ApplyDebianPatches ()
-{
+ApplyDebianPatches () {
   local debianDir="$1"
   local origDir="$2"
   local skipRegexpList="$3"
