@@ -70,14 +70,6 @@ PythonDownloadAndRunBootstrapScript "https://bitbucket.org/pypa/setuptools/raw/b
 echo "Installing ..."
 PrintRun python $bootstrapScript 
 
-# Output seen was: 
-# ,----
-# | Copying setuptools-1.1.6-py2.7.egg to /home/brentg/install/RHEL.6.2.x86_64/lib/python2.7/site-packages
-# | Adding setuptools 1.1.6 to easy-install.pth file
-# | Installing easy_install script to /home/brentg/install/RHEL.6.2.x86_64/bin
-# | Installing easy_install-2.7 script to /home/brentg/install/RHEL.6.2.x86_64/bin
-# `----
-
 # --------------------------------------------------------------------------------
 # Testing:
 # --------------------------------------------------------------------------------

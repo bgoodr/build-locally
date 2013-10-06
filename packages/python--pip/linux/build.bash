@@ -60,12 +60,6 @@ PythonDownloadAndRunBootstrapScript "https://raw.github.com/pypa/pip/master/cont
 echo "Installing ..."
 PrintRun python $bootstrapScript 
 
-# Output seen was: 
-# ,----
-# |     Installing pip script to /home/brentg/install/RHEL.6.2.x86_64/bin
-# |     Installing pip-2.7 script to /home/brentg/install/RHEL.6.2.x86_64/bin
-# `----
-
 # --------------------------------------------------------------------------------
 # Testing:
 # --------------------------------------------------------------------------------

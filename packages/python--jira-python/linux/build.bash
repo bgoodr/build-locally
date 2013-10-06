@@ -52,31 +52,6 @@ echo "Downloading and installing ..."
 # http://jira-python.readthedocs.org/en/latest/#installation
 # Not using a virtualenv. The locally built python is acts as the virtualenv already:
 PrintRun pip install jira-python
-# Output seen was: 
-# ,----
-# |     Installing jirashell script to /home/brentg/install/RHEL.6.2.x86_64/bin
-# |   Running setup.py install for requests
-# |     
-# |   Running setup.py install for requests-oauthlib
-# |     
-# |   Running setup.py install for ipython
-# |     
-# |     Installing ipcontroller script to /home/brentg/install/RHEL.6.2.x86_64/bin
-# |     Installing iptest script to /home/brentg/install/RHEL.6.2.x86_64/bin
-# |     Installing ipcluster script to /home/brentg/install/RHEL.6.2.x86_64/bin
-# |     Installing ipython script to /home/brentg/install/RHEL.6.2.x86_64/bin
-# |     Installing pycolor script to /home/brentg/install/RHEL.6.2.x86_64/bin
-# |     Installing iplogger script to /home/brentg/install/RHEL.6.2.x86_64/bin
-# |     Installing irunner script to /home/brentg/install/RHEL.6.2.x86_64/bin
-# |     Installing ipengine script to /home/brentg/install/RHEL.6.2.x86_64/bin
-# |   Running setup.py install for tlslite
-# |     changing mode of build/scripts-2.7/tls.py from 664 to 775
-# |     changing mode of build/scripts-2.7/tlsdb.py from 664 to 775
-# |     
-# |     changing mode of /home/brentg/install/RHEL.6.2.x86_64/bin/tlsdb.py to 775
-# |     changing mode of /home/brentg/install/RHEL.6.2.x86_64/bin/tls.py to 775
-# |   Running setup.py install for oauthlib
-# `----
 
 # --------------------------------------------------------------------------------
 # Testing:
