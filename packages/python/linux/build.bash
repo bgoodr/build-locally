@@ -74,6 +74,11 @@ done
 CreateAndChdirIntoBuildDir python
 
 # --------------------------------------------------------------------------------
+# Get dependent packages:
+# --------------------------------------------------------------------------------
+VerifyOperatingSystemPackageContainingFile Debian libbz2-dev /usr/include/bzlib.h
+
+# --------------------------------------------------------------------------------
 # Download the source into the build directory:
 # --------------------------------------------------------------------------------
 echo "Downloading ..."
