@@ -7,6 +7,9 @@ dollar0=`which $0`; PACKAGE_DIR=$(cd $(dirname $dollar0); pwd) # NEVER export PA
 # Set defaults for BUILD_DIR and INSTALL_DIR environment variables and
 # define utility functions such as BuildDependentPackage:
 . $PACKAGE_DIR/../../../support-files/build_platform_util.bash
+# Define python utility functions:
+. $PACKAGE_DIR/../../../support-files/python_util.bash
+
 
 # --------------------------------------------------------------------------------
 # Usage
@@ -77,6 +80,7 @@ CreateAndChdirIntoBuildDir python
 # Get dependent packages:
 # --------------------------------------------------------------------------------
 VerifyOperatingSystemPackageContainingFile Debian libbz2-dev /usr/include/bzlib.h
+VerifyOperatingSystemPackageContainingFile Debian libsqlite3-dev /usr/include/sqlite3.h
 
 # --------------------------------------------------------------------------------
 # Download the source into the build directory:
@@ -206,5 +210,11 @@ then
   echo "ERROR: Build must have failed because the version under $INSTALL_DIR/bin was not found. Got $runtime_version instead"
   exit 1
 fi
+
+# Verify the expected packages that should be included in the python
+# we just built:
+VerifyPythonWith "Verifying bz2 package was built and installed properly" "import bz2;"
+VerifyPythonWith "Verifying sqlite3 package was built and installed properly" "import sqlite3;"
+
 echo "Note: All installation tests passed."
 exit 0

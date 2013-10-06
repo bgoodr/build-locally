@@ -1,0 +1,52 @@
+#+title:    TODO Org file for building Python
+#+author:   Brent Goodrick
+#+STARTUP:  hideblocks
+
+* Overview
+
+This is the detailed Org mode file to track todo items and design
+notes for the build-locally project, but specifically for building
+Python. Items marked as TODO are yet to do. See the ../../README.md
+file for end-user usage.
+
+* TODO Resolve dependency hacks
+
+For some packages, such as sqlite3, it seems python has to be rebuilt
+in order for that feature to be seen by its build, versus the more
+desirable arrangement of allowing end-users to plug in the missing
+dependent package into an existing python build after the fact.
+Therefore, the linux/build.bash file has calls to the
+VerifyOperatingSystemPackageContainingFile Bash function that mandates
+that the system has the package available prior to building.
+
+This is a hack to be removed as doing this deviates from the spirit of
+this build-locally package, which is to keep everything local and to
+build directly from downloadable source. If this approach is limited
+to a handful of "basic" dependencies like bz2, sqlite3 etc, then this
+is a suitable short-term hack.
+
+http://tinyurl.com/m2vpcry is one example of what can happen when a
+"basic" feature is found missing and that really should be standard by
+now.
+
+** DONE Verify bz2 is installed
+
+Add verification logic to linux/build.bash to verify that bz2
+python package is accessible after building.
+
+** DONE Verify sqlite3 is installed
+
+Add verification logic to linux/build.bash to verify that sqlite3
+python package is accessible after building.
+
+** TODO Install readline
+
+Create a python--readline and install it via tips found at
+http://stackoverflow.com/questions/7375545/ipython-complaining-about-readline
+
+** TODO Build on RHEL6
+
+Verify this builds on RHEL, if we need to install system packages,
+then try to build from source (hopefully not as bz2 seemed to be in
+the default install, unlike on Debian).
+
