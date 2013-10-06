@@ -79,7 +79,7 @@ VerifySystemPackage () {
   if [ "$expected_release_type" = "Debian" ]
   then
     dpkg-query --status ${package} 2>/dev/null | grep "Status:" | grep "install ok installed" >/dev/null || {
-      echo "ERROR: You must install system package $package under root before proceeding."
+      echo "ERROR: You must install system package $package under root before proceeding, via: apt-get install $package"
       exit 1
     }
   else
