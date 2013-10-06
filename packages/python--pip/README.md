@@ -1,4 +1,4 @@
-python--python-pip
+python--pip
 ==========
 
 Parent: [build-locally](../../README.md)
