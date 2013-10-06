@@ -41,8 +41,20 @@ python package is accessible after building.
 
 ** TODO Install readline
 
-Create a python--readline and install it via tips found at
+Create a python--readline package and install it via tips found at
 http://stackoverflow.com/questions/7375545/ipython-complaining-about-readline
+(but that is MacOS-specific and right now we have not consider that platform).
+
+Besides, the new "hotness" is pip as explained in
+http://stackoverflow.com/questions/3220404/why-use-pip-over-easy-install
+
+And we see 
+http://guide.python-distribute.org/installation.html#pip-installs-python-pip says:
+
+#+BEGIN_EXAMPLE
+The pip application is a replacement for easy_install. It uses mostly the same techniques for finding packages, so
+packages that were made easy_installable should be pip-installable as well.
+#+END_EXAMPLE
 
 ** TODO Build on RHEL6
 
@@ -50,3 +62,8 @@ Verify this builds on RHEL, if we need to install system packages,
 then try to build from source (hopefully not as bz2 seemed to be in
 the default install, unlike on Debian).
 
+** TODO Virtual Environments
+
+See if
+http://guide.python-distribute.org/introduction.html#creating-a-micro-ecosystem-with-virtualenv
+applies here.
