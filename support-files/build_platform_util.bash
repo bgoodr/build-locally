@@ -251,3 +251,72 @@ ApplyDebianPatches () {
   done
 }
 
+DownloadExtractChdirGnuTarball () {
+  local package="$1"
+  local packageURL="http://ftp.gnu.org/gnu/${package}/"
+  tarbasefile=$(wget $packageURL -O - | \
+    grep 'href=' | \
+    grep '\.tar\.gz"' | \
+    tr '"' '\012' | \
+    grep "^${package}" | \
+    sed 's%-%-.%g' | \
+    sort -t. -k 1,1n -k 2,2n -k 3,3n -k 4,4n | \
+    sed 's%-\.%-%g' | \
+    tail -1)
+  if [ -z "$tarbasefile" ]
+  then
+    echo "ASSERTION FAILED: Could not automatically determine download file from $packageURL"
+    exit 1
+  fi
+  if [ ! -f $tarbasefile ]
+  then
+    wget http://ftp.gnu.org/gnu/${package}/$tarbasefile
+    if [ ! -f $tarbasefile ]
+    then
+      echo "ERROR: Could not retrieve $tarbasefile"
+      exit 1
+    fi
+  fi
+  subdir=`tar tf $tarbasefile 2>/dev/null | sed -n '1{s%/$%%gp; q}'`
+  if [ ! -d "$subdir" ]
+  then
+    tar zxvf $tarbasefile
+    if [ ! -d "$subdir" ]
+    then
+      echo "ERROR: Could not extract `pwd`/$tarbasefile"
+      exit 1
+    fi
+  fi
+
+  PrintRun cd $HEAD_DIR/$subdir
+}
+
+ConfigureAndBuildGnuPackage () {
+  # --------------------------------------------------------------------------------
+  # Configuring:
+  # --------------------------------------------------------------------------------
+  echo "Configuring ..."
+  # The distclean command will fail if there the top-level Makefile has not yet been generated:
+  if [ -f Makefile ]
+  then
+    PrintRun make distclean
+  fi
+  if [ ! -f configure ]
+  then
+    echo "ASSERTION FAILED: configure file not found"
+    exit 1
+  fi
+  PrintRun ./configure --prefix="$INSTALL_DIR"
+
+  # --------------------------------------------------------------------------------
+  # Building:
+  # --------------------------------------------------------------------------------
+  echo "Building ..."
+  PrintRun make
+
+  # --------------------------------------------------------------------------------
+  # Installing:
+  # --------------------------------------------------------------------------------
+  echo "Installing ..."
+  PrintRun make install
+}
