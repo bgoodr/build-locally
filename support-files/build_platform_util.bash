@@ -251,9 +251,14 @@ ApplyDebianPatches () {
   done
 }
 
-DownloadExtractChdirGnuTarball () {
+DownloadExtractBuildGnuPackage () {
   local package="$1"
   local packageURL="http://ftp.gnu.org/gnu/${package}/"
+
+  # --------------------------------------------------------------------------------
+  # Downloading:
+  # --------------------------------------------------------------------------------
+  echo "Downloading ..."
   tarbasefile=$(wget $packageURL -O - | \
     grep 'href=' | \
     grep '\.tar\.gz"' | \
@@ -287,11 +292,8 @@ DownloadExtractChdirGnuTarball () {
       exit 1
     fi
   fi
-
   PrintRun cd $HEAD_DIR/$subdir
-}
 
-ConfigureAndBuildGnuPackage () {
   # --------------------------------------------------------------------------------
   # Configuring:
   # --------------------------------------------------------------------------------
@@ -320,3 +322,4 @@ ConfigureAndBuildGnuPackage () {
   echo "Installing ..."
   PrintRun make install
 }
+

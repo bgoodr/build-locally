@@ -44,14 +44,8 @@ done
 CreateAndChdirIntoBuildDir libtool
 
 # --------------------------------------------------------------------------------
-# Download the tarball into the build directory:
+# Download and build tarball into the build directory:
 # --------------------------------------------------------------------------------
-echo "Downloading ..."
-DownloadExtractChdirGnuTarball libtool
-
-# --------------------------------------------------------------------------------
-# Configure and build:
-# --------------------------------------------------------------------------------
-ConfigureAndBuildGnuPackage autoconf
+DownloadExtractBuildGnuPackage libtool
 
 exit 0
