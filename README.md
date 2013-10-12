@@ -59,6 +59,7 @@ Packages
 The following is a list of packages whose build programs are provided by this package:
 
 * [autoconf](packages/autoconf/README.md): Building the autoconf package.
+* [automake](packages/automake/README.md): Building the automake package.
 * [example-package](packages/example-package/README.md): An example directory to serve as a template for adding more packages to be built by this project.
 * [idutils](packages/idutils/README.md): Building the idutils package.
 * [libtool](packages/libtool/README.md): Building the libtool package.
