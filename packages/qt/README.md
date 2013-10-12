@@ -8,3 +8,5 @@ Builds the Qt framework.
 If you use these scripts, you accept the open-source license terms
 automatically and will not be prompted. See requirements in
 [build-locally](../../README.md).
+
+See [TODO Org file](TODO.org) for pending TODO items.
