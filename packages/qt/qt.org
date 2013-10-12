@@ -1,3 +1,7 @@
+#+title:    TODO Org file for building qt
+#+author:   Brent Goodrick
+#+STARTUP:  hideblocks
+
 * DONE Figure out how to download specific versions using Git
 
 Figure how to get the latest 4.8.x branch of Qt via Git:
