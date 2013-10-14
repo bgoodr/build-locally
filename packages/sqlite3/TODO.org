@@ -1,0 +1,56 @@
+#+title:    TODO Org file for building sqlite3
+#+author:   Brent Goodrick
+#+STARTUP:  hideblocks
+
+* DONE Analyze the build instructions
+
+sqlite3 building how to page: http://www.sqlite.org/howtocompile.html
+
+amalgamation page: http://www.sqlite.org/amalgamation.html
+
+The command-line interface is contained in the amalgamation tarball: http://www.sqlite.org/download.html#amalgtarball
+
+See if we can inspect the Debian source tarball to see how they build it.
+
+https://wiki.debian.org/SourcePackage says:
+
+
+You can do a manual download, from http://www.debian.org/distrib/packages.
+
+When you are on the page of the package, choose a distribution, and
+you will have a link to the three files which make the source package.
+
+And on that page we see:
+
+There are shortcuts for some searches available:
+
+http://packages.debian.org/name for the search on package names.
+http://packages.debian.org/src:name for the search on source package names.
+
+This seemed to narrow things down
+
+http://packages.debian.org/search?keywords=sqlite3&searchon=sourcenames&exact=1&suite=testing&section=all
+
+That lead to http://packages.debian.org/jessie/sqlite3.
+
+Contains:
+
+http://ftp.de.debian.org/debian/pool/main/s/sqlite3/sqlite3_3.8.0.2-1.dsc must be what https://wiki.debian.org/dsc is referring to.
+
+http://ftp.de.debian.org/debian/pool/main/s/sqlite3/sqlite3_3.8.0.2.orig-www.tar.gz must be the docs
+
+http://ftp.de.debian.org/debian/pool/main/s/sqlite3/sqlite3_3.8.0.2.orig.tar.gz 
+
+http://ftp.de.debian.org/debian/pool/main/s/sqlite3/sqlite3_3.8.0.2-1.debian.tar.gz
+
+sqlite3_3.8.0.2-1.debian.tar.gz has some debian/patches. http://dep.debian.net/deps/dep3/ has info on the patch file format there.
+
+* DONE Apply the existing Debian patching methods
+
+Apply patches and build them on Debian first, and install them
+locally, all without being dependent upon Debian other than their
+website.
+
+* TODO Rebuild on RHEL
+
+See what falls out from building on RHEL.
