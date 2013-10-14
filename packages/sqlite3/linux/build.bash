@@ -95,7 +95,10 @@ then
 fi
 echo "Running ./configure ..."
 # Here we run similar steps as is in the debian/rules configure rule
-# but elide options that are Debian specific:
+# but elide options that are Debian specific (--disable-tcl is so as
+# to allow us to build on RHEL; without that, the Makefile has rules
+# that attempt to install files into a root-owned directory, and right
+# now we do not need the Tcl extension):
 PrintRun ./configure --prefix="$INSTALL_DIR" --enable-threadsafe --enable-load-extension --disable-tcl
 # Not sure if we need to set this yet:  TCLLIBDIR=/usr/lib/tcltk/sqlite3
 
