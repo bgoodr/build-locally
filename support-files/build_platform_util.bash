@@ -103,24 +103,61 @@ VerifyOperatingSystemPackageContainingFile () {
   fi
 }
 
-GetDebianSourcePackageTarBalls () {
-  local tarballURLPage="$1"
-  local downloadFile=`echo "$tarballURLPage" | sed 's%\([^a-zA-Z0-9_-]\)%_%g' `
-  if [ ! -f $downloadFile ]
+DownloadURLIntoLocalFile () {
+  local URL="$1"
+  local retvar="$2"
+
+  # Only download the file once:
+  local localFile=$(echo "$URL" | sed 's%\([^a-zA-Z0-9_-]\)%_%g')
+  if [ ! -f $localFile ]
   then
-    wget -O - $tarballURLPage > $downloadFile
+    echo "Note: Downloading $URL into local file: $localFile"
+    wget -O - "$URL" > $localFile
   else
-    echo Note: Skipping download of $tarballURLPage and reusing pre-existing download file: $downloadFile
+    echo "Note: Skipping download of $URL and reusing pre-existing local file: $localFile"
   fi
-  local tarballURLs=`sed -n '/Download Source Package/,$p' < $downloadFile| \
-sed -n 's%^.*<a href="\([^"]*\)">.*$%\1%gp' | \
-grep tar.gz`
+
+  retval=$(echo "$retval" | sed 's%^ *%%g') # strip leading whitespace
+
+  # Return the name of the local file:
+  eval "$retvar=\"$localFile\""
+}
+
+GetDebianSourcePackageTarBalls () {
+  local package="$1"
+  local suite="$2"
+  local retvar="$3"
+
+  # Search for the source package and store the results into sourcePackageSearchPageFile:
+  local sourcePackageSearchURL="http://packages.debian.org/search?keywords=${package}&searchon=sourcenames&exact=1&suite=${suite}&section=all"
+  local sourcePackageSearchPageFile=""
+  DownloadURLIntoLocalFile "$sourcePackageSearchURL" sourcePackageSearchPageFile
+
+  # Extract the result link:
+  local resultLink=$(sed -n 's%^.*class="resultlink" href="\([^"]*\)".*%\1%gp' < $sourcePackageSearchPageFile)
+  # Assert that there should be only one result link:
+  local numResultLinks=$(echo "$resultLink" | wc -l)
+  if [ "$numResultLinks" -gt 1 ]
+  then
+    echo "ASSERTION FAILED: Saw got $numResultLinks result links when only 1 was expected, downloaded from $sourcePackageSearchURL"
+    exit 1
+  fi
+
+  # Download the package page into sourcePackageSearchPageFile.
+  # Assume the resultLink is a relative one (if this breaks then
+  # we will have to do some futzing with it here):
+  local sourcePackageURL="http://packages.debian.org${resultLink}"
+  local sourcePackagePageFile=""
+  DownloadURLIntoLocalFile "$sourcePackageURL" sourcePackagePageFile
+
+  # Extract the list of tarball URLs:
+  local tarballURLs=$(sed -n 's%^.*<a href="\([^"]*\)">.*$%\1%gp' < $sourcePackagePageFile | grep tar.gz)
   if [ -z "$tarballURLs" ]
   then
     echo "ERROR: Failed to extract source package tarball URLs from $tarballURLPage"
     exit 1
   fi
-  GetDebianSourcePackageTarBalls_return=""
+  local retval=""
   local tarballURL=""
   for tarballURL in $tarballURLs
   do
@@ -136,52 +173,65 @@ grep tar.gz`
     else
       echo Note: Skipping download of $tarballURL and reusing pre-existing tarball: $tarballBaseFile
     fi
-    GetDebianSourcePackageTarBalls_return="$GetDebianSourcePackageTarBalls_return $tarballBaseFile"
+    retval="$retval $tarballBaseFile"
   done
+
+  retval=$(echo "$retval" | sed 's%^ *%%g') # strip leading whitespace
+
+  retval=$(echo "$retval" | sed 's%^ *%%g') # strip leading whitespace
+
+  # Return the list of tarball files:
+  eval "$retvar=\"$retval\""
 }
 
 ExtractTarBall () {
   local tarball="$1"
   local expectedFiles="$2"
-  local actualFiles=`ls -d $expectedFiles 2>/dev/null`
-  if [ -z "$actualFiles" ]
+  local retvar="$3"
+
+  local retval=`ls -d $expectedFiles 2>/dev/null`
+  if [ -z "$retval" ]
   then
     tar zxvf $tarball
-    local actualFiles=`ls -d $expectedFiles 2>/dev/null`
-    if [ -z "$actualFiles" ]
+    local retval=`ls -d $expectedFiles 2>/dev/null`
+    if [ -z "$retval" ]
     then
       echo "ERROR: Failed to extract $expectedFiles from $tarball!"
       exit 1
     fi
   else
-    echo "Note: Skipping extraction of $tarball and reusing pre-existing files: $actualFiles"
+    echo "Note: Skipping extraction of $tarball and reusing pre-existing files: $retval"
   fi
-  ExtractTarBall_return="$actualFiles"
+
+  retval=$(echo "$retval" | sed 's%^ *%%g') # strip leading whitespace
+
+  # Return the list of actual files:
+  eval "$retvar=\"$retval\""
 }
 
-ExtractDebianSourcePackageTarBalls () {
+ExtractDebianSourcePackageTarBall () {
   local tarballs="$1"
-  local expectedFilesOrDirs="$2"
-  ExtractDebianSourcePackageTarBalls_returnDebianFileOrDirs=""
-  ExtractDebianSourcePackageTarBalls_returnOrigFileOrDirs=""
+  local expectedTarBallExpr="$2"
+  local expectedFilesOrDirs="$3"
+  local retvar="$4"
+
   local tarball=""
+  local actualFiles=""
+  local retval=""
   for tarball in $tarballs
   do
-    if expr $tarball : '.*debian\.tar\.gz' >/dev/null
+    if expr $tarball : "$expectedTarBallExpr" >/dev/null
     then
-      echo Note: Identified Debian patch tarball: $tarball
-      ExtractTarBall $tarball debian
-      ExtractDebianSourcePackageTarBalls_returnDebianFileOrDirs="$ExtractTarBall_return"
-    elif expr $tarball : '.*orig\.tar\.gz' >/dev/null
-    then
-      echo Note: Identified original source tarball: $tarball
-      ExtractTarBall $tarball "$expectedFilesOrDirs"
-      ExtractDebianSourcePackageTarBalls_returnOrigFileOrDirs="$ExtractTarBall_return"
-    else
-      echo "ASSERTION FAILED: Unexpected type of tarball: $tarball"
-      exit 1
+      echo "Note: Identified Debian tarball matching expression \"$expectedTarBallExpr\": $tarball"
+      ExtractTarBall $tarball "$expectedFilesOrDirs" actualFiles
+      retval="$retval $actualFiles"
     fi
   done
+
+  retval=$(echo "$retval" | sed 's%^ *%%g') # strip leading whitespace
+
+  # Return the list of actual files:
+  eval "$retvar=\"$retval\""
 }
 
 AssertNumFilesOrDirs () 
@@ -200,55 +250,58 @@ ApplyDebianPatches () {
   local debianDir="$1"
   local origDir="$2"
   local skipRegexpList="$3"
+
   AssertNumFilesOrDirs 1 "$debianDir"
   AssertNumFilesOrDirs 1 "$origDir"
+
   local patchDir=$debianDir/patches
   local seriesFile=$patchDir/series
-  if [ ! -f $seriesFile ]
+
+  # Apply patches listed in the seriesFile
+  if [ -f $seriesFile ]
   then
-    echo "ASSERTION FAILED: Expected a Debian patch series file but did not find it at: $seriesFile"
-    exit 1
-  fi
-  # http://www.debian.org/doc/manuals/maint-guide/dother.en.html#patches states:
-  # "The order of these patches is recorded in the debian/patches/series file"
-  #
-  # Skip commented out patches:
-  local patches=`grep -v '^[ \t]*#' $seriesFile`
-  local patch=""
-  for patch in $patches
-  do
-    local skip=0
-    local skipRegexp
-    for skipRegexp in $skipRegexpList
+
+    # Skip commented out patches:
+    local patches=$(grep -v '^[ \t]*#' $seriesFile)
+
+    # Apply the patches in the order of the series
+    # file, because http://www.debian.org/doc/manuals/maint-guide/dother.en.html#patches
+    # states: "The order of these patches is recorded in the
+    # debian/patches/series file":
+    local patch=""
+    for patch in $patches
     do
-      if echo "$patch" | grep "$skipRegexp" >/dev/null
+      local skip=0
+      local skipRegexp
+      for skipRegexp in $skipRegexpList
+      do
+        if echo "$patch" | grep "$skipRegexp" >/dev/null
+        then
+          echo "Note: Skipping patch $patch since it matches $skipRegexp"
+          skip=1
+          break
+        fi
+      done
+      if [ $skip = 1 ]
       then
-        echo "Note: Skipping patch $patch since it matches $skipRegexp"
-        skip=1
-        break
+        continue
+      fi
+      local patchCompleteFile=`echo "$patch" | sed 's%\([^a-zA-Z0-9_-]\)%_%g' `
+      if [ ! -f $patchCompleteFile ]
+      then
+        echo Note: Applying patch $patch
+        (cd $origDir; patch -p1 --forward) < $patchDir/$patch
+        if [ $? != 0 ]
+        then
+          echo "ERROR: Patch $patch failed to apply"
+          exit 1
+        fi
+        touch $patchCompleteFile
+      else
+        echo Note: Skipping patch $patch which was already applied
       fi
     done
-    if [ $skip = 1 ]
-    then
-      continue
-    fi
-    local patchCompleteFile=`echo "$patch" | sed 's%\([^a-zA-Z0-9_-]\)%_%g' `
-    if [ ! -f $patchCompleteFile ]
-    then
-      echo
-      echo Note: Applying patch $patch
-      (cd $origDir; patch -p1 --forward) < $patchDir/$patch
-      if [ $? != 0 ]
-      then
-        echo "ERROR: Patch $patch failed to apply"
-        exit 1
-      fi
-      echo
-      touch $patchCompleteFile
-    else
-      echo Note: Patch $patch already applied
-    fi
-  done
+  fi
 }
 
 DownloadExtractBuildGnuPackage () {
