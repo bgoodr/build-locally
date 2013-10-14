@@ -186,17 +186,18 @@ GetDebianSourcePackageTarBalls () {
 
 ExtractTarBall () {
   local tarball="$1"
-  local expectedFiles="$2"
+  local expectedFilesOrDirsRegexp="$2"
+  echo "expectedFilesOrDirsRegexp==\"${expectedFilesOrDirsRegexp}\""
   local retvar="$3"
 
-  local retval=`ls -d $expectedFiles 2>/dev/null`
+  local retval=$(ls -d * | grep '$expectedFilesOrDirsRegexp' 2>/dev/null)
   if [ -z "$retval" ]
   then
     tar zxvf $tarball
-    local retval=`ls -d $expectedFiles 2>/dev/null`
+    retval=$(ls -d * | grep "$expectedFilesOrDirsRegexp" 2>/dev/null)
     if [ -z "$retval" ]
     then
-      echo "ERROR: Failed to extract $expectedFiles from $tarball!"
+      echo "ERROR: Failed to extract files matching regular expression \"$expectedFilesOrDirsRegexp\" from $tarball!"
       exit 1
     fi
   else
@@ -211,8 +212,8 @@ ExtractTarBall () {
 
 ExtractDebianSourcePackageTarBall () {
   local tarballs="$1"
-  local expectedTarBallExpr="$2"
-  local expectedFilesOrDirs="$3"
+  local expectedTarBallRegexp="$2"
+  local expectedFilesOrDirsRegexp="$3"
   local retvar="$4"
 
   local tarball=""
@@ -220,10 +221,10 @@ ExtractDebianSourcePackageTarBall () {
   local retval=""
   for tarball in $tarballs
   do
-    if expr $tarball : "$expectedTarBallExpr" >/dev/null
+    if echo "$tarball" | grep "$expectedTarBallRegexp" >/dev/null
     then
-      echo "Note: Identified Debian tarball matching expression \"$expectedTarBallExpr\": $tarball"
-      ExtractTarBall $tarball "$expectedFilesOrDirs" actualFiles
+      echo "Note: Identified Debian tarball matching regular expression \"$expectedTarBallRegexp\": $tarball"
+      ExtractTarBall $tarball "$expectedFilesOrDirsRegexp" actualFiles
       retval="$retval $actualFiles"
     fi
   done
