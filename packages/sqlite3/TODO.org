@@ -78,3 +78,9 @@ command line.
 Yes that did the trick. I do not think there is any need for the Tcl
 extension right now; if/when that changes, we will need to add
 building Tcl a dependency.
+
+* DONE Install the docs
+
+The man page and the HTML documentation is not installed, so we have
+to do that manually.
+

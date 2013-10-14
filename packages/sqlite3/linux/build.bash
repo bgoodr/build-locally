@@ -114,6 +114,13 @@ PrintRun make
 echo "Installing ..."
 PrintRun make install
 
+# The Makefile lacks any rules for installing the manpage, so just do
+# it:
+PrintRun cp -p sqlite3.1 $INSTALL_DIR/man/man1
+# Do likewise for the www directory:
+PrintRun mkdir -p $INSTALL_DIR/share/sqlite3/
+PrintRun cp -rp $HEAD_DIR/$wwwFiles $INSTALL_DIR/share/sqlite3/
+
 # --------------------------------------------------------------------------------
 # Testing:
 # --------------------------------------------------------------------------------
