@@ -52,13 +52,13 @@ CreateAndChdirIntoBuildDir sqlite3
 GetDebianSourcePackageTarBalls sqlite3 testing tarballs
 
 debianFiles=""
-ExtractDebianSourcePackageTarBall "$tarballs" '.*debian\.tar\.gz' 'debian' debianFiles
+ExtractDebianSourcePackageTarBall "$tarballs" '.*debian\.tar\.gz$' '^debian$' debianFiles
 
 origFiles=""
-ExtractDebianSourcePackageTarBall "$tarballs" '.*orig\.tar\.gz' 'sqlite3-*' origFiles
+ExtractDebianSourcePackageTarBall "$tarballs" '.*orig\.tar\.gz$' '^sqlite3-[0-9.]*$' origFiles
 
 wwwFiles=""
-ExtractDebianSourcePackageTarBall "$tarballs" '.*orig-www\.tar\.gz' 'www' wwwFiles
+ExtractDebianSourcePackageTarBall "$tarballs" '.*orig-www\.tar\.gz$' '^www$' wwwFiles
 
 # --------------------------------------------------------------------------------
 # Applying Debian patches:
@@ -96,7 +96,7 @@ fi
 echo "Running ./configure ..."
 # Here we run similar steps as is in the debian/rules configure rule
 # but elide options that are Debian specific:
-PrintRun ./configure --prefix="$INSTALL_DIR" --enable-threadsafe --enable-load-extension
+PrintRun ./configure --prefix="$INSTALL_DIR" --enable-threadsafe --enable-load-extension --disable-tcl
 # Not sure if we need to set this yet:  TCLLIBDIR=/usr/lib/tcltk/sqlite3
 
 # --------------------------------------------------------------------------------
