@@ -117,7 +117,7 @@ PrintRun make install
 echo "Testing ..."
 expectedVersion=$(echo "$origFiles" | sed 's%sqlite3-%%g')
 executable=$INSTALL_DIR/bin/sqlite3
-actualVersion=$($executable -version | awk '{printf("%s\n",$1);}')
+actualVersion=$($executable -version | awk '{printf("%s",$1);}')
 if [ "$expectedVersion" = "$actualVersion" ]
 then
   echo "Note: Verified expected version of executable $executable is $expectedVersion"
