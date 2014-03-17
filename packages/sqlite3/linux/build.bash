@@ -95,7 +95,10 @@ then
 fi
 echo "Running ./configure ..."
 # Here we run similar steps as is in the debian/rules configure rule
-# but elide options that are Debian specific:
+# but elide options that are Debian specific (--disable-tcl is so as
+# to allow us to build on RHEL; without that, the Makefile has rules
+# that attempt to install files into a root-owned directory, and right
+# now we do not need the Tcl extension):
 PrintRun ./configure --prefix="$INSTALL_DIR" --enable-threadsafe --enable-load-extension --disable-tcl
 # Not sure if we need to set this yet:  TCLLIBDIR=/usr/lib/tcltk/sqlite3
 
@@ -110,6 +113,13 @@ PrintRun make
 # --------------------------------------------------------------------------------
 echo "Installing ..."
 PrintRun make install
+
+# The Makefile lacks any rules for installing the manpage, so just do
+# it:
+PrintRun cp -p sqlite3.1 $INSTALL_DIR/man/man1
+# Do likewise for the www directory:
+PrintRun mkdir -p $INSTALL_DIR/share/sqlite3/
+PrintRun cp -rp $HEAD_DIR/$wwwFiles $INSTALL_DIR/share/sqlite3/
 
 # --------------------------------------------------------------------------------
 # Testing:

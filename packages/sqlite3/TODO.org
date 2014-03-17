@@ -51,6 +51,36 @@ Apply patches and build them on Debian first, and install them
 locally, all without being dependent upon Debian other than their
 website.
 
-* TODO Rebuild on RHEL
+* DONE Rebuild on RHEL
 
-See what falls out from building on RHEL.
+See what falls out from building on RHEL. Failed with:
+
+#+BEGIN_EXAMPLE
+----------------------------------------------------------------------
+echo 'package ifneeded sqlite3 3.8.0.2 [list load /usr/share/tcl8.5/sqlite3/libtclsqlite3.so sqlite3]' > pkgIndex.tcl
+/usr/bin/install -c -d /usr/share/tcl8.5/sqlite3
+/usr/bin/install: cannot change permissions of `/usr/share/tcl8.5/sqlite3': No such file or directory
+make: *** [tcl_install] Error 1
+#+END_EXAMPLE
+
+Why did this succeed in Debian but not RHEL? At this point, I do not
+have a locally built Tcl so why did it succeed on Debian?
+
+Go back and rebuild on Debian to see. The Debian build is not
+detecting tcl resulting in HAVE_TCL set to null on the generated
+Makefile but on RHEL it is sensing it and then attempting to install
+into a root-writable directory. 
+
+Disable building the Tcl extension to see if that works around it on
+RHEL first just to get it working: pass --disable-tcl to the configure
+command line.
+
+Yes that did the trick. I do not think there is any need for the Tcl
+extension right now; if/when that changes, we will need to add
+building Tcl a dependency.
+
+* DONE Install the docs
+
+The man page and the HTML documentation is not installed, so we have
+to do that manually.
+
