@@ -170,7 +170,6 @@ DownloadPackageFromGitRepo git://git.code.sf.net/p/free-cad/code $packageSubDir
 # --------------------------------------------------------------------------------
 # Build:
 # --------------------------------------------------------------------------------
-echo "Building ..."
 # Per http://forum.freecadweb.org/viewtopic.php?f=4&t=5096#p40018 we see:
 #
 #   Ah, now I see. On debian based systems there is no need to build
@@ -178,11 +177,112 @@ echo "Building ..."
 #   python-pivy. Install this one and then disable the build of the
 #   local pivy by setting FREECAD_USE_EXTERNAL_PIVY on.
 #
-# Do an Out-of-source build as indicated on http://freecadweb.org/wiki/index.php?title=CompileOnUnix#Out-of-source_build
+#
+# Do an Out-of-source build as indicated on
+# http://freecadweb.org/wiki/index.php?title=CompileOnUnix#Out-of-source_build
+#
+#
+#
+# --------------------------------------------------------------------------------
+# For this error:
+#
+# [ 34%] Building CXX object src/Main/CMakeFiles/FreeCADMainCmd.dir/MainCmd.cpp.o
+# Linking CXX executable ../../bin/FreeCADCmd
+# ../../lib/libFreeCADBase.so: undefined reference to `PyCapsule_New'
+# ../../lib/libFreeCADBase.so: undefined reference to `PyCapsule_GetPointer'
+# ../../lib/libFreeCADBase.so: undefined reference to `PyCapsule_Import'
+# collect2: error: ld returned 1 exit status
+#
+# Find the references:
+#
+#    grep -i python ~/build/Debian.7.x86_64/freecad/freecad-build/CMakeCache.txt
+#    // the Python import module.
+#    //Use system installed python-pivy instead of the bundled.
+#    FreeCADBase_LIB_DEPENDS:STATIC=general;/usr/lib/python2.6/config/libpython2.6.so;general;/usr/lib/x86_64-linux-gnu/libxerces-c.so;general;/usr/lib/x86_64-linux-gnu/libQtCore.so;general;/usr/lib/libboost_filesystem-mt.so;general;/usr/lib/libboost_program_options-mt.so;general;/usr/lib/libboost_regex-mt.so;general;/usr/lib/libboost_signals-mt.so;general;/usr/lib/libboost_system-mt.so;general;/usr/lib/libboost_thread-mt.so;general;pthread;general;/usr/lib/x86_64-linux-gnu/libz.so;general;-lutil;general;-ldl;
+#    FreeCADGui_LIB_DEPENDS:STATIC=general;FreeCADBase;general;FreeCADApp;general;/usr/lib/libCoin.so;general;/usr/lib/libSoQt.so;general;/usr/lib/x86_64-linux-gnu/libQtOpenGL.so;general;/usr/lib/x86_64-linux-gnu/libQtSvg.so;general;/usr/lib/x86_64-linux-gnu/libQtUiTools.a;general;/usr/lib/x86_64-linux-gnu/libQtWebKit.so;general;/usr/lib/x86_64-linux-gnu/libQtXmlPatterns.so;general;/usr/lib/x86_64-linux-gnu/libQtGui.so;general;/usr/lib/x86_64-linux-gnu/libQtXml.so;general;/usr/lib/x86_64-linux-gnu/libQtNetwork.so;general;/usr/lib/x86_64-linux-gnu/libQtCore.so;general;/usr/lib/libboost_filesystem-mt.so;general;/usr/lib/libboost_program_options-mt.so;general;/usr/lib/libboost_regex-mt.so;general;/usr/lib/libboost_signals-mt.so;general;/usr/lib/libboost_system-mt.so;general;/usr/lib/libboost_thread-mt.so;general;pthread;general;/usr/lib/x86_64-linux-gnu/libGL.so;general;/usr/lib/x86_64-linux-gnu/libshiboken-python2.7.so;general;/usr/lib/x86_64-linux-gnu/libpyside-python2.7.so;
+#    PYTHON_EXECUTABLE:FILEPATH=/usr/bin/python
+#    PYTHON_INCLUDE_DIR:PATH=/usr/include/python2.7
+#    PYTHON_LIBRARY:FILEPATH=/usr/lib/python2.6/config/libpython2.6.so
+#    //Details about finding PythonInterp
+#    FIND_PACKAGE_MESSAGE_DETAILS_PythonInterp:INTERNAL=[/usr/bin/python][v2.7.3()]
+#    //Details about finding PythonLibs
+#    FIND_PACKAGE_MESSAGE_DETAILS_PythonLibs:INTERNAL=[/usr/lib/python2.6/config/libpython2.6.so][/usr/include/python2.7][v2.7.3(2.7.3)]
+#    //ADVANCED property for variable: PYTHON_EXECUTABLE
+#    PYTHON_EXECUTABLE-ADVANCED:INTERNAL=1
+#    //ADVANCED property for variable: PYTHON_INCLUDE_DIR
+#    PYTHON_INCLUDE_DIR-ADVANCED:INTERNAL=1
+#    //ADVANCED property for variable: PYTHON_LIBRARY
+#    PYTHON_LIBRARY-ADVANCED:INTERNAL=1
+#    
+# Looks like PYTHON_LIBRARY:FILEPATH is 2.6 and we need 2.7.
+#
+# Helpful info at http://forum.freecadweb.org/viewtopic.php?f=4&t=5130
+#
+# From cmake man page:
+#
+#   -D <var>:<type>=<value>
+#          Create a cmake cache entry.
+#  
+#          When cmake is first run in an empty build tree, it creates
+#          a CMakeCache.txt file and populates it with customizable
+#          settings for the project.  This option may be used to
+#          specify a setting that takes priority over the project's
+#          default value.  The option may be repeated for as many
+#          cache entries as desired.
+#
+# So perhaps we can reconfigure the python lookup by cmake directives.
+#
+# I installed cmake-doc so that I could examine "FindPythonLibs" at:
+#
+#   file:///usr/share/doc/cmake-data/cmake-gui.html#module:FindPythonLibs
+#
+# which says:
+#
+#     If you'd like to specify the installation of Python to use, you should modify the following cache variables:
+#
+#       PYTHON_LIBRARY             - path to the python library
+#       PYTHON_INCLUDE_DIR         - path to where Python.h is found
+#
+# I see Python_ADDITIONAL_VERSIONS being set by ~/build/Debian.7.x86_64/freecad/free-cad-code/CMakeLists.txt
+#
+# But, why do I have both python 2.6 stuff and python 2.7 stuff in the system?
+#
+# Search for it:
+#
+#    apt-file search /usr/lib/python2.6/config/libpython2.6.so
+#    libpython2.6: /usr/lib/python2.6/config/libpython2.6.so
+#
+# Tried removing the CMakeCache.txt and setting 
+#
+#  -DPython_ADDITIONAL_VERSIONS:STRING="2.7"
+#
+# on the cmake command line and cmake insists on finding the 2.6 .so
+# file. So that did not work.
+# 
+# Now have to manually patch the cmake file in the source tree using sed. :(
+# --------------------------------------------------------------------------------
+# packageSubDir is the path to the source folder we pulled from git earlier.
+sed -i 's%set(Python_ADDITIONAL_VERSIONS [^)]*)%set(Python_ADDITIONAL_VERSIONS "2.7")%g' $packageSubDir/CMakeLists.txt
+#
+# Now build:
+#
+echo "Building ..."
 PrintRun mkdir -p freecad-build
 PrintRun cd freecad-build
-PrintRun cmake -DFREECAD_USE_EXTERNAL_PIVY=ON ../$packageSubDir # The path to the FreeCAD source folder
+# --------------------------------------------------------------------------------
+# Per
+# http://stackoverflow.com/questions/17445857/clear-cmakes-internal-cache
+# we want to remove the cache file to force cmake to respect our
+# changes on the cmake command line:
+# --------------------------------------------------------------------------------
+PrintRun rm -f CMakeCache.txt 
+
+PrintRun cmake \
+  -DFREECAD_USE_EXTERNAL_PIVY=ON ../$packageSubDir
 PrintRun make
+
+
+
 
 # --------------------------------------------------------------------------------
 # Install:
