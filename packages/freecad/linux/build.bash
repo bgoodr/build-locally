@@ -57,13 +57,19 @@ CreateAndChdirIntoBuildDir freecad
 
 # This will work only for Debian systems. Later on we can rework this to build completely from source:
 
+# TODO: See if we can build all of these from source, or use my Debian
+# source package routines as done in ../../sqlite3/linux/build.bash
 
 tmpscript=$(pwd)/tmpscript.$$
 set -x
 
 cat > $tmpscript <<EOF
 set -x -e
+
+# --------------------------------------------------------------------------------
 # apt-get update <-- It is not certain if this helps with missing packages
+# --------------------------------------------------------------------------------
+
 apt-get install -y  build-essential
 apt-get install -y  cmake
 apt-get install -y  python
