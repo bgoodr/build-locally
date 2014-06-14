@@ -160,7 +160,12 @@ fi
 # --------------------------------------------------------------------------------
 echo "Downloading ..."
 # http://freecadweb.org/wiki/index.php?title=CompileOnUnix#Getting_the_source
-PrintRun git clone git://git.code.sf.net/p/free-cad/code free-cad-code
+
+# --------------------------------------------------------------------------------
+# Check out the source for freecad into the build directory:
+# --------------------------------------------------------------------------------
+packageSubDir=free-cad-code
+DownloadPackageFromGitRepo git://git.code.sf.net/p/free-cad/code $packageSubDir
 
 # --------------------------------------------------------------------------------
 # Build:
@@ -174,11 +179,10 @@ echo "Building ..."
 #   local pivy by setting FREECAD_USE_EXTERNAL_PIVY on.
 #
 # Do an Out-of-source build as indicated on http://freecadweb.org/wiki/index.php?title=CompileOnUnix#Out-of-source_build
-PrintRun mkdir freecad-build
+PrintRun mkdir -p freecad-build
 PrintRun cd freecad-build
-PrintRun cmake -DFREECAD_USE_EXTERNAL_PIVY=ON ../free-cad-code # <-- "free-cad-code" is what git checked out which is the path is to the FreeCAD source folder
+PrintRun cmake -DFREECAD_USE_EXTERNAL_PIVY=ON ../$packageSubDir # The path to the FreeCAD source folder
 PrintRun make
-
 
 # --------------------------------------------------------------------------------
 # Install:

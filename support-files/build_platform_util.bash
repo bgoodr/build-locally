@@ -377,3 +377,27 @@ DownloadExtractBuildGnuPackage () {
   PrintRun make install
 }
 
+DownloadPackageFromGitRepo () {
+  local gitrepo="$1"
+  local packageSubDir="$2"
+  local depth="$3"
+  echo "Checking out from git repo $gitrepo ..."
+  if [ ! -d $packageSubDir ]
+  then
+    if [ -n "$depth" ]
+    then
+      PrintRun git clone $gitrepo
+    else
+      PrintRun git clone --depth 1 $gitrepo
+    fi
+    if [ ! -d $packageSubDir ]
+    then
+      echo "ERROR: Failed to checkout $packageSubDir sources from git repo at $gitrepo"
+      exit 1
+    fi
+  else
+    PrintRun cd $packageSubDir
+    PrintRun git pull
+    PrintRun cd ..
+  fi
+}

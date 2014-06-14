@@ -55,21 +55,8 @@ CreateAndChdirIntoBuildDir xdotool
 # --------------------------------------------------------------------------------
 # Check out the source for xdotool into the build directory:
 # --------------------------------------------------------------------------------
-echo "Checking out from git repo ..."
-gitrepo=git://github.com/jordansissel/xdotool.git
-if [ ! -d xdotool ]
-then
-  PrintRun git clone --depth 1 $gitrepo
-  if [ ! -d xdotool ]
-  then
-    echo "ERROR: Failed to checkout xdotool sources from git repo at $gitrepo"
-    exit 1
-  fi
-  PrintRun cd xdotool
-else
-  PrintRun cd xdotool
-  PrintRun git pull
-fi
+DownloadPackageFromGitRepo git://github.com/jordansissel/xdotool.git xdotool
+PrintRun cd xdotool
 
 if [ ! -f /usr/include/X11/extensions/XTest.h ]
 then
