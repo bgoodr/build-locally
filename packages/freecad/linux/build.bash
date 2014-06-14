@@ -54,14 +54,12 @@ CreateAndChdirIntoBuildDir freecad
 
 # This will work only for Debian systems. Later on we can rework this to build completely from source:
 
-echo "work in progress. I get the following failures ..." exit 1
-# Get:15 http://ftp.us.debian.org/debian/ wheezy/main libalgorithm-diff-xs-perl amd64 0.04-2+b1 [12.9 kB]
-# Get:16 http://ftp.us.debian.org/debian/ wheezy/main libalgorithm-merge-perl all 0.08-2 [13.5 kB]
-# Get:17 http://ftp.us.debian.org/debian/ wheezy/main libfile-fcntllock-perl amd64 0.14-2 [17.2 kB]
-# Get:18 http://ftp.us.debian.org/debian/ wheezy/main manpages-dev all 3.44-1 [1,737 kB]
-# Fetched 30.0 MB in 29s (1,012 kB/s)
-# Failed to fetch http://security.debian.org/debian-security/pool/updates/main/l/linux/linux-libc-dev_3.2.57-3+deb7u1_amd64.deb  404  Not Found [IP: 149.20.20.6 80]
-# E: Unable to fetch some archives, maybe run apt-get update or try with --fix-missing?
+# Now getting this error:
+# Building dependency tree       
+# Reading state information... Done
+# E: Unable to locate package libcoin80-dev
+# + rm -f /home/brentg/build/Debian.7.x86_64/freecad/tmpscript.4338
+# + exit -1
 
 
 tmpscript=$(pwd)/tmpscript.$$
