@@ -265,23 +265,48 @@ DownloadPackageFromGitRepo git://git.code.sf.net/p/free-cad/code $packageSubDir
 # --------------------------------------------------------------------------------
 # packageSubDir is the path to the source folder we pulled from git earlier.
 sed -i 's%set(Python_ADDITIONAL_VERSIONS [^)]*)%set(Python_ADDITIONAL_VERSIONS "2.7")%g' $packageSubDir/CMakeLists.txt
+
+# --------------------------------------------------------------------------------
+# No documentation on how to install it inside http://freecadweb.org/wiki/index.php?title=CompileOnUnix#Compile_FreeCAD 
 #
-# Now build:
+# Inside ~/build/Debian.7.x86_64/freecad/freecad-build/cmake_install.cmake is seen:
+#    
+#    IF(NOT DEFINED CMAKE_INSTALL_PREFIX)
+#      SET(CMAKE_INSTALL_PREFIX "/usr/local")
+#    ENDIF(NOT DEFINED CMAKE_INSTALL_PREFIX)
 #
+# Looks like /usr/local is a default. That will not work for us as we
+# do not want to install things into root-controlled directories (that
+# is why these scripts are called build-locally)
+#
+# cmake docs for that variable:
+# http://www.cmake.org/cmake/help/v2.8.8/cmake.html#variable%3aCMAKE_INSTALL_PREFIX
+#
+# We have to specify it in cmake -D CMAKE_INSTALL_PREFIX directive as
+# given by http://stackoverflow.com/a/6242041/257924
+# --------------------------------------------------------------------------------
+
 echo "Building ..."
 PrintRun mkdir -p freecad-build
 PrintRun cd freecad-build
-# --------------------------------------------------------------------------------
-# Per
-# http://stackoverflow.com/questions/17445857/clear-cmakes-internal-cache
-# we want to remove the cache file to force cmake to respect our
-# changes on the cmake command line:
-# --------------------------------------------------------------------------------
-PrintRun rm -f CMakeCache.txt 
+
+BUILD_LOCALLY_FREECAD_CLEAR_CMAKE_CACHE=${BUILD_LOCALLY_FREECAD_CLEAR_CMAKE_CACHE:=1}
+if [ "$BUILD_LOCALLY_FREECAD_CLEAR_CMAKE_CACHE" = "1" ]
+then
+  # --------------------------------------------------------------------------------
+  # Per
+  # http://stackoverflow.com/questions/17445857/clear-cmakes-internal-cache
+  # we want to remove the cache file to force cmake to respect our
+  # changes on the cmake command line:
+  # --------------------------------------------------------------------------------
+  PrintRun rm -f CMakeCache.txt 
+fi
 
 PrintRun cmake \
+  -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
   -DFREECAD_USE_EXTERNAL_PIVY=ON ../$packageSubDir
 PrintRun make
+
 
 
 
@@ -289,7 +314,6 @@ PrintRun make
 # --------------------------------------------------------------------------------
 # Install:
 # --------------------------------------------------------------------------------
-# Huh? Whuh? No documentation on how to install it inside http://freecadweb.org/wiki/index.php?title=CompileOnUnix#Compile_FreeCAD ???
 echo "Installing ..."
-# ???
+PrintRun make install
 
