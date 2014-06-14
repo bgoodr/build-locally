@@ -90,6 +90,9 @@ apt-get install -y  libtool
 # It might: python-pivy depends upon libcoin60. Also libsoqt4-dev depends upon libcoin60-dev.
 # apt-get install -y  libcoin80-dev <-- this does not work on Wheezy for some reason.
 apt-get install -y  python-pivy  # <-- this does work and is dependent upon libcoin60
+# But that leaves us with the outstanding question: What are we missing
+# out on if we install libcoin60 and not libcoin80? Is libcoin80
+# "better"?
 # --------------------------------------------------------------------------------
 
 apt-get install -y  libsoqt4-dev
@@ -131,7 +134,7 @@ EOF
 chmod a+x $tmpscript
 sudo sh -c $tmpscript
 rm -f $tmpscript
-exit -1
+exit 1
 
 # --------------------------------------------------------------------------------
 # Download the source for freecad into the build directory:
