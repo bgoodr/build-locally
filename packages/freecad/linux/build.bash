@@ -60,12 +60,19 @@ CreateAndChdirIntoBuildDir freecad
 # TODO: See if we can build all of these from source, or use my Debian
 # source package routines as done in ../../sqlite3/linux/build.bash
 
-tmpscript=$(pwd)/tmpscript.$$
-trap "rm -f $tmpscript" 0 # arrange to remove $tmpscript upon failure
+# Set BUILD_LOCALLY_FREECAD_DO_DEBIAN_PACKAGE_INSTALLS=0 in the
+# environment for skipping this lengthy process of installing Debian
+# packages if you have just done it already (for debugging the build) :
+BUILD_LOCALLY_FREECAD_DO_DEBIAN_PACKAGE_INSTALLS=${BUILD_LOCALLY_FREECAD_DO_DEBIAN_PACKAGE_INSTALLS:=1}
 
-set -x
+if [ "$BUILD_LOCALLY_FREECAD_DO_DEBIAN_PACKAGE_INSTALLS" = "1" ]
+then
+  tmpscript=$(pwd)/tmpscript.$$
+  trap "rm -f $tmpscript" 0 # arrange to remove $tmpscript upon failure
 
-cat > $tmpscript <<EOF
+  set -x
+
+  cat > $tmpscript <<EOF
 set -x -e
 
 # --------------------------------------------------------------------------------
@@ -141,24 +148,36 @@ apt-get install -y python-qt4                    # <-- (needed for the 2D Drafti
 apt-get install -y doxygen libcoin60-doc         # <-- (if you intend to generate source code documentation)
 #apt-get install -y libspnav-dev                 # <-- (for 3Dconnexion devices support like the Space Navigator or Space Pilot) (I DON'T HAVE SUCH A DEVICE SO EXCLUDING THIS)
 # --------------------------------------------------------------------------------
-
-
 EOF
 
-chmod a+x $tmpscript
-sudo sh -c $tmpscript
+  chmod a+x $tmpscript
+  sudo sh -c $tmpscript
+  
+fi
 
 # --------------------------------------------------------------------------------
 # Download the source for freecad into the build directory:
 # --------------------------------------------------------------------------------
 echo "Downloading ..."
 # http://freecadweb.org/wiki/index.php?title=CompileOnUnix#Getting_the_source
-git clone git://git.code.sf.net/p/free-cad/code free-cad-code
+PrintRun git clone git://git.code.sf.net/p/free-cad/code free-cad-code
 
 # --------------------------------------------------------------------------------
 # Build:
 # --------------------------------------------------------------------------------
 echo "Building ..."
+# Per http://forum.freecadweb.org/viewtopic.php?f=4&t=5096#p40018 we see:
+#
+#   Ah, now I see. On debian based systems there is no need to build
+#   the shipped pivy sources because a package already exists, called
+#   python-pivy. Install this one and then disable the build of the
+#   local pivy by setting FREECAD_USE_EXTERNAL_PIVY on.
+#
+# Do an Out-of-source build as indicated on http://freecadweb.org/wiki/index.php?title=CompileOnUnix#Out-of-source_build
+PrintRun mkdir freecad-build
+PrintRun cd freecad-build
+PrintRun cmake -DFREECAD_USE_EXTERNAL_PIVY=ON ../free-cad-code # <-- "free-cad-code" is what git checked out which is the path is to the FreeCAD source folder
+PrintRun make
 
 
 # --------------------------------------------------------------------------------
