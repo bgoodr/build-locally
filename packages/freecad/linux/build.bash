@@ -57,6 +57,20 @@ CreateAndChdirIntoBuildDir freecad
 
 # This will work only for Debian systems. Later on we can rework this to build completely from source:
 
+
+tmpscript=$(pwd)/tmpscript.$$
+set -x
+
+cat > $tmpscript <<EOF
+set -x -e
+# apt-get update <-- It is not certain if this helps with missing packages
+apt-get install -y  build-essential
+apt-get install -y  cmake
+apt-get install -y  python
+apt-get install -y  python-matplotlib
+apt-get install -y  libtool
+
+# --------------------------------------------------------------------------------
 # Now getting this error:
 # Building dependency tree       
 # Reading state information... Done
@@ -65,23 +79,13 @@ CreateAndChdirIntoBuildDir freecad
 # + exit -1
 # 
 # I cannot find libcoin80-dev. Try apt-get update. No that does not work.
+#
+# See if using python-pivy http://forum.freecadweb.org/viewtopic.php?f=4&t=5096#p40018 will work around it.
+# It might: python-pivy depends upon libcoin60. Also libsoqt4-dev depends upon libcoin60-dev.
+# apt-get install -y  libcoin80-dev <-- this does not work on Wheezy for some reason.
+apt-get install -y  python-pivy  # <-- this does work and is dependent upon libcoin60
+# --------------------------------------------------------------------------------
 
-
-
-
-
-tmpscript=$(pwd)/tmpscript.$$
-set -x
-
-cat > $tmpscript <<EOF
-set -x -e
-apt-get update
-apt-get install -y  build-essential
-apt-get install -y  cmake
-apt-get install -y  python
-apt-get install -y  python-matplotlib
-apt-get install -y  libtool
-apt-get install -y  libcoin80-dev
 apt-get install -y  libsoqt4-dev
 apt-get install -y  libxerces-c-dev
 apt-get install -y  libboost-dev
@@ -95,7 +99,16 @@ apt-get install -y  libqt4-opengl-dev
 apt-get install -y  qt4-dev-tools
 apt-get install -y  python-dev
 apt-get install -y  python-pyside
-apt-get install -y  liboce*-dev (opencascade community edition)
+
+# --------------------------------------------------------------------------------
+# apt-get install -y  liboce*-dev (opencascade community edition) <-- huh? They didn't spell out which ones are in the "*"???
+apt-get install -y  liboce-foundation-dev
+apt-get install -y  liboce-modeling-dev
+apt-get install -y  liboce-ocaf-dev
+# apt-get install -y  liboce-ocaf-lite-dev # <-- huh? What is this lite thing huh whuh?
+apt-get install -y  liboce-visualization-dev
+# --------------------------------------------------------------------------------
+
 apt-get install -y  oce-draw
 apt-get install -y  gfortran
 apt-get install -y  libeigen3-dev
