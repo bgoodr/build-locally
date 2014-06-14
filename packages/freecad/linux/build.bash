@@ -186,12 +186,14 @@ DownloadPackageFromGitRepo git://git.code.sf.net/p/free-cad/code $packageSubDir
 # --------------------------------------------------------------------------------
 # For this error:
 #
-# [ 34%] Building CXX object src/Main/CMakeFiles/FreeCADMainCmd.dir/MainCmd.cpp.o
-# Linking CXX executable ../../bin/FreeCADCmd
-# ../../lib/libFreeCADBase.so: undefined reference to `PyCapsule_New'
-# ../../lib/libFreeCADBase.so: undefined reference to `PyCapsule_GetPointer'
-# ../../lib/libFreeCADBase.so: undefined reference to `PyCapsule_Import'
-# collect2: error: ld returned 1 exit status
+#     [ 34%] Building CXX object src/Main/CMakeFiles/FreeCADMainCmd.dir/MainCmd.cpp.o
+#     Linking CXX executable ../../bin/FreeCADCmd
+#     ../../lib/libFreeCADBase.so: undefined reference to `PyCapsule_New'
+#     ../../lib/libFreeCADBase.so: undefined reference to `PyCapsule_GetPointer'
+#     ../../lib/libFreeCADBase.so: undefined reference to `PyCapsule_Import'
+#     collect2: error: ld returned 1 exit status
+#
+# This is the same error explained at http://forum.freecadweb.org/viewtopic.php?f=4&t=5130#p40320
 #
 # Find the references:
 #
@@ -287,6 +289,7 @@ PrintRun make
 # --------------------------------------------------------------------------------
 # Install:
 # --------------------------------------------------------------------------------
+# Huh? Whuh? No documentation on how to install it inside http://freecadweb.org/wiki/index.php?title=CompileOnUnix#Compile_FreeCAD ???
 echo "Installing ..."
-
+# ???
 
