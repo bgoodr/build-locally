@@ -52,6 +52,9 @@ done
 # --------------------------------------------------------------------------------
 CreateAndChdirIntoBuildDir freecad
 
+
+# http://freecadweb.org/wiki/index.php?title=CompileOnUnix#Compile_FreeCAD
+
 # This will work only for Debian systems. Later on we can rework this to build completely from source:
 
 # Now getting this error:
@@ -60,6 +63,11 @@ CreateAndChdirIntoBuildDir freecad
 # E: Unable to locate package libcoin80-dev
 # + rm -f /home/brentg/build/Debian.7.x86_64/freecad/tmpscript.4338
 # + exit -1
+# 
+# I cannot find libcoin80-dev. Try apt-get update. No that does not work.
+
+
+
 
 
 tmpscript=$(pwd)/tmpscript.$$
@@ -67,6 +75,7 @@ set -x
 
 cat > $tmpscript <<EOF
 set -x -e
+apt-get update
 apt-get install -y  build-essential
 apt-get install -y  cmake
 apt-get install -y  python
