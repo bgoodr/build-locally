@@ -62,8 +62,7 @@ CreateAndChdirIntoBuildDir () {
 
 ValidateFileInInstallBinDir () {
   local file="$1"
-  export PATH=$INSTALL_DIR/bin:$PATH
-  actualLocation=$(which $file)
+  actualLocation=$(export PATH=$INSTALL_DIR/bin:$PATH; which $file)
   if [ ! -f "$INSTALL_DIR/bin/$file" ]
   then
     echo "ERROR: $INSTALL_DIR/bin/$file does not exist which is unexpected"
