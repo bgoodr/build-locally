@@ -142,6 +142,7 @@ then
 fi
 tarballBase=$(basename $tarballURL)
 versionSubdir=${tarballBase/.tar.*z/}
+version=${versionSubdir/Python-/}
 echo "Note: Found latest major version $MAJOR_VERSION version of $version"
 if [ "$CLEAN" = 1 ]
 then
@@ -151,7 +152,7 @@ if [ ! -d "$versionSubdir" ]
 then
   if [ ! -f $tarballBase ]
   then
-    curl -o $tarballBase $tarballURL
+    PrintRun curl -L -o $tarballBase $tarballURL
     if [ ! -f $tarballBase ]
     then
       echo "ERROR: Failed to download"
@@ -200,7 +201,8 @@ InstallDocs () {
   if [ ! -f "$docBase" ]
   then
     local docURL="http://docs.python.org/$MAJOR_VERSION/archives/$docBase"
-    PrintRun wget -O "$docBase" "$docURL"
+    set -x
+    PrintRun curl -L -o "$docBase" "$docURL"
     if [ ! -f "$docBase" ]
     then
       echo "ERROR: Failed to download docs from $docURL"
