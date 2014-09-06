@@ -189,7 +189,7 @@ fi
 # --------------------------------------------------------------------------------
 # Docs should be installed locally to avoid having to browse to a web
 # page on some remote web server each and every time just to lookup
-# syntax for Python syntax:
+# Python syntax:
 InstallDocs () {
   local docType="$1"
   local savedir="$(pwd)"
