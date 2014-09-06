@@ -83,9 +83,47 @@ VerifyOperatingSystemPackageContainingFile Debian libbz2-dev /usr/include/bzlib.
 VerifyOperatingSystemPackageContainingFile Debian libsqlite3-dev /usr/include/sqlite3.h
 
 # --------------------------------------------------------------------------------
+# Verify openssl is working for use under wget:
+# --------------------------------------------------------------------------------
+#
+# We get this from some RHEL6 machines:
+#
+# ,----
+# | --2014-09-06 07:46:16--  http://www.python.org/download/releases/
+# | Resolving www.python.org... 23.235.47.175
+# | Connecting to www.python.org|23.235.47.175|:80... connected.
+# | HTTP request sent, awaiting response... 301 Moved Permanently
+# | Location: https://www.python.org/download/releases/ [following]
+# | --2014-09-06 07:46:16--  https://www.python.org/download/releases/
+# | Connecting to www.python.org|23.235.47.175|:443... connected.
+# | ERROR: certificate common name `*.c.ssl.fastly.net' doesn't match requested host name `www.python.org'.
+# | To connect to www.python.org insecurely, use `--no-check-certificate'.
+# `----
+#
+# The problem and a solution is described at https://github.com/python/pythondotorg/issues/415
+#
+# For now, detect that and ask the user to ask the system
+# administrator to install a working openssl.
+#
+# TODO: Consider alternatives:
+#  - Checking out the source for the latest version of python.
+#  - build our own version of openssl and wget (might not work in that 
+#    we have to use an old version of wget to get the sources, or 
+#    checkout openssl and wget from source)
+#
+badOpenSSLLibrary=$(wget -O - "http://www.python.org/download/releases/" 2>&1 \
+  | sed -n 's%^.*certificate common name .* doesn.t match requested host name.*$%1%gp')
+if [ "$badOpenSSLLibrary" = 1 ]
+then
+  echo "ERROR: Your openssl system library is too old"
+  echo "       Ask your system administrator to update the system to the latest version of openssl."
+  echo "       See https://github.com/python/pythondotorg/issues/415 for why you must upgrade it"
+  exit 1
+fi
+
+# --------------------------------------------------------------------------------
 # Download the source into the build directory:
 # --------------------------------------------------------------------------------
-echo "Downloading ..."
 version=$(wget -O - "http://www.python.org/download/releases/" \
   | sed -n 's%^.*href="\([0-9.]*\)".*$%\1%gp' \
   | sort -t. -k1,1n -k2,2n -k3.3n \
