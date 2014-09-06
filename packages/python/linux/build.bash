@@ -106,8 +106,10 @@ VerifyOperatingSystemPackageContainingFile Debian libsqlite3-dev /usr/include/sq
 # administrator to install a working openssl.
 #
 # TODO: Consider alternatives:
-#  - Checking out the source for the latest version of python.
-#  - build our own version of openssl and wget (might not work in that 
+#
+#  - Check out the source for the latest version of python. But that
+#    side-steps the problem with openssl.
+#  - Build our own version of openssl and wget (might not work in that 
 #    we have to use an old version of wget to get the sources, or 
 #    checkout openssl and wget from source)
 #
