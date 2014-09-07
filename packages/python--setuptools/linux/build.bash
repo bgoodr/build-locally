@@ -53,6 +53,11 @@ then
   find $INSTALL_DIR/bin -name 'easy_install*' | xargs -n5 rm -f
 fi
 
+# Avoid installing into the system defined Python (which cannot work
+# unless the user is root which is not the intended use case):
+echo "Ensuring that our locally built python is in the path prior to any system or other Python ..."
+export PATH="$INSTALL_DIR/bin:$PATH"
+
 # --------------------------------------------------------------------------------
 # Download the installer into the build directory:
 # --------------------------------------------------------------------------------
