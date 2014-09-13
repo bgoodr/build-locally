@@ -67,6 +67,7 @@ The following is a list of packages whose build programs are provided by this pa
 * [libtool](packages/libtool/README.md): Building the libtool package.
 * [libxkbcommon](packages/libxkbcommon/README.md): Building the libxkbcommon package.
 * [perl--cpanm](packages/perl--cpanm/README.md): Building the Perl--cpanm language system.
+* [perl--xml-parser](packages/perl--xml-parser/README.md): Building the Perl--xml-parser language system.
 * [perl](packages/perl/README.md): Building the Perl language system.
 * [pkg-config](packages/pkg-config/README.md): Building the pkg-config package.
 * [python--ipython](packages/python--ipython/README.md): Building the ipython package into the Python installation tree.
