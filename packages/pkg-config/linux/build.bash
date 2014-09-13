@@ -81,7 +81,7 @@ PrintRun cd pkg-config
 
 # --------------------------------------------------------------------------------
 # Hack around this error:
-#   cd /home/brentg/install/Debian.7.x86_64/bin && ln pkg-config x86_64-unknown-linux-gnu-pkg-config
+#   cd /home/someuser/install/Debian.7.x86_64/bin && ln pkg-config x86_64-unknown-linux-gnu-pkg-config
 #   ln: failed to create hard link `x86_64-unknown-linux-gnu-pkg-config': File exists
 # --------------------------------------------------------------------------------
 PrintRun make uninstall-hook

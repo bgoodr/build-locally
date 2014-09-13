@@ -95,7 +95,7 @@ apt-get install -y libtool
 # Building dependency tree       
 # Reading state information... Done
 # E: Unable to locate package libcoin80-dev
-# + rm -f /home/brentg/build/Debian.7.x86_64/freecad/tmpscript.4338
+# + rm -f /home/someuser/build/Debian.7.x86_64/freecad/tmpscript.4338
 # + exit -1
 # 
 # I cannot find libcoin80-dev. Try apt-get update. No that does not work.
