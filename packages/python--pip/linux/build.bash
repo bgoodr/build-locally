@@ -36,6 +36,12 @@ do
 done
 
 # --------------------------------------------------------------------------------
+# Dependent packages will be installed into $INSTALL_DIR/bin so add
+# that directory to the PATH:
+# --------------------------------------------------------------------------------
+SetupBasicEnvironment
+
+# --------------------------------------------------------------------------------
 # Build required dependent packages:
 # --------------------------------------------------------------------------------
 # pip depends upon setuptools. See http://www.pip-installer.org/en/latest/installing.html#id2
