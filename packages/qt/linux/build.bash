@@ -154,9 +154,6 @@ then
   exit 1
 fi
 
-if [ 0 = 1 ]
-then
-  
 # Mandate fully-automated builds by saying yes to the prompts:
 sed -i 's%read acceptance%acceptance=y%g' ./configure
 
@@ -176,7 +173,6 @@ PrintRun ./configure -prefix-install -prefix "$INSTALL_DIR" $CONFIGURE_OPTIONS
 # --------------------------------------------------------------------------------
 echo "Note: Building ..."
 PrintRun make
-fi
 
 # --------------------------------------------------------------------------------
 # Install:
