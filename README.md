@@ -78,6 +78,7 @@ The following is a list of packages whose build programs are provided by this pa
 * [sqlite3](packages/sqlite3/README.md): Building the sqlite3 package.
 * [texinfo](packages/texinfo/README.md): Building the texinfo package.
 * [xkeyboard-config](packages/xkeyboard-config/README.md): Building the xkeyboard-config package.
+* [xorg-macros](packages/xorg-macros/README.md): Building the xorg-macros package.
 
 
 Development
