@@ -65,6 +65,7 @@ The following is a list of packages whose build programs are provided by this pa
 * [idutils](packages/idutils/README.md): Building the idutils package.
 * [intltool](packages/intltool/README.md): Building the intltool package.
 * [libtool](packages/libtool/README.md): Building the libtool package.
+* [pkg-config](packages/pkg-config/README.md): Building the pkg-config package.
 * [python--ipython](packages/python--ipython/README.md): Building the ipython package into the Python installation tree.
 * [python--jira-python](packages/python--jira-python/README.md): Building the jira-python package into the Python installation tree.
 * [python--pip](packages/python--pip/README.md): Building the pip Python package into the Python installation tree.
