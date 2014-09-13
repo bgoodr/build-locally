@@ -66,6 +66,7 @@ The following is a list of packages whose build programs are provided by this pa
 * [intltool](packages/intltool/README.md): Building the intltool package.
 * [libtool](packages/libtool/README.md): Building the libtool package.
 * [libxkbcommon](packages/libxkbcommon/README.md): Building the libxkbcommon package.
+* [perl](packages/perl/README.md): Building the Perl language system.
 * [pkg-config](packages/pkg-config/README.md): Building the pkg-config package.
 * [python--ipython](packages/python--ipython/README.md): Building the ipython package into the Python installation tree.
 * [python--jira-python](packages/python--jira-python/README.md): Building the jira-python package into the Python installation tree.
