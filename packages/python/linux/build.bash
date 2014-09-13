@@ -88,56 +88,105 @@ CreateAndChdirIntoBuildDir python
 VerifyOperatingSystemPackageContainingFile Debian libbz2-dev /usr/include/bzlib.h
 VerifyOperatingSystemPackageContainingFile Debian libsqlite3-dev /usr/include/sqlite3.h
 
+# Disable this check for now as we will use curl and not wget to
+# bypass the old openssl issue. For some reason, curl works but wget
+# fails:
+if false
+then
+  # --------------------------------------------------------------------------------
+  # Verify openssl is working for use under wget:
+  # --------------------------------------------------------------------------------
+  #
+  # We get this from some RHEL6 machines:
+  #
+  # | --2014-09-06 07:46:16--  http://www.python.org/download/releases/
+  # | Resolving www.python.org... 23.235.47.175
+  # | Connecting to www.python.org|23.235.47.175|:80... connected.
+  # | HTTP request sent, awaiting response... 301 Moved Permanently
+  # | Location: https://www.python.org/download/releases/ [following]
+  # | --2014-09-06 07:46:16--  https://www.python.org/download/releases/
+  # | Connecting to www.python.org|23.235.47.175|:443... connected.
+  # | ERROR: certificate common name `*.c.ssl.fastly.net' doesn't match requested host name `www.python.org'.
+  # | To connect to www.python.org insecurely, use `--no-check-certificate'.
+  #
+  # The problem and a solution is described at https://github.com/python/pythondotorg/issues/415
+  #
+  # For now, detect that and ask the user to ask the system
+  # administrator to install a working openssl.
+  #
+  # TODO: Consider alternatives:
+  #
+  #  - Check out the source for the latest version of python. But that
+  #    side-steps the problem with openssl.
+  #  - Build our own version of openssl and wget (might not work in that 
+  #    we have to use an old version of wget to get the sources, or 
+  #    checkout openssl and wget from source)
+  #
+  badOpenSSLLibrary=$(wget -O - "http://www.python.org/download/releases/" 2>&1 \
+    | sed -n 's%^.*certificate common name .* doesn.t match requested host name.*$%1%gp')
+
+  if [ "$badOpenSSLLibrary" = 1 ]
+  then
+    echo "ERROR: Your openssl system library is too old"
+    echo "       Ask your system administrator to update the system to the latest version of openssl."
+    echo "       See https://github.com/python/pythondotorg/issues/415 for why you must upgrade it"
+    exit 1
+  fi
+  
+fi
+
 # --------------------------------------------------------------------------------
 # Download the source into the build directory:
 # --------------------------------------------------------------------------------
-echo "Downloading ..."
-version=$(wget -O - "http://www.python.org/download/releases/" \
-  | sed -n 's%^.*href="\([0-9.]*\)".*$%\1%gp' \
-  | sort -t. -k1,1n -k2,2n -k3.3n \
-  | grep "^${MAJOR_VERSION}\." \
-  | tail -1)
-if [ -z "$version" ]
+downloadURL=https://www.python.org/downloads/
+tarballURL=$(curl -L $downloadURL 2>/dev/null \
+  | sed -n 's/^.*href="\([^"]*\.tar\.[^"]*\)".*Download Python '"$MAJOR_VERSION"'.*$/\1/gp')
+if [ -z "$tarballURL" ]
 then
-  echo "ERROR: Cannot download major version $MAJOR_VERSION of Python"
+  echo "ERROR: Could not determine downloadable tarball from $downloadURL"
   exit 1
 fi
+tarballBase=$(basename $tarballURL)
+versionSubdir=${tarballBase/.tar.*z/}
+version=${versionSubdir/Python-/}
 echo "Note: Found latest major version $MAJOR_VERSION version of $version"
-version_subdir="Python-${version}"
-tarballBase="$version_subdir.tgz"
 if [ "$CLEAN" = 1 ]
 then
-  PrintRun rm -rf "$version_subdir"
+  PrintRun rm -rf "$versionSubdir"
 fi
-if [ ! -d "$version_subdir" ]
+if [ ! -d "$versionSubdir" ]
 then
-  tarballURL="http://www.python.org/ftp/python/${version}/$tarballBase"
   if [ ! -f $tarballBase ]
   then
-    PrintRun wget -O $tarballBase $tarballURL
+    PrintRun curl -L -o $tarballBase $tarballURL
+    if [ ! -f $tarballBase ]
+    then
+      echo "ERROR: Failed to download"
+      exit 1
+    fi
     if [ ! -f $tarballBase ]
     then
       echo "ERROR: Download from $tarballURL failed as $tarballBase does not exist"
       exit 1
     fi
   fi
-  PrintRun tar zxvf $tarballBase
-  if [ ! -d "$version_subdir" ]
+  PrintRun tar xvf $tarballBase
+  if [ ! -d "$versionSubdir" ]
   then
     echo "ERROR: Failed to extract tarball at $tarballBase"
     exit 1
   fi
 else
-  echo "Note: $version_subdir already exists. Continuing..."
+  echo "Note: $versionSubdir already exists. Continuing..."
 fi
-if [ -z "$version_subdir" ]
+if [ -z "$versionSubdir" ]
 then
-  echo "ASSERTION FAILED: version_subdir was not initialized."
+  echo "ASSERTION FAILED: versionSubdir was not initialized."
   exit 1
 fi
-if [ ! -d "$version_subdir" ]
+if [ ! -d "$versionSubdir" ]
 then
-  echo "ASSERTION FAILED: $version_subdir should exist as a directory by now but does not."
+  echo "ASSERTION FAILED: $versionSubdir should exist as a directory by now but does not."
   exit 1
 fi
 
@@ -146,19 +195,20 @@ fi
 # --------------------------------------------------------------------------------
 # Docs should be installed locally to avoid having to browse to a web
 # page on some remote web server each and every time just to lookup
-# syntax for Python syntax:
+# Python syntax:
 InstallDocs () {
   local docType="$1"
   local savedir="$(pwd)"
   local docBase="python-${version}-docs-${docType}.tar.bz2"
   local docTarBallPath="$savedir/$docBase"
-  local docDir="$INSTALL_DIR/share/doc/$version_subdir"
+  local docDir="$INSTALL_DIR/share/doc/$versionSubdir"
   local docInstallDir="$docDir/python-${version}-docs-$docType"
   echo "Note: Installing $docType docs into $docDir ..."
   if [ ! -f "$docBase" ]
   then
     local docURL="http://docs.python.org/$MAJOR_VERSION/archives/$docBase"
-    PrintRun wget -O "$docBase" "$docURL"
+    set -x
+    PrintRun curl -L -o "$docBase" "$docURL"
     if [ ! -f "$docBase" ]
     then
       echo "ERROR: Failed to download docs from $docURL"
@@ -183,7 +233,7 @@ InstallDocs html
 # Build:
 # --------------------------------------------------------------------------------
 echo "Building ..."
-PrintRun cd "$version_subdir"
+PrintRun cd "$versionSubdir"
 if [ ! -f ./configure ]
 then
   echo "ASSERTION FAILED: we should have seen a ./configure file inside $(pwd) by now."

@@ -36,27 +36,23 @@ do
 done
 
 # --------------------------------------------------------------------------------
-# Dependent packages will be installed into $INSTALL_DIR/bin so add
-# that directory to the PATH:
-# --------------------------------------------------------------------------------
-SetupBasicEnvironment
-
-# --------------------------------------------------------------------------------
 # Build required dependent packages:
 # --------------------------------------------------------------------------------
-# setuptools depends upon python:
-BuildDependentPackage python bin/python
+# rbtools depends upon setuptools. See https://www.reviewboard.org/docs/manual/1.7/users/tools/post-review/#installing-rbtools
+BuildDependentPackage python--setuptools bin/easy_install
 
 # --------------------------------------------------------------------------------
 # Create build directory structure:
 # --------------------------------------------------------------------------------
-CreateAndChdirIntoBuildDir python--setuptools
+CreateAndChdirIntoBuildDir python--rbtools
 
 if [ "$CLEAN" = 1 ]
 then
-  # This is in effect an uninstall as given by https://pypi.python.org/pypi/setuptools/1.1.6#uninstalling
-  find $INSTALL_DIR/lib/python*/site-packages -name 'setuptools*' -o -name 'distribute*' | xargs -n5 rm -rf
-  find $INSTALL_DIR/bin -name 'easy_install*' | xargs -n5 rm -f
+  find $INSTALL_DIR/lib/python*/site-packages -name 'RBTools*' | xargs -n5 rm -rf
+  rm -f $INSTALL_DIR/RHEL.6.4.x86_64/bin"
+  # TODO: During the install, we see "Adding RBTools 0.6.2 to
+  # easy-install.pth file". So how do we remove the egg from the .pth
+  # file cleanly?
 fi
 
 # Avoid installing into the system defined Python (which cannot work
@@ -65,27 +61,15 @@ echo "Ensuring that our locally built python is in the path prior to any system 
 export PATH="$INSTALL_DIR/bin:$PATH"
 
 # --------------------------------------------------------------------------------
-# Download the installer into the build directory:
-# --------------------------------------------------------------------------------
-echo "Downloading ..."
-# Securely download ez_setup.py.
-# home page https://pypi.python.org/pypi/setuptools
-#           https://pypi.python.org/pypi/setuptools/1.1.6#id119
-#           https://pypi.python.org/pypi/setuptools/1.1.6#unix-based-systems-including-mac-os-x
-# Download ez_setup.py and run it using the target Python version. The script will download the appropriate version and install it for you:
-# URL to download is https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py
-PythonDownloadAndRunBootstrapScript "https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py"
-
-# --------------------------------------------------------------------------------
 # Install:
 # --------------------------------------------------------------------------------
 echo "Installing ..."
-PrintRun python $bootstrapScript 
+PrintRun easy_install -U RBTools
 
 # --------------------------------------------------------------------------------
 # Testing:
 # --------------------------------------------------------------------------------
 echo "Testing ..."
-ValidateFileInInstallBinDir easy_install
+ValidateFileInInstallBinDir rbt
 echo "Note: All installation tests passed."
 exit 0

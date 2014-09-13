@@ -69,6 +69,7 @@ The following is a list of packages whose build programs are provided by this pa
 * [python--ipython](packages/python--ipython/README.md): Building the ipython package into the Python installation tree.
 * [python--jira-python](packages/python--jira-python/README.md): Building the jira-python package into the Python installation tree.
 * [python--pip](packages/python--pip/README.md): Building the pip Python package into the Python installation tree.
+* [python--rbtools](packages/python--rbtools/README.md): Building the python--rbtools package.
 * [python--readline](packages/python--readline/README.md): Building the readline Python package into the Python installation tree.
 * [python--setuptools](packages/python--setuptools/README.md): Building the setuptools package into the Python installation tree.
 * [python](packages/python/README.md): Building the Python language system.
