@@ -7,9 +7,10 @@ dollar0=`which $0`; PACKAGE_DIR=$(cd $(dirname $dollar0); pwd) # NEVER export PA
 # Set defaults for BUILD_DIR and INSTALL_DIR environment variables and
 # utility functions such as BuildDependentPackage:
 . $PACKAGE_DIR/../../../support-files/build_platform_util.bash
+# Define perl utility functions:
+. $PACKAGE_DIR/../../../support-files/perl_util.bash
 
-usage ()
-{
+usage () {
   cat <<EOF
 USAGE: $0 ... options ...
 
@@ -26,7 +27,6 @@ Options are:
 EOF
 }
 
-CLEAN=0
 while [ $# -gt 0 ]
 do
   if [ "$1" = "-builddir" ]
@@ -37,9 +37,6 @@ do
   then
     INSTALLDIR="$2"
     shift
-  elif [ "$1" = "-clean" ]
-  then
-    CLEAN=1
   elif [ "$1" = "-h" ]
   then
     usage
@@ -58,68 +55,51 @@ done
 SetupBasicEnvironment
 
 # --------------------------------------------------------------------------------
+# Build required dependent packages:
+# --------------------------------------------------------------------------------
+BuildDependentPackage autoconf bin/autoconf
+BuildDependentPackage automake bin/automake
+BuildDependentPackage libtool bin/libtool
+BuildDependentPerlModule perl--xml-parser XML::Parser
+
+# --------------------------------------------------------------------------------
 # Create build directory structure:
 # --------------------------------------------------------------------------------
-CreateAndChdirIntoBuildDir texinfo
-
-if [ "$CLEAN" = 1 ]
-then
-  PrintRun rm -rf $HEAD_DIR
-  PrintRun mkdir -p $HEAD_DIR
-fi
-
+CreateAndChdirIntoBuildDir intltool
 
 # --------------------------------------------------------------------------------
-# Download the source into the build directory:
+# Check out the source for intltool into the build directory:
 # --------------------------------------------------------------------------------
-echo "Downloading ..."
-# Determine the most recent tarball file:
-tarbasefile=$(wget http://ftp.gnu.org/gnu/texinfo/ -O - \
-  | grep 'href=' \
-  | grep '\.tar\.gz"' \
-  | tr '"' '\012' \
-  | grep '^texinfo' \
-  | sed 's%-%-.%g' \
-  | sort -t. -k 1,1n -k 2,2n -k 3,3n -k 4,4n \
-  | sed 's%-\.%-%g' \
-  | tail -1)
-if [ ! -f "$tarbasefile" ]
+version=0.50.2
+tarball=intltool-${version}.tar.gz
+subdir=intltool-${version}
+if [ ! -d ${subdir} ]
 then
-  PrintRun wget http://ftp.gnu.org/gnu/texinfo/$tarbasefile
-  if [ ! -f "$tarbasefile" ]
+  url=https://launchpad.net/intltool/trunk/${version}/+download/${tarfile}
+  PrintRun wget $url
+  PrintRun tar zxvf ${tarfile}
+  if [ ! -d $subdir ]
   then
-    echo "ERROR: Could not retrieve $tarbasefile"
+    echo "ERROR: Failed to extract $tarball since $(pwd)/$subdir does not exist."
     exit 1
   fi
 fi
+PrintRun cd $subdir
 
 # --------------------------------------------------------------------------------
-# Extracting:
+# Configure
 # --------------------------------------------------------------------------------
-echo "Extracting ..."
-subdir=`tar tf $tarbasefile 2>/dev/null \
-  | sed -n '1{s%/$%%gp; q}'`
-if [ ! -d "$subdir" ]
-then
-  PrintRun tar zxvf $tarbasefile
-  if [ ! -d "$subdir" ]
-  then
-    echo "ERROR: Could not extract `pwd`/$tarbasefile"
-    exit 1
-  fi
-fi
+echo "Configuring ..."
+# There is no autogen.sh here and the configure file should already
+# exist. I could not find a way to get the source without using bzr
+# which I don't want to have to require users install as I would have
+# to build that tool too. (maybe someday we do build it).
+PrintRun ./configure --prefix="$INSTALL_DIR"
 
 # --------------------------------------------------------------------------------
 # Build:
 # --------------------------------------------------------------------------------
-echo "Building and installing ..."
-PrintRun cd $HEAD_DIR/$subdir
-if [ ! -f configure ]
-then
-  echo "ASSERTION FAILED: configure file not found"
-  exit 1
-fi
-PrintRun ./configure --prefix="$INSTALL_DIR"
+echo "Building ..."
 PrintRun make
 
 # --------------------------------------------------------------------------------
@@ -128,6 +108,15 @@ PrintRun make
 echo "Installing ..."
 PrintRun make install
 
-
-
-
+# --------------------------------------------------------------------------------
+# Testing:
+# --------------------------------------------------------------------------------
+echo "Testing ..."
+intltoolizeExe="$INSTALL_DIR/bin/intltoolize"
+if [ ! -f "$intltoolizeExe" ]
+then
+  echo "ERROR: Could not find expected intltoolize executable at: $intltoolizeExe"
+  exit 1
+fi
+echo "Note: All installation tests passed."
+exit 0

@@ -5,28 +5,39 @@
 dollar0=`which $0`; PACKAGE_DIR=$(cd $(dirname $dollar0); pwd) # NEVER export PACKAGE_DIR
 
 # Set defaults for BUILD_DIR and INSTALL_DIR environment variables and
-# define utility functions such as BuildDependentPackage:
+# utility functions such as BuildDependentPackage:
 . $PACKAGE_DIR/../../../support-files/build_platform_util.bash
-# Define python utility functions:
-. $PACKAGE_DIR/../../../support-files/python_util.bash
 
-CLEAN=0
+usage () {
+  cat <<EOF
+USAGE: $0 ... options ...
+
+Options are:
+
+[ -builddir BUILD_DIR ]
+
+  Override the BUILD_DIR default, which is $BUILD_DIR.
+
+[ -installdir INSTALL_DIR ]
+
+  Override the INSTALL_DIR default, which is $INSTALL_DIR.
+
+EOF
+}
+
 while [ $# -gt 0 ]
 do
   if [ "$1" = "-builddir" ]
   then
-    BUILD_DIR="$2"
+    BUILDDIR="$2"
     shift
   elif [ "$1" = "-installdir" ]
   then
-    INSTALL_DIR="$2"
+    INSTALLDIR="$2"
     shift
-  elif [ "$1" = "-clean" ]
-  then
-    CLEAN=1
   elif [ "$1" = "-h" ]
   then
-    EmitStandardUsage
+    usage
     exit 0
   else
     echo "Undefined parameter $1"
@@ -44,33 +55,58 @@ SetupBasicEnvironment
 # --------------------------------------------------------------------------------
 # Build required dependent packages:
 # --------------------------------------------------------------------------------
-# pip depends upon setuptools. See http://www.pip-installer.org/en/latest/installing.html#id2
-BuildDependentPackage python--setuptools bin/easy_install
+BuildDependentPackage autoconf bin/autoconf
+BuildDependentPackage automake bin/automake
+BuildDependentPackage libtool bin/libtool
 
 # --------------------------------------------------------------------------------
 # Create build directory structure:
 # --------------------------------------------------------------------------------
-CreateAndChdirIntoBuildDir python--pip
+CreateAndChdirIntoBuildDir pkg-config
 
 # --------------------------------------------------------------------------------
-# Download the installer into the build directory:
+# Check out the source for pkg-config into the build directory:
 # --------------------------------------------------------------------------------
-echo "Downloading ..."
-# Securely download get-pip.py
-# as instructed by http://www.pip-installer.org/en/latest/installing.html#install-or-upgrade-pip
-# home page http://www.pip-installer.org/en/latest/
-PythonDownloadAndRunBootstrapScript "https://raw.github.com/pypa/pip/master/contrib/get-pip.py"
+DownloadPackageFromGitRepo git://anongit.freedesktop.org/pkg-config pkg-config
+PrintRun cd pkg-config
+
+# echo "Creating ./configure file ..."
+# PrintRun rm -f ./configure
+# PrintRun ./autogen.sh --prefix="$INSTALL_DIR" --with-internal-glib 
+# if [ ! -f ./configure ]
+# then
+#   echo "ERROR: Could not create ./configure file. autoconf must have failed."
+#   exit 1
+# fi
+
+# --------------------------------------------------------------------------------
+# Hack around this error:
+#   cd /home/someuser/install/Debian.7.x86_64/bin && ln pkg-config x86_64-unknown-linux-gnu-pkg-config
+#   ln: failed to create hard link `x86_64-unknown-linux-gnu-pkg-config': File exists
+# --------------------------------------------------------------------------------
+PrintRun make uninstall-hook
+
+# --------------------------------------------------------------------------------
+# Build:
+# --------------------------------------------------------------------------------
+echo "Building ..."
+PrintRun make
 
 # --------------------------------------------------------------------------------
 # Install:
 # --------------------------------------------------------------------------------
 echo "Installing ..."
-PrintRun python $bootstrapScript 
+PrintRun make install
 
 # --------------------------------------------------------------------------------
 # Testing:
 # --------------------------------------------------------------------------------
 echo "Testing ..."
-ValidateFileInInstallBinDir pip
+pkgM4=$INSTALL_DIR/share/aclocal/pkg.m4
+if [ ! -f "$pkgM4" ]
+then
+  echo "ERROR: Could not locate pkg.m4 file at $pkgM4"
+  exit 1
+fi
 echo "Note: All installation tests passed."
 exit 0

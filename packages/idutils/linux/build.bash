@@ -62,6 +62,12 @@ do
 done
 
 # --------------------------------------------------------------------------------
+# Dependent packages will be installed into $INSTALL_DIR/bin so add
+# that directory to the PATH:
+# --------------------------------------------------------------------------------
+SetupBasicEnvironment
+
+# --------------------------------------------------------------------------------
 # Build required dependent packages:
 # --------------------------------------------------------------------------------
 BuildDependentPackage texinfo bin/makeinfo
@@ -75,10 +81,6 @@ CreateAndChdirIntoBuildDir idutils
 # Download the source into the build directory:
 # --------------------------------------------------------------------------------
 echo "Downloading ..."
-# Don't depend upon anything other than what is installed on the
-# system, plus the dependencies above into the $INSTALL_DIR/bin
-# directory:
-export PATH=$INSTALL_DIR/bin:$PATH
 version_subdir=idutils
 if [ "$CLEAN" = 1 ]
 then
@@ -130,14 +132,12 @@ echo "Building ..."
 if [ ! -f ./configure ]
 then
   echo "Creating ./configure file ..."
-  PrintRun ./autogen.sh
+  PrintRun ./autogen.sh --enable-maintainer-mode --prefix="$INSTALL_DIR"
   if [ ! -f ./configure ]
   then
     echo "ERROR: Could not create ./configure file. autoconf must have failed."
     exit 1
   fi
-  echo "Running ./configure ..."
-  PrintRun ./configure --enable-maintainer-mode --prefix="$INSTALL_DIR"
 fi
 PrintRun make
 

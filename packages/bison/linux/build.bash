@@ -47,11 +47,11 @@ SetupBasicEnvironment
 # --------------------------------------------------------------------------------
 # Create build directory structure:
 # --------------------------------------------------------------------------------
-CreateAndChdirIntoBuildDir autoconf
+CreateAndChdirIntoBuildDir bison
 
 # --------------------------------------------------------------------------------
 # Download and build tarball into the build directory:
 # --------------------------------------------------------------------------------
-DownloadExtractBuildGnuPackage autoconf
+DownloadExtractBuildGnuPackage bison
 
 exit 0

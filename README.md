@@ -60,9 +60,16 @@ The following is a list of packages whose build programs are provided by this pa
 
 * [autoconf](packages/autoconf/README.md): Building the autoconf package.
 * [automake](packages/automake/README.md): Building the automake package.
+* [bison](packages/bison/README.md): Building the bison package.
 * [example-package](packages/example-package/README.md): An example directory to serve as a template for adding more packages to be built by this project.
 * [idutils](packages/idutils/README.md): Building the idutils package.
+* [intltool](packages/intltool/README.md): Building the intltool package.
 * [libtool](packages/libtool/README.md): Building the libtool package.
+* [libxkbcommon](packages/libxkbcommon/README.md): Building the libxkbcommon package.
+* [perl--cpanm](packages/perl--cpanm/README.md): Building the Perl--cpanm language system.
+* [perl--xml-parser](packages/perl--xml-parser/README.md): Building the Perl--xml-parser language system.
+* [perl](packages/perl/README.md): Building the Perl language system.
+* [pkg-config](packages/pkg-config/README.md): Building the pkg-config package.
 * [python--ipython](packages/python--ipython/README.md): Building the ipython package into the Python installation tree.
 * [python--jira-python](packages/python--jira-python/README.md): Building the jira-python package into the Python installation tree.
 * [python--pip](packages/python--pip/README.md): Building the pip Python package into the Python installation tree.
@@ -73,6 +80,9 @@ The following is a list of packages whose build programs are provided by this pa
 * [qt](packages/qt/README.md): Building the Qt framework.
 * [sqlite3](packages/sqlite3/README.md): Building the sqlite3 package.
 * [texinfo](packages/texinfo/README.md): Building the texinfo package.
+* [xkeyboard-config](packages/xkeyboard-config/README.md): Building the xkeyboard-config package.
+* [xorg-macros](packages/xorg-macros/README.md): Building the xorg-macros package.
+
 
 Development
 ===========

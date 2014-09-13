@@ -34,6 +34,12 @@ do
 done
 
 # --------------------------------------------------------------------------------
+# Dependent packages will be installed into $INSTALL_DIR/bin so add
+# that directory to the PATH:
+# --------------------------------------------------------------------------------
+SetupBasicEnvironment
+
+# --------------------------------------------------------------------------------
 # Build required dependent packages:
 # --------------------------------------------------------------------------------
 BuildDependentPackage autoconf bin/autoconf

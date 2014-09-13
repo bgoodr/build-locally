@@ -1,6 +1,17 @@
 #!/bin/bash
 # -*-mode: Shell-script; indent-tabs-mode: nil; sh-basic-offset: 2 -*-
 
+cat <<EOF
+
+The libxkbcommon package is not ready yet. We see this error on Debian:
+
+configure: error: xkbcommon-x11 requires xcb-xkb >= 1.10 which was not found. You can disable X11 support with --disable-x11.
+
+So have to figure out how to build xcb-xkb first.
+
+EOF
+exit 1
+
 # Find the base directory while avoiding subtle variations in $0:
 dollar0=`which $0`; PACKAGE_DIR=$(cd $(dirname $dollar0); pwd) # NEVER export PACKAGE_DIR
 
@@ -8,8 +19,7 @@ dollar0=`which $0`; PACKAGE_DIR=$(cd $(dirname $dollar0); pwd) # NEVER export PA
 # utility functions such as BuildDependentPackage:
 . $PACKAGE_DIR/../../../support-files/build_platform_util.bash
 
-usage ()
-{
+usage () {
   cat <<EOF
 USAGE: $0 ... options ...
 
@@ -26,7 +36,6 @@ Options are:
 EOF
 }
 
-CLEAN=0
 while [ $# -gt 0 ]
 do
   if [ "$1" = "-builddir" ]
@@ -37,9 +46,6 @@ do
   then
     INSTALLDIR="$2"
     shift
-  elif [ "$1" = "-clean" ]
-  then
-    CLEAN=1
   elif [ "$1" = "-h" ]
   then
     usage
@@ -58,68 +64,43 @@ done
 SetupBasicEnvironment
 
 # --------------------------------------------------------------------------------
+# Build required dependent packages:
+# --------------------------------------------------------------------------------
+BuildDependentPackage autoconf bin/autoconf
+BuildDependentPackage automake bin/automake
+BuildDependentPackage libtool bin/libtool
+BuildDependentPackage bison bin/bison
+BuildDependentPackage xorg-macros share/aclocal/xorg-macros.m4
+BuildDependentPackage xkeyboard-config share/pkgconfig/xkeyboard-config.pc
+
+# --------------------------------------------------------------------------------
 # Create build directory structure:
 # --------------------------------------------------------------------------------
-CreateAndChdirIntoBuildDir texinfo
+CreateAndChdirIntoBuildDir libxkbcommon
 
-if [ "$CLEAN" = 1 ]
+# --------------------------------------------------------------------------------
+# Check out the source for libxkbcommon into the build directory:
+# --------------------------------------------------------------------------------
+DownloadPackageFromGitRepo https://github.com/xkbcommon/libxkbcommon.git libxkbcommon
+PrintRun cd libxkbcommon
+
+
+# HACK: We need x11-xcb which I don't want to have to build yet:
+export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig:$INSTALL_DIR/share/pkgconfig
+
+echo "Creating ./configure file ..."
+PrintRun rm -f ./configure
+PrintRun ./autogen.sh --prefix="$INSTALL_DIR"
+if [ ! -f ./configure ]
 then
-  PrintRun rm -rf $HEAD_DIR
-  PrintRun mkdir -p $HEAD_DIR
-fi
-
-
-# --------------------------------------------------------------------------------
-# Download the source into the build directory:
-# --------------------------------------------------------------------------------
-echo "Downloading ..."
-# Determine the most recent tarball file:
-tarbasefile=$(wget http://ftp.gnu.org/gnu/texinfo/ -O - \
-  | grep 'href=' \
-  | grep '\.tar\.gz"' \
-  | tr '"' '\012' \
-  | grep '^texinfo' \
-  | sed 's%-%-.%g' \
-  | sort -t. -k 1,1n -k 2,2n -k 3,3n -k 4,4n \
-  | sed 's%-\.%-%g' \
-  | tail -1)
-if [ ! -f "$tarbasefile" ]
-then
-  PrintRun wget http://ftp.gnu.org/gnu/texinfo/$tarbasefile
-  if [ ! -f "$tarbasefile" ]
-  then
-    echo "ERROR: Could not retrieve $tarbasefile"
-    exit 1
-  fi
-fi
-
-# --------------------------------------------------------------------------------
-# Extracting:
-# --------------------------------------------------------------------------------
-echo "Extracting ..."
-subdir=`tar tf $tarbasefile 2>/dev/null \
-  | sed -n '1{s%/$%%gp; q}'`
-if [ ! -d "$subdir" ]
-then
-  PrintRun tar zxvf $tarbasefile
-  if [ ! -d "$subdir" ]
-  then
-    echo "ERROR: Could not extract `pwd`/$tarbasefile"
-    exit 1
-  fi
+  echo "ERROR: Could not create ./configure file. autoconf must have failed."
+  exit 1
 fi
 
 # --------------------------------------------------------------------------------
 # Build:
 # --------------------------------------------------------------------------------
-echo "Building and installing ..."
-PrintRun cd $HEAD_DIR/$subdir
-if [ ! -f configure ]
-then
-  echo "ASSERTION FAILED: configure file not found"
-  exit 1
-fi
-PrintRun ./configure --prefix="$INSTALL_DIR"
+echo "Building ..."
 PrintRun make
 
 # --------------------------------------------------------------------------------
@@ -128,6 +109,22 @@ PrintRun make
 echo "Installing ..."
 PrintRun make install
 
+echo "ERROR: debugging"
+exit 1
 
-
-
+# --------------------------------------------------------------------------------
+# Testing:
+# --------------------------------------------------------------------------------
+echo "Testing ..."
+expectedVersion=$(echo "$origFiles" | sed 's%sqlite3-%%g')
+executable=$INSTALL_DIR/bin/sqlite3
+actualVersion=$($executable -version | awk '{printf("%s",$1);}')
+if [ "$expectedVersion" = "$actualVersion" ]
+then
+  echo "Note: Verified expected version of executable $executable is $expectedVersion"
+else
+  echo "ERROR: Expected version of executable $executable is $expectedVersion but got $actualVersion instead."
+  exit 1
+fi
+echo "Note: All installation tests passed."
+exit 0

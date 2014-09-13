@@ -62,8 +62,7 @@ CreateAndChdirIntoBuildDir () {
 
 ValidateFileInInstallBinDir () {
   local file="$1"
-  export PATH=$INSTALL_DIR/bin:$PATH
-  actualLocation=$(which $file)
+  actualLocation=$(export PATH=$INSTALL_DIR/bin:$PATH; which $file)
   if [ ! -f "$INSTALL_DIR/bin/$file" ]
   then
     echo "ERROR: $INSTALL_DIR/bin/$file does not exist which is unexpected"
@@ -380,14 +379,17 @@ DownloadExtractBuildGnuPackage () {
 DownloadPackageFromGitRepo () {
   local gitrepo="$1"
   local packageSubDir="$2"
-  local depth="$3"
+  local fullcheckout="$3"
   echo "Checking out from git repo $gitrepo ..."
   if [ ! -d $packageSubDir ]
   then
-    if [ -n "$depth" ]
+    if [ -n "$fullcheckout" ]
     then
+      echo "Note: Checking out all history of $gitrepo"
       PrintRun git clone $gitrepo
     else
+      echo "Warning: Checking out with --depth 1. Note that this will not get remote tracking branches."
+      echo "         Call DownloadPackageFromGitRepo with fullcheckout argument for full checkout."
       PrintRun git clone --depth 1 $gitrepo
     fi
     if [ ! -d $packageSubDir ]
@@ -400,4 +402,11 @@ DownloadPackageFromGitRepo () {
     PrintRun git pull
     PrintRun cd ..
   fi
+}
+
+SetupBasicEnvironment () {
+  # Don't depend upon anything other than what is installed on the
+  # system, plus the dependencies for a given package, into the
+  # $INSTALL_DIR/bin directory:
+  export PATH=$INSTALL_DIR/bin:$PATH
 }
