@@ -227,7 +227,9 @@ CreateAndChdirIntoBuildDir emacs
 # Check out the source for emacs into the build directory:
 # --------------------------------------------------------------------------------
 packageSubDir=emacs
+
 DownloadPackageFromGitRepo git://git.savannah.gnu.org/emacs.git $packageSubDir
+
 PrintRun cd $packageSubDir
 
 # --------------------------------------------------------------------------------
@@ -236,7 +238,7 @@ PrintRun cd $packageSubDir
 echo "Configuring ..."
 
 # Allow system supplied gtk libraries to also be found by pkg-config
-# versus our locally built pkg-config that doesn't also read from the
+# versus our locally built pkg-config that does not also read from the
 # system-supplied .pc files. This may also solve problems finding
 # other system-supplied packages that I am choosing not to build in
 # the near term:
@@ -266,16 +268,7 @@ fi
 # GNUmakefile first:
 PrintRun make configure
 
-# For later testing that we succeeded in building and installing a
-# supposedly newer version of emacs into $INSTALL_DIR/bin, determine
-# the expected version from the ./configure file:
-expected_emacs_version=$(sed -n "s%^ *PACKAGE_VERSION='\\([^']*\\)'.*\$%\\1%gp" < configure); echo x${act}x
-if [ -z "$expected_emacs_version" ]
-then
-  echo "ASSERTION FAILED: Could not determine expected emacs version."
-  exit 1
-fi
-
+# Run configure:
 PrintRun ./configure --prefix="$INSTALL_DIR" --with-x-toolkit $xft_option $svg_config_options $gif_config_options $tiff_config_options 
 
 # --------------------------------------------------------------------------------
@@ -294,18 +287,38 @@ PrintRun make install
 # Testing:
 # --------------------------------------------------------------------------------
 echo "Testing ..."
+
 emacsExe="$INSTALL_DIR/bin/emacs"
 if [ ! -f "$emacsExe" ]
 then
   echo "ERROR: Could not find expected executable at: $emacsExe"
   exit 1
 fi
-actual_emacs_version=$($emacsExe --batch --quick --eval '(prin1 emacs-version t)')
+
+# Determine the expected version from the ./configure file:
+expected_emacs_version=$(sed -n "s%^ *PACKAGE_VERSION='\\([^']*\\)'.*\$%\\1%gp" < configure);
+if [ -z "$expected_emacs_version" ]
+then
+  echo "ASSERTION FAILED: Could not determine expected emacs version."
+  exit 1
+fi
+
+# Determine the actual version we built:
+actual_emacs_version=$($emacsExe --batch --quick --eval '(prin1 emacs-version t)' | tr -d '"')
+
+# Trim off the final number. That last number gets tacked on by
+# something in the build (how? the makefiles are obfuscated) and we
+# don't care about that. And if you run make then make install, that
+# number gets bumped again.
+echo "Original actual_emacs_version is \"${actual_emacs_version}\" but we are ripping off the last number which gets incremented in each local build."
+actual_emacs_version=$(echo "$actual_emacs_version" | sed 's%^\([0-9]*.[0-9]*.[0-9]*\).[0-9]*$%\1%g')
+
+# Now compare:
 if [ "$expected_emacs_version" != "$actual_emacs_version" ]
 then
   echo "ERROR: Failed to build expected emacs version: $expected_emacs_version"
   echo "                         actual emacs version: $actual_emacs_version"
   exit 1
 fi
-echo "Note: All installation tests passed."
+echo "Note: All installation tests passed. Emacs version $actual_emacs_version was built and installed."
 exit 0
