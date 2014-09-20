@@ -261,6 +261,12 @@ echo "local_pkg_config_path==\"${local_pkg_config_path}\""
 
 # The system-supplied pkg-config PKG_CONFIG_PATH value:
 system_pkg_config_path=$(PATH=$(echo "$PATH" | sed 's%'"$INSTALL_DIR/bin":'%%g'); pkg-config --variable pc_path pkg-config)
+if [ -z "$system_pkg_config_path" ]
+then
+  # pkg-config on RHEL6 does not return anything. Hack in something that might work and pray:
+  system_pkg_config_path=/usr/lib/pkgconfig:/usr/share/pkgconfig
+  echo "WARNING: System-supplied buggy pkg-config that returns nothing for 'pkg-config --variable pc_path pkg-config'. Hacking around it with: $system_pkg_config_path"
+fi
 echo "system_pkg_config_path==\"${system_pkg_config_path}\""
 
 export PKG_CONFIG_PATH="$local_pkg_config_path:$system_pkg_config_path"
