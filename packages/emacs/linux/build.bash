@@ -223,6 +223,7 @@ BuildDependentPackage automake bin/automake
 BuildDependentPackage texinfo bin/makeinfo
 BuildDependentPackage pkg-config bin/pkg-config
 BuildDependentPackage make bin/make # because GNU make 3.80 that is default in RHEL6 has a buggy (or ...) operator
+echo "TODO: build gtk as a dependency: BuildDependentPackage gtk bin/fixmeforgtk"; exit 1
 
 # --------------------------------------------------------------------------------
 # Dependent packages will be installed into $INSTALL_DIR/bin so add
@@ -248,6 +249,10 @@ PrintRun cd $packageSubDir
 # Configure
 # --------------------------------------------------------------------------------
 echo "Configuring ..."
+
+echo "TODO: Rip out the following code that tries to use system supplied gtk libraries as they no longer work on RHEL6 because of this error
+  configure: error: Package 'gobject-2.0', required by 'gdk-pixbuf-2.0', not found
+"; exit 1
 
 # Allow system supplied gtk libraries to also be found by pkg-config
 # versus our locally built pkg-config that does not also read from the
