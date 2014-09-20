@@ -145,12 +145,13 @@ fi
 # during ./configure execution.
 # 
 # Therefore, test for the existence of GTK headers. Here, we are using
-# GTK3 headers which is what ./configure tries to find first when
-# --with-x-toolkit is specified. And we look for both gtk2 and gtk3
-# because ideally we would not have to request admins to install gtk3
-# on RHEL6 systems if we can avoid it (and it is not apparent to me if
-# gtk3 is needed on RHEL6 for Emacs).
-if [ ! -f /usr/include/gtk-[23].0/gtk/gtk.h ]
+# either GTK2 or GTK3 headers. Note ./configure searches for GTK3
+# headers first, then GTK2 headers, when --with-x-toolkit is specified
+# (versus us specifying --with-x-toolkit=gtk3). we look for both GTK2
+# and GTK3 because ideally we would not have to request admins to
+# install gtk3 on RHEL6 systems if we can avoid it (and it is not
+# apparent if gtk3 is needed on RHEL6 for Emacs).
+if [ -z "$(ls -d /usr/include/gtk-[23].0/gtk/gtk.h 2>/dev/null)" ]
 then
   echo "ERROR: gtk.h is missing from the system."
   echo "       On Debian, maybe the package is libgtk-3-dev"
@@ -220,6 +221,7 @@ xft_option="--with-xft"
 BuildDependentPackage autoconf bin/autoconf
 BuildDependentPackage automake bin/automake
 BuildDependentPackage texinfo bin/makeinfo
+BuildDependentPackage pkg-config bin/pkg-config
 
 # --------------------------------------------------------------------------------
 # Create build directory structure:
@@ -262,6 +264,19 @@ echo "${PKG_CONFIG_PATH}" | tr : '\012'
 if [ -f Makefile ]
 then
   PrintRun make distclean
+fi
+
+# Hackaround a bug in GNU Make 3.80 in RHEL6 that seems to be fixed on
+# Debian's GNU Make 3.81. The $(or ...) operator does not work.
+# Modify the GNUmakefile directly (the alternative is to build make as
+# a dependency because it might cause other problems in my production
+# software builds so save that for later):
+if [ "$(echo -e "configure:\n\t@echo "'$(or works,is-buggy)' | make -f - configure)" = "works" ]
+then
+  :
+else
+  echo "WARNING: Detected buggy \"or\" operator in GNU make ... HACKING GNUmakefile now ..."
+  sed -i 's/(or \([^,]*\),\([^,]*\))/(if \1,\1,\2)/g' GNUmakefile
 fi
 
 # Per the GNUmakefile which takes precedence over the Makefile:
