@@ -70,14 +70,14 @@ CreateAndChdirIntoBuildDir pkg-config
 DownloadPackageFromGitRepo git://anongit.freedesktop.org/pkg-config pkg-config
 PrintRun cd pkg-config
 
-# echo "Creating ./configure file ..."
-# PrintRun rm -f ./configure
-# PrintRun ./autogen.sh --prefix="$INSTALL_DIR" --with-internal-glib 
-# if [ ! -f ./configure ]
-# then
-#   echo "ERROR: Could not create ./configure file. autoconf must have failed."
-#   exit 1
-# fi
+echo "Creating ./configure file ..."
+PrintRun rm -f ./configure
+PrintRun ./autogen.sh --prefix="$INSTALL_DIR" --with-internal-glib 
+if [ ! -f ./configure ]
+then
+  echo "ERROR: Could not create ./configure file. autoconf must have failed."
+  exit 1
+fi
 
 # --------------------------------------------------------------------------------
 # Hack around this error:
