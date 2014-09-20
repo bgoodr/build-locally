@@ -140,14 +140,17 @@ fi
 #    configure: error: No package 'gtk+-3.0' found
 #    No package 'glib-2.0' found
 #
-# See later on where we include both sysem and locally built
+# See later on where we include both system and locally built
 # directories into the value of PKG_CONFIG_PATH that pkg-config sees
 # during ./configure execution.
 # 
 # Therefore, test for the existence of GTK headers. Here, we are using
 # GTK3 headers which is what ./configure tries to find first when
-# --with-x-toolkit is specified:
-if [ ! -f /usr/include/gtk-3.0/gtk/gtk.h ]
+# --with-x-toolkit is specified. And we look for both gtk2 and gtk3
+# because ideally we would not have to request admins to install gtk3
+# on RHEL6 systems if we can avoid it (and it is not apparent to me if
+# gtk3 is needed on RHEL6 for Emacs).
+if [ ! -f /usr/include/gtk-[23].0/gtk/gtk.h ]
 then
   echo "ERROR: gtk.h is missing from the system."
   echo "       On Debian, maybe the package is libgtk-3-dev"
