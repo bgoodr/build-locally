@@ -222,6 +222,13 @@ BuildDependentPackage autoconf bin/autoconf
 BuildDependentPackage automake bin/automake
 BuildDependentPackage texinfo bin/makeinfo
 BuildDependentPackage pkg-config bin/pkg-config
+BuildDependentPackage make bin/make # because GNU make 3.80 that is default in RHEL6 has a buggy (or ...) operator
+
+# --------------------------------------------------------------------------------
+# Dependent packages will be installed into $INSTALL_DIR/bin so add
+# that directory to the PATH:
+# --------------------------------------------------------------------------------
+SetupBasicEnvironment
 
 # --------------------------------------------------------------------------------
 # Create build directory structure:
@@ -264,19 +271,6 @@ echo "${PKG_CONFIG_PATH}" | tr : '\012'
 if [ -f Makefile ]
 then
   PrintRun make distclean
-fi
-
-# Hackaround a bug in GNU Make 3.80 in RHEL6 that seems to be fixed on
-# Debian's GNU Make 3.81. The $(or ...) operator does not work.
-# Modify the GNUmakefile directly (the alternative is to build make as
-# a dependency because it might cause other problems in my production
-# software builds so save that for later):
-if [ "$(echo -e "configure:\n\t@echo "'$(or works,is-buggy)' | make -f - configure)" = "works" ]
-then
-  :
-else
-  echo "WARNING: Detected buggy \"or\" operator in GNU make ... HACKING GNUmakefile now ..."
-  sed -i 's/(or \([^,]*\),\([^,]*\))/(if \1,\1,\2)/g' GNUmakefile
 fi
 
 # Per the GNUmakefile which takes precedence over the Makefile:
