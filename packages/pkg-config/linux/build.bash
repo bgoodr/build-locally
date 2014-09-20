@@ -98,6 +98,23 @@ PrintRun make
 echo "Installing ..."
 PrintRun make install
 
+# Hack around missing share/pkgconfig because without it, subsequent
+# scans for packages in ./configure files fails abruptly when it
+# trips over a directory in the search path that does not exist.
+if [ "$(which pkg-config)" != "$INSTALL_DIR/bin/pkg-config" ]
+then
+  echo "ERROR: ASSERTION FAILED: The new pkg-config should be in the PATH by now"
+  exit 1
+fi
+for dir in $(pkg-config --variable pc_path pkg-config | tr : ' ')
+do
+  if [ ! -d $dir ]
+  then
+    echo "Note: Installing missing pkg-config directory in $dir ..."
+    PrintRun mkdir -p $dir
+  fi
+done
+
 # --------------------------------------------------------------------------------
 # Testing:
 # --------------------------------------------------------------------------------
