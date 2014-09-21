@@ -80,8 +80,6 @@ packageSubDir=pixman
 DownloadPackageFromGitRepo git://anongit.freedesktop.org/pixman $packageSubDir
 
 PrintRun cd $packageSubDir
-if false
-then
 
 # --------------------------------------------------------------------------------
 # Configure
@@ -107,8 +105,6 @@ PrintRun make
 echo "Installing ..."
 PrintRun make install
 
-  
-fi
 # --------------------------------------------------------------------------------
 # Testing:
 # --------------------------------------------------------------------------------
