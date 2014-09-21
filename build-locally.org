@@ -187,7 +187,12 @@ showed up during the freetype build:
      - use the `-Wl,-rpath -Wl,LIBDIR' linker flag
      - have your system administrator add LIBDIR to `/etc/ld.so.conf'
 #+END_EXAMPLE
-   
+
+(Note: Eventually I concluded LD_RUN_PATH is not necessar,  and in fact
+the libraries produced by the freetype build actually do have rpaths
+in them. So it is not understood why the above message still needs to
+be shown.)
+
 The second step seems the most promising since it seems it would allow
 us to avoid having to change all of the scripts to specify the
 -Wl,-rpath option in a myriad of different ways:
