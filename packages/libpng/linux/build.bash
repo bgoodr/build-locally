@@ -127,12 +127,12 @@ echo "Testing ..."
 expected_version=$(sed -n "s%^ *PACKAGE_VERSION='\\([^']*\\)'.*\$%\\1%gp" < configure);
 if [ -z "$expected_version" ]
 then
-  echo "ASSERTION FAILED: Could not determine expected glib version."
+  echo "ASSERTION FAILED: Could not determine expected $PACKAGE version."
   exit 1
 fi
 
-expected_major_version=$(echo "$expected_version" | sed -n 's/^\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)$/\1/g');
-expected_minor_version=$(echo "$expected_version" | sed -n 's/^\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)$/\2/g');
+expected_major_version=$(echo "$expected_version" | sed -n 's/^\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)$/\1/gp');
+expected_minor_version=$(echo "$expected_version" | sed -n 's/^\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)$/\2/gp');
 
 # Verify a file we should have installed:
 pcfile="$INSTALL_DIR/lib/pkgconfig/libpng${expected_major_version}${expected_minor_version}.pc"
