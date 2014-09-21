@@ -66,6 +66,7 @@ The following is a list of packages whose build programs are provided by this pa
 * [flex](packages/flex/README.md): Building the flex package.
 * [gettext](packages/gettext/README.md): Building the gettext package.
 * [glib](packages/glib/README.md): Building the glib package.
+* [gobject-introspection](packages/gobject-introspection/README.md): Building the gobject-introspection package.
 * [idutils](packages/idutils/README.md): Building the idutils package.
 * [intltool](packages/intltool/README.md): Building the intltool package.
 * [libffi](packages/libffi/README.md): Building the libffi package.
