@@ -1,3 +1,4 @@
+#!/bin/bash
 # -*-mode: Shell-script; indent-tabs-mode: nil; sh-basic-offset: 2 -*-
 #
 # This script sets and exports the following environment variables:
