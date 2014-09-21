@@ -75,7 +75,7 @@ PrintRun cd xkeyboard-config
 export PKG_CONFIG_PATH=/usr/share/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:$INSTALL_DIR/share/pkgconfig
 
 echo "Creating ./configure file ..."
-PrintRun rm -f ./configure
+# Run autogen.sh which also generates and runs ./configure:
 PrintRun ./autogen.sh --prefix="$INSTALL_DIR"
 if [ ! -f ./configure ]
 then

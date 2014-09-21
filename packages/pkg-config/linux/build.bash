@@ -71,7 +71,7 @@ DownloadPackageFromGitRepo git://anongit.freedesktop.org/pkg-config pkg-config
 PrintRun cd pkg-config
 
 echo "Creating ./configure file ..."
-PrintRun rm -f ./configure
+# Run autogen.sh which also generates and runs ./configure:
 PrintRun ./autogen.sh --prefix="$INSTALL_DIR" --with-internal-glib 
 if [ ! -f ./configure ]
 then

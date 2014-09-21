@@ -88,9 +88,13 @@ PrintRun cd $packageSubDir
 # Configure
 # --------------------------------------------------------------------------------
 echo "Configuring ..."
-
-# Run configure by way of autogen.sh
+# Run autogen.sh which also generates and runs ./configure:
 PrintRun ./autogen.sh --prefix="$INSTALL_DIR"
+if [ ! -f ./configure ]
+then
+  echo "ERROR: Could not create ./configure file. autoconf must have failed."
+  exit 1
+fi
 
 # --------------------------------------------------------------------------------
 # Build:
