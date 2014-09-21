@@ -73,6 +73,7 @@ The following is a list of packages whose build programs are provided by this pa
 * [idutils](packages/idutils/README.md): Building the idutils package.
 * [intltool](packages/intltool/README.md): Building the intltool package.
 * [libffi](packages/libffi/README.md): Building the libffi package.
+* [libpng](packages/libpng/README.md): Building the libpng package.
 * [libtool](packages/libtool/README.md): Building the libtool package.
 * [libxkbcommon](packages/libxkbcommon/README.md): Building the libxkbcommon package.
 * [make](packages/make/README.md): Building the make package.
