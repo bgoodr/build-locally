@@ -84,9 +84,6 @@ DownloadPackageFromGitRepo git://git.gnome.org/$packageSubDir $packageSubDir
 
 PrintRun cd $packageSubDir
 
-if false
-then
-
 # --------------------------------------------------------------------------------
 # Configure
 # --------------------------------------------------------------------------------
@@ -106,10 +103,6 @@ PrintRun make
 # --------------------------------------------------------------------------------
 echo "Installing ..."
 PrintRun make install
-
-  
-fi
-
 
 # --------------------------------------------------------------------------------
 # Testing:
