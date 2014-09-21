@@ -58,6 +58,7 @@ Packages
 
 The following is a list of packages whose build programs are provided by this package:
 
+* [atk](packages/atk/README.md): Building the atk package.
 * [autoconf](packages/autoconf/README.md): Building the autoconf package.
 * [automake](packages/automake/README.md): Building the automake package.
 * [bison](packages/bison/README.md): Building the bison package.
