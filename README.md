@@ -63,6 +63,7 @@ The following is a list of packages whose build programs are provided by this pa
 * [automake](packages/automake/README.md): Building the automake package.
 * [bison](packages/bison/README.md): Building the bison package.
 * [cairo](packages/cairo/README.md): Building the cairo package.
+* [colm](packages/colm/README.md): Building the colm package.
 * [emacs](packages/emacs/README.md): Building the emacs package.
 * [example-package](packages/example-package/README.md): An example directory to serve as a template for adding more packages to be built by this project.
 * [flex](packages/flex/README.md): Building the flex package.
