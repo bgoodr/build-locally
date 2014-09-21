@@ -86,36 +86,36 @@ PrintRun cd $packageSubDir
 # --------------------------------------------------------------------------------
 echo "Configuring ..."
 
-# # We see:
-# #
-# #    cd builds/unix; /bin/sh ./configure  '--prefix=/home/someuser/install/RHEL.6.4.x86_64'
-# #    /bin/sh: ./configure: No such file or directory
-# #    builds/unix/detect.mk:86: recipe for target 'setup' failed
-# #    
-# # Hack around it via tips at https://bugs.freedesktop.org/show_bug.cgi?id=75652#c7 that state:
-# #
-# #   Adding ./autogen.sh into the command string (i.e. `make distclean
-# #   && ./autogen.sh && ./configure...` works around the error. Perhaps
-# #   the distclean target is removing a little too much?
-# #
-# PrintRun make distclean
+# We see:
+#
+#    cd builds/unix; /bin/sh ./configure  '--prefix=/home/someuser/install/RHEL.6.4.x86_64'
+#    /bin/sh: ./configure: No such file or directory
+#    builds/unix/detect.mk:86: recipe for target 'setup' failed
+#    
+# Hack around it via tips at https://bugs.freedesktop.org/show_bug.cgi?id=75652#c7 that state:
+#
+#   Adding ./autogen.sh into the command string (i.e. `make distclean
+#   && ./autogen.sh && ./configure...` works around the error. Perhaps
+#   the distclean target is removing a little too much?
+#
+PrintRun make distclean
 
-# # Run autogen.sh (which does generate ./configure but does not then call ./configure like some other packages do):
-# PrintRun ./autogen.sh
+# Run autogen.sh (which does generate ./configure but does not then call ./configure like some other packages do):
+PrintRun ./autogen.sh
 
-# PrintRun ./configure --prefix="$INSTALL_DIR"
+PrintRun ./configure --prefix="$INSTALL_DIR"
 
-# # --------------------------------------------------------------------------------
-# # Build:
-# # --------------------------------------------------------------------------------
-# echo "Building ..."
-# PrintRun make
+# --------------------------------------------------------------------------------
+# Build:
+# --------------------------------------------------------------------------------
+echo "Building ..."
+PrintRun make
 
-# # --------------------------------------------------------------------------------
-# # Install:
-# # --------------------------------------------------------------------------------
-# echo "Installing ..."
-# PrintRun make install
+# --------------------------------------------------------------------------------
+# Install:
+# --------------------------------------------------------------------------------
+echo "Installing ..."
+PrintRun make install
 
 # --------------------------------------------------------------------------------
 # Testing:
