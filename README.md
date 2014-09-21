@@ -81,6 +81,7 @@ The following is a list of packages whose build programs are provided by this pa
 * [perl--xml-parser](packages/perl--xml-parser/README.md): Building the Perl--xml-parser language system.
 * [perl](packages/perl/README.md): Building the Perl language system.
 * [pkg-config](packages/pkg-config/README.md): Building the pkg-config package.
+* [pixman](packages/pixman/README.md): Building the pixman package.
 * [python--ipython](packages/python--ipython/README.md): Building the ipython package into the Python installation tree.
 * [python--jira-python](packages/python--jira-python/README.md): Building the jira-python package into the Python installation tree.
 * [python--pip](packages/python--pip/README.md): Building the pip Python package into the Python installation tree.
