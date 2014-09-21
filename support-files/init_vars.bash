@@ -7,6 +7,7 @@
 # RELEASE_SUBDIR: Identifies the specific platform and version upon which the package is being built.
 # INSTALL_DIR:    Installation directory
 # BUILD_DIR:      Where the sources are downloaded and built.
+# PACKAGE:        Name of the build-locally package (which not always be equal to what the package wants to call itself)
 
 if [ -z "$RELEASE_SUBDIR" -o -z "$PLATFORM" ]
 then
@@ -48,3 +49,8 @@ if [ -z "$INSTALL_DIR" ]
 then
   INSTALL_DIR="$HOME/install/$RELEASE_SUBDIR"; export INSTALL_DIR
 fi
+
+# Find the base directory while avoiding subtle variations in $0.
+# Note that the *.bash files also do this; It is extra work, it is ok, just calm down:
+dollar0=`which $0`; PACKAGE_DIR=$(cd $(dirname $dollar0); pwd) # NEVER export PACKAGE_DIR
+PACKAGE=$(basename $(dirname $PACKAGE_DIR))
