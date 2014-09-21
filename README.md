@@ -65,6 +65,7 @@ The following is a list of packages whose build programs are provided by this pa
 * [example-package](packages/example-package/README.md): An example directory to serve as a template for adding more packages to be built by this project.
 * [flex](packages/flex/README.md): Building the flex package.
 * [gettext](packages/gettext/README.md): Building the gettext package.
+* [glib](packages/glib/README.md): Building the glib package.
 * [idutils](packages/idutils/README.md): Building the idutils package.
 * [intltool](packages/intltool/README.md): Building the intltool package.
 * [libffi](packages/libffi/README.md): Building the libffi package.
