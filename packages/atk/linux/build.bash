@@ -71,25 +71,6 @@ BuildDependentPackage glib bin/gobject-query
 # --------------------------------------------------------------------------------
 SetupBasicEnvironment
 
-# ldconfig will find the old glib-2.0 version installed locally on the
-# system, but we want it paired up with our locally built
-# version. What happens here is that this package ./configure file
-# compiles a conftest executable that, when executed, will pull in the
-# ldconfig defined library and not the one we build (see ld.so(8) man
-# page for the ordering):
-#
-#    *** 'pkg-config --modversion glib-2.0' returned 2.41.5, but GLIB (2.22.5)
-#    *** was found! If pkg-config was correct, then it is best
-#    *** to remove the old version of GLib. You may also be able to fix the error
-#    *** by modifying your LD_LIBRARY_PATH enviroment variable, or by editing
-#    *** /etc/ld.so.conf. Make sure you have run ldconfig if that is
-#    *** required on your system.
-#    *** If pkg-config was wrong, set the environment variable PKG_CONFIG_PATH
-#    *** to point to the correct configuration files
-#
-# Therefore, override LD_LIBRARY_PATH with path before calling ./configure:
-export LD_LIBRARY_PATH=$INSTALL_DIR/lib:$LD_LIBRARY_PATH
-
 # --------------------------------------------------------------------------------
 # Create build directory structure:
 # --------------------------------------------------------------------------------

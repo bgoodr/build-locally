@@ -405,8 +405,15 @@ DownloadPackageFromGitRepo () {
 }
 
 SetupBasicEnvironment () {
+
+  # This function must be sourced before calling autogen.sh or configure.
+
   # Don't depend upon anything other than what is installed on the
   # system, plus the dependencies for a given package, into the
   # $INSTALL_DIR/bin directory:
   export PATH=$INSTALL_DIR/bin:$PATH
+
+  # See "RPATH Handling" section in ../build-locally.org for details:
+  export LD_LIBRARY_PATH=$INSTALL_DIR/lib:$LD_LIBRARY_PATH
+
 }

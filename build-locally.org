@@ -129,3 +129,189 @@ All build programs should be able to refer to, and build, dependent
 package by way of relative file reference. This typically requires the
 full build-locally project to be checked out.
 
+* Special cases
+** RPATH Handling
+
+This following comments apply to all shared libraries built locally, and
+not just to glib, but we use glib-2.0 as the example:
+
+ldconfig will find the old glib-2.0 version installed locally on the
+system, but we want it paired up with our locally built
+version. What happens here is that this package ./configure file
+compiles a conftest executable that, when executed, will pull in the
+ldconfig defined library and not the one we build (see ld.so(8) man
+page for the ordering):
+
+#+BEGIN_EXAMPLE
+  ,*** 'pkg-config --modversion glib-2.0' returned 2.41.5, but GLIB (2.22.5)
+  ,*** was found! If pkg-config was correct, then it is best
+  ,*** to remove the old version of GLib. You may also be able to fix the error
+  ,*** by modifying your LD_LIBRARY_PATH enviroment variable, or by editing
+  ,*** /etc/ld.so.conf. Make sure you have run ldconfig if that is
+  ,*** required on your system.
+  ,*** If pkg-config was wrong, set the environment variable PKG_CONFIG_PATH
+  ,*** to point to the correct configuration files
+#+END_EXAMPLE
+
+The initial thought was to override LD_LIBRARY_PATH with the path(s) to our shared
+libraries during the build (notably during the link of those builds) via:
+
+#+BEGIN_EXAMPLE
+  export LD_LIBRARY_PATH=$INSTALL_DIR/lib:$LD_LIBRARY_PATH
+#+END_EXAMPLE
+
+But upon further thought, that would require us to set the
+LD_LIBRARY_PATH in startup scripts (.bashrc etc.) which is likely to
+cause problems: 
+
+ - It is a pain to require users to do that.
+ - We do not want to use the system-supplied libraries when the
+   locally-built libraries are the correct versions.
+
+The build-locally scripts originally had the above setting of
+LD_LIBRARY_PATH in place, but then later on the following output
+showed up during the freetype build:
+
+#+BEGIN_EXAMPLE
+  Libraries have been installed in:
+     /home/brentg/install/RHEL.6.4.x86_64/lib
+  
+  If you ever happen to want to link against installed libraries
+  in a given directory, LIBDIR, you must either use libtool, and
+  specify the full pathname of the library, or use the `-LLIBDIR'
+  flag during linking and do at least one of the following:
+     - add LIBDIR to the `LD_LIBRARY_PATH' environment variable
+       during execution
+     - add LIBDIR to the `LD_RUN_PATH' environment variable
+       during linking
+     - use the `-Wl,-rpath -Wl,LIBDIR' linker flag
+     - have your system administrator add LIBDIR to `/etc/ld.so.conf'
+#+END_EXAMPLE
+   
+The second step seems the most promising since it seems it would allow
+us to avoid having to change all of the scripts to specify the
+-Wl,-rpath option in a myriad of different ways:
+
+#+BEGIN_EXAMPLE
+      - add LIBDIR to the `LD_RUN_PATH' environment variable
+        during linking
+#+END_EXAMPLE
+
+Researching this further yeilds
+http://stackoverflow.com/questions/9622772/make-ld-run-path-is-ignored
+which references http://web.archive.org/web/20140713082052/http://linuxmafia.com/faq/Admin/ld-lib-path.html
+
+(Using wayback machine because the server serving up
+http://linuxmafia.com/faq/Admin/ld-lib-path.html is not responding).
+
+That indicates LD_LIBRARY_PATH is a bad idea to use at runtime.
+
+http://stackoverflow.com/a/10027161 indicates there could be a bug
+in the linker that prevents the LD_RUN_PATH variable approach from
+working. 
+
+ Sourceware Bugzilla – Bug 13764 gold doesn't take the LD_RUN_PATH environment variable into account
+
+That is more recent relative to the systems (RHEL6 notably) that I
+want to build upon. I don't know if it applies to the linker 
+
+It is verified that the LD_RUN_PATH approach works on RHEL6.
+
+http://stackoverflow.com/questions/2836330/is-there-a-way-to-inspect-the-current-rpath-on-linux#answer-6348364
+
+which states:
+
+#+BEGIN_EXAMPLE
+  For the record, here are a couple of commands that will show the rpath header.
+  
+  objdump -x binary-or-library | grep RPATH
+  
+  Maybe an even better way to do it is the following:
+  
+  readelf -d binary-or-library |head -20
+#+END_EXAMPLE
+
+Per the ld(1) man page:
+
+#+BEGIN_EXAMPLE
+  -rpath=dir
+      Add a directory to the runtime library search path.  This is used when linking an ELF executable with shared objects.  All -rpath
+      arguments are concatenated and passed to the runtime linker, which uses them to locate shared objects at runtime.  The -rpath
+      option is also used when locating shared objects which are needed by shared objects explicitly included in the link; see the
+      description of the -rpath-link option.  If -rpath is not used when linking an ELF executable, the contents of the environment
+      variable "LD_RUN_PATH" will be used if it is defined.
+  
+      The -rpath option may also be used on SunOS.  By default, on SunOS, the linker will form a runtime search patch out of all the -L
+      options it is given.  If a -rpath option is used, the runtime search path will be formed exclusively using the -rpath options,
+      ignoring the -L options.  This can be useful when using gcc, which adds many -L options which may be on NFS mounted file systems.
+  
+      For compatibility with other ELF linkers, if the -R option is followed by a directory name, rather than a file name, it is
+      treated as the -rpath option.
+#+END_EXAMPLE 
+
+*** Build the patchelf executable
+
+*** Determine the rpaths of all shared libraries
+
+#+BEGIN_SRC sh :results verbatim
+  LD_LIBRARY_PATH=~/install/RHEL.6.4.x86_64/lib \
+    find ~/install/RHEL.6.4.x86_64/lib/ -mtime -2 -name '*.so' | \
+    xargs -i sh -c "ldd {} | sed 's%^%{} %g'" 2>&1 | grep '=>.*RHEL.6.4.x86_64' | awk1 | while read lib
+  do
+    curRpath=$(objdump -x $lib | grep RPATH | awk '{printf("%s\n",$2);}')
+    if [ "$curRpath" != "$INSTALL_DIR/lib" ]
+    then
+      echo lib $lib $curRpath
+      break
+    fi
+  done
+#+END_SRC
+
+#+RESULTS:
+: lib /home/brentg/install/RHEL.6.4.x86_64/lib/libgobject-2.0.so /home/brentg/install/RHEL.6.4.x86_64/lib:/home/brentg/install/RHEL.6.4.x86_64/lib/../lib64
+
+So the above results tells us that we cannot simply set LD_RUN_PATH to be a single path. It will vary from package to package.
+
+Besides many if not all of the shared libraries have the RPATH set
+already, presumably by default due to use of the use of
+autoconf/automake/libtool/etc.
+
+*** Are both LD_LIBRARY_PATH and LD_RUN_PATH needed at link time?
+
+No. Only Ld_LIBRARY_PATH is needed during the build, the execution of
+the configure conftest executables. And to export LD_RUN_PATH before
+running the configure scripts might foul up that logic. And besides,
+if we do set LD_RUN_PATH globally inside SetupBasicEnvironment defined
+in ./support-files/build_platform_util.bash, then that may interfere
+with those packages that define more than one element of the RPATH in
+their builds (as discovered in [[Determine the rpaths of all shared
+libraries]] e.g., libgobject-2.0.so).
+
+*** Do installed executables have proper RPATHs?
+
+#+BEGIN_SRC sh :results verbatim
+  LD_LIBRARY_PATH=~/install/RHEL.6.4.x86_64/lib \
+    find ~/install/RHEL.6.4.x86_64/bin -mtime -2 | \
+    xargs -i sh -c "ldd {} | sed 's%^%{} %g'" 2>&1 | grep '=>.*RHEL.6.4.x86_64' | awk1 | while read bin
+  do
+    curRpath=$(objdump -x $bin | grep RPATH | awk '{printf("%s\n",$2);}')
+    if [ "$curRpath" != "$INSTALL_DIR/lib" -a "$curRpath" != "$INSTALL_DIR/lib:$INSTALL_DIR/lib/../lib64" ]
+    then
+      echo bin $bin $curRpath
+    fi
+  done
+#+END_SRC
+
+#+RESULTS:
+
+Answer: No. All executables we have built have the RPATHs in them properly.
+
+Therefore nothing to do.
+
+*** Conclusion
+
+Centralize the setting of LD_LIBRARY_PATH during the link only.  It is
+currently thought it is only needed during the link, that is, if
+packages are well behaved and generate libraries and executables that
+have rpaths set, then executing them outside of the build will pick up
+the proper locally-built libraries.
