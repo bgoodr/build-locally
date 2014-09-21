@@ -111,7 +111,7 @@ echo "Testing ..."
 expected_version=$(sed -n "s%^ *PACKAGE_VERSION='\\([^']*\\)'.*\$%\\1%gp" < configure);
 if [ -z "$expected_version" ]
 then
-  echo "ASSERTION FAILED: Could not determine expected glib version."
+  echo "ASSERTION FAILED: Could not determine expected $PACKAGE version."
   exit 1
 fi
 
