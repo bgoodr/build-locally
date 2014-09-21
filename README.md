@@ -63,6 +63,7 @@ The following is a list of packages whose build programs are provided by this pa
 * [bison](packages/bison/README.md): Building the bison package.
 * [emacs](packages/emacs/README.md): Building the emacs package.
 * [example-package](packages/example-package/README.md): An example directory to serve as a template for adding more packages to be built by this project.
+* [flex](packages/flex/README.md): Building the flex package.
 * [gettext](packages/gettext/README.md): Building the gettext package.
 * [idutils](packages/idutils/README.md): Building the idutils package.
 * [intltool](packages/intltool/README.md): Building the intltool package.
