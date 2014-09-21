@@ -128,7 +128,7 @@ GLIB_HEADER_MICRO_VERSION=$(sed -n 's/^#define GLIB_MICRO_VERSION \([0-9]*\) *$/
 expected_glib_version=$(sed -n "s%^ *PACKAGE_VERSION='\\([^']*\\)'.*\$%\\1%gp" < configure);
 if [ -z "$expected_glib_version" ]
 then
-  echo "ASSERTION FAILED: Could not determine expected glib version."
+  echo "ASSERTION FAILED: Could not determine expected $PACKAGE version."
   exit 1
 fi
 
