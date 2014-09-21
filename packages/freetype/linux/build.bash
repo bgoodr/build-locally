@@ -88,7 +88,7 @@ echo "Configuring ..."
 
 # # We see:
 # #
-# #    cd builds/unix; /bin/sh ./configure  '--prefix=/home/brentg/install/RHEL.6.4.x86_64'
+# #    cd builds/unix; /bin/sh ./configure  '--prefix=/home/someuser/install/RHEL.6.4.x86_64'
 # #    /bin/sh: ./configure: No such file or directory
 # #    builds/unix/detect.mk:86: recipe for target 'setup' failed
 # #    

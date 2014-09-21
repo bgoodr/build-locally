@@ -174,7 +174,7 @@ showed up during the freetype build:
 
 #+BEGIN_EXAMPLE
   Libraries have been installed in:
-     /home/brentg/install/RHEL.6.4.x86_64/lib
+     /home/someuser/install/RHEL.6.4.x86_64/lib
   
   If you ever happen to want to link against installed libraries
   in a given directory, LIBDIR, you must either use libtool, and
@@ -273,7 +273,7 @@ Per the ld(1) man page:
 #+END_SRC
 
 #+RESULTS:
-: lib /home/brentg/install/RHEL.6.4.x86_64/lib/libgobject-2.0.so /home/brentg/install/RHEL.6.4.x86_64/lib:/home/brentg/install/RHEL.6.4.x86_64/lib/../lib64
+: lib /home/someuser/install/RHEL.6.4.x86_64/lib/libgobject-2.0.so /home/someuser/install/RHEL.6.4.x86_64/lib:/home/someuser/install/RHEL.6.4.x86_64/lib/../lib64
 
 So the above results tells us that we cannot simply set LD_RUN_PATH to be a single path. It will vary from package to package.
 
