@@ -73,6 +73,7 @@ The following is a list of packages whose build programs are provided by this pa
 * [gnome-common](packages/gnome-common/README.md): Building the gnome-common package.
 * [gobject-introspection](packages/gobject-introspection/README.md): Building the gobject-introspection package.
 * [gtk-doc](packages/gtk-doc/README.md): Building the gtk-doc package.
+* [gtk](packages/gtk/README.md): Building the gtk package.
 * [harfbuzz](packages/harfbuzz/README.md): Building the harfbuzz package.
 * [help2man](packages/help2man/README.md): Building the help2man package.
 * [idutils](packages/idutils/README.md): Building the idutils package.
