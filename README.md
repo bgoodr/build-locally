@@ -74,6 +74,7 @@ The following is a list of packages whose build programs are provided by this pa
 * [gobject-introspection](packages/gobject-introspection/README.md): Building the gobject-introspection package.
 * [gtk-doc](packages/gtk-doc/README.md): Building the gtk-doc package.
 * [harfbuzz](packages/harfbuzz/README.md): Building the harfbuzz package.
+* [help2man](packages/help2man/README.md): Building the help2man package.
 * [idutils](packages/idutils/README.md): Building the idutils package.
 * [intltool](packages/intltool/README.md): Building the intltool package.
 * [libffi](packages/libffi/README.md): Building the libffi package.
