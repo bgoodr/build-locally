@@ -304,9 +304,9 @@ ApplyDebianPatches () {
   fi
 }
 
-DownloadExtractBuildGnuPackage () {
+DownloadExtractBuildAutoconfBasedPackage () {
   local package="$1"
-  local packageURL="http://ftp.gnu.org/gnu/${package}/"
+  local packageURL="$2"
 
   # --------------------------------------------------------------------------------
   # Downloading:
@@ -328,7 +328,7 @@ DownloadExtractBuildGnuPackage () {
   fi
   if [ ! -f $tarbasefile ]
   then
-    wget http://ftp.gnu.org/gnu/${package}/$tarbasefile
+    wget $packageURL$tarbasefile
     if [ ! -f $tarbasefile ]
     then
       echo "ERROR: Could not retrieve $tarbasefile"
@@ -374,6 +374,12 @@ DownloadExtractBuildGnuPackage () {
   # --------------------------------------------------------------------------------
   echo "Installing ..."
   PrintRun make install
+}
+
+DownloadExtractBuildGnuPackage () {
+  local package="$1"
+  local packageURL="http://ftp.gnu.org/gnu/${package}/"
+  DownloadExtractBuildAutoconfBasedPackage "$package" "$packageURL"
 }
 
 DownloadPackageFromGitRepo () {
