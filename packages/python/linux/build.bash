@@ -140,7 +140,7 @@ fi
 # --------------------------------------------------------------------------------
 downloadURL=https://www.python.org/downloads/
 tarballURL=$(curl -L $downloadURL 2>/dev/null \
-  | sed -n 's/^.*href="\([^"]*\.tar\.[^"]*\)".*Download Python '"$MAJOR_VERSION"'.*$/\1/gp')
+  | sed -n 's/^.*href="\([^"]*\.\(tgz\|tar.gz\)\)".*Download Python '"$MAJOR_VERSION"'.*$/\1/gp')
 if [ -z "$tarballURL" ]
 then
   echo "ERROR: Could not determine downloadable tarball from $downloadURL"
