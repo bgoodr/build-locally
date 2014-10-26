@@ -148,6 +148,7 @@ then
 fi
 tarballBase=$(basename $tarballURL)
 versionSubdir=${tarballBase/.tar.*z/}
+versionSubdir=${tarballBase/.tgz/}
 version=${versionSubdir/Python-/}
 echo "Note: Found latest major version $MAJOR_VERSION version of $version"
 if [ "$CLEAN" = 1 ]
