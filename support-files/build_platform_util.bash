@@ -105,9 +105,15 @@ VerifyOperatingSystemPackageContainingFile () {
 DownloadURLIntoLocalFile () {
   local URL="$1"
   local retvar="$2"
+  local localFile="$3"
 
+  # localFile is optional in those cases where the output file name does not matter:
+  if [ -z "$localFile" ]
+  then
+    localFile=$(echo "$URL" | sed 's%\([^a-zA-Z0-9_-]\)%_%g')
+  fi
+  
   # Only download the file once:
-  local localFile=$(echo "$URL" | sed 's%\([^a-zA-Z0-9_-]\)%_%g')
   if [ ! -f $localFile ]
   then
     echo "Note: Downloading $URL into local file: $localFile"
