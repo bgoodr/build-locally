@@ -74,7 +74,7 @@ SetupBasicEnvironment
 CreateAndChdirIntoBuildDir colm
 
 # --------------------------------------------------------------------------------
-# Check out the source for emacs into the build directory:
+# Check out the source into the build directory:
 # --------------------------------------------------------------------------------
 packageSubDir=colm
 DownloadPackageFromGitRepo git://github.com/ehdtee/colm $packageSubDir

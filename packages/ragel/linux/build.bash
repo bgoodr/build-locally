@@ -75,7 +75,7 @@ SetupBasicEnvironment
 CreateAndChdirIntoBuildDir ragel
 
 # --------------------------------------------------------------------------------
-# Check out the source for emacs into the build directory:
+# Check out the source into the build directory:
 # --------------------------------------------------------------------------------
 packageSubDir=ragel
 DownloadPackageFromGitRepo git://github.com/ehdtee/ragel $packageSubDir

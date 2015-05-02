@@ -77,7 +77,7 @@ SetupBasicEnvironment
 CreateAndChdirIntoBuildDir atk
 
 # --------------------------------------------------------------------------------
-# Check out the source for emacs into the build directory:
+# Check out the source into the build directory:
 # --------------------------------------------------------------------------------
 packageSubDir=atk
 DownloadPackageFromGitRepo git://git.gnome.org/$packageSubDir $packageSubDir

@@ -75,7 +75,7 @@ echo "TODO: build the dependent packages:"; exit 1
 CreateAndChdirIntoBuildDir gtk
 
 # --------------------------------------------------------------------------------
-# Check out the source for emacs into the build directory:
+# Check out the source into the build directory:
 # --------------------------------------------------------------------------------
 packageSubDir=gtk+
 # http://www.gtk.org/download/index.php#BleedingEdge

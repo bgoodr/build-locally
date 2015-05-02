@@ -75,7 +75,7 @@ SetupBasicEnvironment
 CreateAndChdirIntoBuildDir glib
 
 # --------------------------------------------------------------------------------
-# Check out the source for emacs into the build directory:
+# Check out the source into the build directory:
 # --------------------------------------------------------------------------------
 packageSubDir=glib
 DownloadPackageFromGitRepo git://git.gnome.org/$packageSubDir $packageSubDir

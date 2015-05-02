@@ -81,7 +81,7 @@ SetupBasicEnvironment
 CreateAndChdirIntoBuildDir pango
 
 # --------------------------------------------------------------------------------
-# Check out the source for emacs into the build directory:
+# Check out the source into the build directory:
 # --------------------------------------------------------------------------------
 packageSubDir=pango
 DownloadPackageFromGitRepo git://git.gnome.org/$packageSubDir $packageSubDir

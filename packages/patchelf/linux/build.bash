@@ -74,7 +74,7 @@ SetupBasicEnvironment
 CreateAndChdirIntoBuildDir patchelf
 
 # --------------------------------------------------------------------------------
-# Check out the source for emacs into the build directory:
+# Check out the source into the build directory:
 # --------------------------------------------------------------------------------
 packageSubDir=patchelf
 # https://github.com/NixOS/patchelf.git
