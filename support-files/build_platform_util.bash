@@ -73,29 +73,28 @@ ValidateFileInInstallBinDir () {
 }
 
 VerifySystemPackage () {
-  local expected_release_type="$1"
-  local package="$2"
-  if [ "$expected_release_type" = "Debian" ]
+  local package="$1"
+  if [ "$release_type" = "Debian" -o "$release_type" = "Ubuntu" ]
   then
     dpkg-query --status ${package} 2>/dev/null | grep "Status:" | grep "install ok installed" >/dev/null || {
       echo "ERROR: You must install system package $package under root before proceeding, via: apt-get install $package"
       exit 1
     }
   else
-    echo "ASSERTION FAILED: VerifySystemPackage not yet implemented on $expected_release_type."
+    echo "ASSERTION FAILED: VerifySystemPackage not yet implemented on platforms of this release_type: $release_type"
     exit 1
   fi
 }
 
 VerifyOperatingSystemPackageContainingFile () {
-  local expected_release_type="$1"
+  local expected_release_type_regexp="$1"
   local package="$2"
   local needed_file="$3"
-  if [ "$expected_release_type" = "$release_type" ]
+  if [[ $release_type =~ $expected_release_type_regexp ]]
   then
     if [ ! -f "$needed_file" ]
     then
-      VerifySystemPackage "$expected_release_type" "$package"
+      VerifySystemPackage "$package"
     else
       echo "Note: No need to install package \"${package}\" because file \"${needed_file}\" already exists."
     fi
