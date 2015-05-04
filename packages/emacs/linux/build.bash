@@ -104,6 +104,7 @@ if [ ! -f /usr/include/X11/X.h ]
 then
   echo "ERROR: You must install development headers for X"
   echo "       On Debian, maybe the package is libx11-dev"
+  echo "       On Ubuntu, maybe the package is x11proto-core-dev"
 fi
 
 svg_config_options="--without-rsvg"
