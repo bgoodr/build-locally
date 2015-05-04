@@ -22,11 +22,12 @@ then
     # Replace wheezy/sid with wheezy_sid on Debian so that release_num does not have slashes in it because it will be used in directory filenames:
     /Debian/s%/%_%g;
     s/^Debian GNU.Linux \([^ ]*\) .n .l$/release_type=Debian; release_num="\1"; /gp;
+    s/^Ubuntu \([^ ]*\) .*$/release_type=Ubuntu; release_num="\1"; /gp;
       ' $issueFile 2>/dev/null`
     eval "$spec"
-    if [ "$release_type" != "RHEL" -a "$release_type" != "CentOS" -a "$release_type" != "Debian" ]
+    if [ "$release_type" != "RHEL" -a "$release_type" != "CentOS" -a "$release_type" != "Debian" -a "$release_type" != "Ubuntu" ]
     then
-      echo "WARNING: $0: Unrecognized Linux release type on host `uname -n`."
+      echo "WARNING: $0: Unrecognized Linux release type \"$release_type\" on host `uname -n`."
     fi
     release_kernel_version=`cat /proc/version | sed -n 's%^Linux version \([^ ]*\) .*$%\1%gp'`
     release_machine_type=`uname -m | sed 's%^i686$%x86%g; s%-%_%g;'`
