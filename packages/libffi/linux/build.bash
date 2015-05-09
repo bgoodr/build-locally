@@ -75,7 +75,7 @@ SetupBasicEnvironment
 CreateAndChdirIntoBuildDir libffi
 
 # --------------------------------------------------------------------------------
-# Check out the source for emacs into the build directory:
+# Check out the source into the build directory:
 # --------------------------------------------------------------------------------
 packageSubDir=libffi
 # http://sourceware.org/libffi/

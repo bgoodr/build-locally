@@ -73,7 +73,7 @@ SetupBasicEnvironment
 CreateAndChdirIntoBuildDir libpng
 
 # --------------------------------------------------------------------------------
-# Check out the source for emacs into the build directory:
+# Check out the source into the build directory:
 # --------------------------------------------------------------------------------
 packageSubDir=code
 # http://libpng.sourceforge.net/index.html

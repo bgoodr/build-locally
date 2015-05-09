@@ -69,6 +69,7 @@ The following is a list of packages whose build programs are provided by this pa
 * [flex](packages/flex/README.md): Building the flex package.
 * [freetype](packages/freetype/README.md): Building the freetype package.
 * [gettext](packages/gettext/README.md): Building the gettext package.
+* [git](packages/git/README.md): Building the Git package.
 * [glib](packages/glib/README.md): Building the glib package.
 * [gnome-common](packages/gnome-common/README.md): Building the gnome-common package.
 * [gobject-introspection](packages/gobject-introspection/README.md): Building the gobject-introspection package.
@@ -87,19 +88,20 @@ The following is a list of packages whose build programs are provided by this pa
 * [pango](packages/pango/README.md): Building the pango package.
 * [patchelf](packages/patchelf/README.md): Building the patchelf package.
 * [perl--cpanm](packages/perl--cpanm/README.md): Building the Perl--cpanm language system.
-* [perl--xml-parser](packages/perl--xml-parser/README.md): Building the Perl--xml-parser language system.
 * [perl](packages/perl/README.md): Building the Perl language system.
-* [pkg-config](packages/pkg-config/README.md): Building the pkg-config package.
+* [perl--xml-parser](packages/perl--xml-parser/README.md): Building the Perl--xml-parser language system.
 * [pixman](packages/pixman/README.md): Building the pixman package.
+* [pkg-config](packages/pkg-config/README.md): Building the pkg-config package.
 * [python--ipython](packages/python--ipython/README.md): Building the ipython package into the Python installation tree.
 * [python--jira-python](packages/python--jira-python/README.md): Building the jira-python package into the Python installation tree.
+* [python](packages/python/README.md): Building the Python language system.
 * [python--pip](packages/python--pip/README.md): Building the pip Python package into the Python installation tree.
 * [python--rbtools](packages/python--rbtools/README.md): Building the python--rbtools package.
 * [python--readline](packages/python--readline/README.md): Building the readline Python package into the Python installation tree.
 * [python--setuptools](packages/python--setuptools/README.md): Building the setuptools package into the Python installation tree.
-* [python](packages/python/README.md): Building the Python language system.
 * [qt](packages/qt/README.md): Building the Qt framework.
 * [ragel](packages/ragel/README.md): Building the ragel package.
+* [rdesktop](packages/rdesktop/README.md): Building the rdesktop package.
 * [sqlite3](packages/sqlite3/README.md): Building the sqlite3 package.
 * [texinfo](packages/texinfo/README.md): Building the texinfo package.
 * [xkeyboard-config](packages/xkeyboard-config/README.md): Building the xkeyboard-config package.

@@ -140,7 +140,7 @@ fi
 # --------------------------------------------------------------------------------
 downloadURL=https://www.python.org/downloads/
 tarballURL=$(curl -L $downloadURL 2>/dev/null \
-  | sed -n 's/^.*href="\([^"]*\.tar\.[^"]*\)".*Download Python '"$MAJOR_VERSION"'.*$/\1/gp')
+  | sed -n 's/^.*href="\([^"]*\.\(tgz\|tar.gz\)\)".*Download Python '"$MAJOR_VERSION"'.*$/\1/gp')
 if [ -z "$tarballURL" ]
 then
   echo "ERROR: Could not determine downloadable tarball from $downloadURL"
@@ -148,6 +148,7 @@ then
 fi
 tarballBase=$(basename $tarballURL)
 versionSubdir=${tarballBase/.tar.*z/}
+versionSubdir=${tarballBase/.tgz/}
 version=${versionSubdir/Python-/}
 echo "Note: Found latest major version $MAJOR_VERSION version of $version"
 if [ "$CLEAN" = 1 ]

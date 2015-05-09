@@ -71,6 +71,8 @@ SetupBasicEnvironment
 # Build required dependent packages:
 # --------------------------------------------------------------------------------
 BuildDependentPackage texinfo bin/makeinfo
+BuildDependentPackage autoconf bin/autoconf
+BuildDependentPackage automake bin/automake
 
 # --------------------------------------------------------------------------------
 # Create build directory structure:
@@ -132,13 +134,14 @@ echo "Building ..."
 if [ ! -f ./configure ]
 then
   echo "Creating ./configure file ..."
-  PrintRun ./autogen.sh --enable-maintainer-mode --prefix="$INSTALL_DIR"
+  PrintRun ./autogen.sh
   if [ ! -f ./configure ]
   then
     echo "ERROR: Could not create ./configure file. autoconf must have failed."
     exit 1
   fi
 fi
+PrintRun ./configure --enable-maintainer-mode --prefix="$INSTALL_DIR"
 PrintRun make
 
 # --------------------------------------------------------------------------------

@@ -73,7 +73,7 @@ SetupBasicEnvironment
 CreateAndChdirIntoBuildDir pixman
 
 # --------------------------------------------------------------------------------
-# Check out the source for emacs into the build directory:
+# Check out the source into the build directory:
 # --------------------------------------------------------------------------------
 packageSubDir=pixman
 # http://cgit.freedesktop.org/pixman/

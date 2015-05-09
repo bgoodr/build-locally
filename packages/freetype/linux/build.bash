@@ -74,7 +74,7 @@ SetupBasicEnvironment
 CreateAndChdirIntoBuildDir freetype
 
 # --------------------------------------------------------------------------------
-# Check out the source for emacs into the build directory:
+# Check out the source into the build directory:
 # --------------------------------------------------------------------------------
 packageSubDir=freetype2
 DownloadPackageFromGitRepo git://git.sv.gnu.org/freetype/freetype2.git $packageSubDir

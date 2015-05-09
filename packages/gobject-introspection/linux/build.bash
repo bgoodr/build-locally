@@ -76,7 +76,7 @@ SetupBasicEnvironment
 CreateAndChdirIntoBuildDir gobject-introspection
 
 # --------------------------------------------------------------------------------
-# Check out the source for emacs into the build directory:
+# Check out the source into the build directory:
 # --------------------------------------------------------------------------------
 packageSubDir=gobject-introspection
 # https://wiki.gnome.org/action/show/Projects/GObjectIntrospection#Getting_the_code

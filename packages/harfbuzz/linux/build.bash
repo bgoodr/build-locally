@@ -77,7 +77,7 @@ SetupBasicEnvironment
 CreateAndChdirIntoBuildDir harfbuzz
 
 # --------------------------------------------------------------------------------
-# Check out the source for emacs into the build directory:
+# Check out the source into the build directory:
 # --------------------------------------------------------------------------------
 packageSubDir=harfbuzz
 DownloadPackageFromGitRepo git://github.com/behdad/harfbuzz $packageSubDir
