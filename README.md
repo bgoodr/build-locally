@@ -84,6 +84,7 @@ The following is a list of packages whose build programs are provided by this pa
 * [libffi](packages/libffi/README.md): Building the libffi package.
 * [libpng](packages/libpng/README.md): Building the libpng package.
 * [libtool](packages/libtool/README.md): Building the libtool package.
+* [libunistring](packages/libunistring/README.md): Building the libunistring package.
 * [libxkbcommon](packages/libxkbcommon/README.md): Building the libxkbcommon package.
 * [make](packages/make/README.md): Building the make package.
 * [numdiff](packages/numdiff/README.md): Building the numdiff package.
