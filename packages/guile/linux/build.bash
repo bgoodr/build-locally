@@ -73,6 +73,9 @@ SetupBasicEnvironment
 BuildDependentPackage texinfo bin/makeinfo
 BuildDependentPackage autoconf bin/autoconf
 BuildDependentPackage libtool bin/libtool
+BuildDependentPackage gmp lib/libgmp.so
+BuildDependentPackage libunistring lib/libunistring.so
+BuildDependentPackage bdwgc lib/libgc.so
 
 # --------------------------------------------------------------------------------
 # Create build directory structure:
