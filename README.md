@@ -75,6 +75,7 @@ The following is a list of packages whose build programs are provided by this pa
 * [gobject-introspection](packages/gobject-introspection/README.md): Building the gobject-introspection package.
 * [gtk-doc](packages/gtk-doc/README.md): Building the gtk-doc package.
 * [gtk](packages/gtk/README.md): Building the gtk package.
+* [guile](packages/guile/README.md): Building the guile package.
 * [harfbuzz](packages/harfbuzz/README.md): Building the harfbuzz package.
 * [help2man](packages/help2man/README.md): Building the help2man package.
 * [idutils](packages/idutils/README.md): Building the idutils package.
@@ -104,6 +105,7 @@ The following is a list of packages whose build programs are provided by this pa
 * [rdesktop](packages/rdesktop/README.md): Building the rdesktop package.
 * [sqlite3](packages/sqlite3/README.md): Building the sqlite3 package.
 * [texinfo](packages/texinfo/README.md): Building the texinfo package.
+* [xbindkeys](packages/xbindkeys/README.md): Building the xbindkeys package.
 * [xkeyboard-config](packages/xkeyboard-config/README.md): Building the xkeyboard-config package.
 * [xorg-macros](packages/xorg-macros/README.md): Building the xorg-macros package.
 

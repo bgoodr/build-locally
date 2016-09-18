@@ -1,0 +1,8 @@
+~/build/RHEL.6.4.x86_64/guile/guile/configure:45565: bgdbg
+~/build/RHEL.6.4.x86_64/guile/guile/configure:45567: bgdbg
+~/build/RHEL.6.4.x86_64/guile/guile/configure:45571: bgdbg
+~/build/RHEL.6.4.x86_64/guile/guile/configure:45581: bgdbg
+~/build/RHEL.6.4.x86_64/guile/guile/configure:45583: bgdbg
+~/build/RHEL.6.4.x86_64/guile/guile/configure:45597: bgdbg
+~/build/RHEL.6.4.x86_64/guile/guile/configure:45609: bgdbg
+~/build/RHEL.6.4.x86_64/guile/guile/configure:45709: bgdbg
