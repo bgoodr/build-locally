@@ -71,6 +71,7 @@ The following is a list of packages whose build programs are provided by this pa
 * [gettext](packages/gettext/README.md): Building the gettext package.
 * [git](packages/git/README.md): Building the Git package.
 * [glib](packages/glib/README.md): Building the glib package.
+* [gmp](packages/gmp/README.md): Building the gmp package.
 * [gnome-common](packages/gnome-common/README.md): Building the gnome-common package.
 * [gobject-introspection](packages/gobject-introspection/README.md): Building the gobject-introspection package.
 * [gtk-doc](packages/gtk-doc/README.md): Building the gtk-doc package.
