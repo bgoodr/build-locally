@@ -61,6 +61,7 @@ The following is a list of packages whose build programs are provided by this pa
 * [atk](packages/atk/README.md): Building the atk package.
 * [autoconf](packages/autoconf/README.md): Building the autoconf package.
 * [automake](packages/automake/README.md): Building the automake package.
+* [bdwgc](packages/bdwgc/README.md): Building the bdwgc package.
 * [bison](packages/bison/README.md): Building the bison package.
 * [cairo](packages/cairo/README.md): Building the cairo package.
 * [colm](packages/colm/README.md): Building the colm package.
