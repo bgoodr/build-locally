@@ -3,12 +3,27 @@
 #+STARTUP:  hideblocks
 
 * Building Emacs
+  :PROPERTIES:
+  :ID:       ca15082a-afdc-4cc4-b9d4-27fae808fa34
+  :END:
 
- 1. [ ] Build and locally install packages that ./linux/build.bash
+ 1. [ ] [[id:1a3d366a-92d3-4021-8a7e-351f646aaa93][Experiment with org-id to see if it renders properly by the corresponding web page in GitHub]]
+ 2. [ ] Build and locally install packages that ./linux/build.bash
     currently requires from the system, since that deviates from the
     intent of the build-locally system. See the notes in the comments
     inside ./linux/build.bash. Namely, re-examine the hardcoded
     --without-gif and with-tiff options to configure.
- 2. [ ] Re-enable building with svg. Currently disabled due to its complex
+ 3. [ ] Re-enable building with svg. Currently disabled due to its complex
     dependencies.
+
+** TODO Experiment with org-id to see if it renders properly by the corresponding web page in GitHub
+   :PROPERTIES:
+   :ID:       1a3d366a-92d3-4021-8a7e-351f646aaa93
+   :END:
+
+backlink: [[id:ca15082a-afdc-4cc4-b9d4-27fae808fa34][Building Emacs]]
+
+This is just a test to see what GitHub will show in their web page at:
+
+https://github.com/bgoodr/build-locally/blob/master/packages/emacs/emacs.org
 
