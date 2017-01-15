@@ -1,4 +1,4 @@
-#+title:    TODO Org file for building qt
+#+title:    Org file for building Building Emacs
 #+author:   Brent Goodrick
 #+STARTUP:  hideblocks
 
