@@ -27,3 +27,4 @@ This is just a test to see what GitHub will show in their web page at:
 
 https://github.com/bgoodr/build-locally/blob/master/packages/emacs/emacs.org
 
+No, it doesn't. It does not show the backlinks.
