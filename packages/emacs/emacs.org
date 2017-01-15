@@ -28,3 +28,19 @@ This is just a test to see what GitHub will show in their web page at:
 https://github.com/bgoodr/build-locally/blob/master/packages/emacs/emacs.org
 
 No, it doesn't. It does not show the backlinks.
+
+Try setting org-id-track-globally to nil and try a sub item: 
+
+#+BEGIN_EXAMPLE
+(setq org-id-track-globally nil)
+#+END_EXAMPLE
+
+Try it: [[id:341270c9-9129-4ba8-8769-7429bde3afbb][A subelement created under org-id-track-globally is nil conditions]]
+
+*** TODO A subelement created under org-id-track-globally is nil conditions
+    :PROPERTIES:
+    :ID:       341270c9-9129-4ba8-8769-7429bde3afbb
+    :END:
+
+backlink: [[id:1a3d366a-92d3-4021-8a7e-351f646aaa93][Experiment with org-id to see if it renders properly by the corresponding web page in GitHub]]
+
