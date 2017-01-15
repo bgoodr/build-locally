@@ -1,0 +1,14 @@
+#+title:    TODO Org file for building qt
+#+author:   Brent Goodrick
+#+STARTUP:  hideblocks
+
+* Building Emacs
+
+ 1. [ ] Build and locally install packages that ./linux/build.bash
+    currently requires from the system, since that deviates from the
+    intent of the build-locally system. See the notes in the comments
+    inside ./linux/build.bash. Namely, re-examine the hardcoded
+    --without-gif and with-tiff options to configure.
+ 2. [ ] Re-enable building with svg. Currently disabled due to its complex
+    dependencies.
+
