@@ -57,6 +57,7 @@ done
 # --------------------------------------------------------------------------------
 SetupBasicEnvironment
 
+
 # --------------------------------------------------------------------------------
 # Build required dependent packages:
 # --------------------------------------------------------------------------------
@@ -117,75 +118,135 @@ then
 fi
 
 subdir=$(tar tf $tarbasefile 2>/dev/null | sed -n '1{s%/.*$%%gp; q}')
+echo "subdir==\"${subdir}\""
 
-# --------------------------------------------------------------------------------
-# Cleaning:
-# --------------------------------------------------------------------------------
-if [ "$CLEAN" = 1 ]
+if false
 then
-  echo "Cleaning ..."
-  PrintRun rm -rf $subdir
-fi
+  # --------------------------------------------------------------------------------
+  # Cleaning:
+  # --------------------------------------------------------------------------------
+  if [ "$CLEAN" = 1 ]
+  then
+    echo "Cleaning ..."
+    PrintRun rm -rf $subdir
+  fi
 
-# --------------------------------------------------------------------------------
-# Extracting:
-# --------------------------------------------------------------------------------
-echo "Extracting ..."
-if [ ! -d "$subdir" ]
-then
-  PrintRun tar zxvf $tarbasefile
+  # --------------------------------------------------------------------------------
+  # Extracting:
+  # --------------------------------------------------------------------------------
+  echo "Extracting ..."
   if [ ! -d "$subdir" ]
   then
-    echo "ERROR: Could not extract `pwd`/$tarbasefile because $subdir does not exist as a directory."
+    PrintRun tar zxvf $tarbasefile
+    if [ ! -d "$subdir" ]
+    then
+      echo "ERROR: Could not extract `pwd`/$tarbasefile because $subdir does not exist as a directory."
+      exit 1
+    fi
+  fi
+
+  # --------------------------------------------------------------------------------
+  # Build:
+  # --------------------------------------------------------------------------------
+  echo "Building and installing ..."
+  PrintRun cd $HEAD_DIR/$subdir
+  if [ ! -f configure ]
+  then
+    echo "ASSERTION FAILED: configure file not found"
     exit 1
   fi
+
+  #
+  # We need python built into gdb (for Qt5 pretty printing for in
+  # http://stackoverflow.com/questions/10492290/gdb-pretty-printers-for-qt5
+  # using http://stackoverflow.com/a/31766741/257924 which refers to
+  # https://github.com/Lekensteyn/qt5printers which led to the post at
+  # http://stackoverflow.com/questions/42571014/what-version-of-gdb-provides-the-gdb-printing-python-module)
+  # but it should hopefully pick up the new version of python by default
+  # because of the following blurb inside gdb-7.12/gdb/README:
+  #
+  #    --with-python[=PATH]
+  #         Build GDB with Python scripting support.  (Done by default if
+  #         libpython is present and found at configure time.)  Python makes
+  #         GDB scripting much more powerful than the restricted CLI
+  #         scripting language.  If your host does not have Python installed,
+  #         you can find it on http://www.python.org/download/.  The oldest
+  #         version of Python supported by GDB is 2.4.  The optional argument
+  #         PATH says where to find the Python headers and libraries; the
+  #         configure script will look in PATH/include for headers and in
+  #         PATH/lib for the libraries.
+  #
+  # That should work since we are forcing python package as a dependency
+  # earlier in this script.
+  #
+  # Also, disable building with guile for now (see guile comments earlier in the script).
+  #
+  PrintRun ./configure --prefix="$INSTALL_DIR" --with-guile=no
+  PrintRun make
+
+  # --------------------------------------------------------------------------------
+  # Install:
+  # --------------------------------------------------------------------------------
+  echo "Installing ..."
+  PrintRun make install
+
 fi
 
 # --------------------------------------------------------------------------------
-# Build:
+# Testing:
 # --------------------------------------------------------------------------------
-echo "Building and installing ..."
-PrintRun cd $HEAD_DIR/$subdir
-if [ ! -f configure ]
+echo "Testing ..."
+cd /tmp
+bin_executable=$(which gdb)
+expected_installed_version=$(echo "$subdir" | sed 's%^gdb-%%g')
+echo "expected_installed_version==\"${expected_installed_version}\""
+actual_installed_version=$($bin_executable --version | sed -n '1{s%^GNU gdb (GDB) \(.*\)$%\1%gp; q;}')
+echo "actual_installed_version==\"${actual_installed_version}\""
+if [ "$expected_installed_version" != "$actual_installed_version" ]
 then
-  echo "ASSERTION FAILED: configure file not found"
+  echo "ERROR: Expected installed version \"$expected_installed_version\" is not the same as the actual installed version \"$actual_installed_version\"."
   exit 1
 fi
 
-#
-# We need python built into gdb (for Qt5 pretty printing for in
-# http://stackoverflow.com/questions/10492290/gdb-pretty-printers-for-qt5
-# using http://stackoverflow.com/a/31766741/257924 which refers to
-# https://github.com/Lekensteyn/qt5printers which led to the post at
-# http://stackoverflow.com/questions/42571014/what-version-of-gdb-provides-the-gdb-printing-python-module)
-# but it should hopefully pick up the new version of python by default
-# because of the following blurb inside gdb-7.12/gdb/README:
-#
-#    `--with-python[=PATH]'
-#         Build GDB with Python scripting support.  (Done by default if
-#         libpython is present and found at configure time.)  Python makes
-#         GDB scripting much more powerful than the restricted CLI
-#         scripting language.  If your host does not have Python installed,
-#         you can find it on http://www.python.org/download/.  The oldest
-#         version of Python supported by GDB is 2.4.  The optional argument
-#         PATH says where to find the Python headers and libraries; the
-#         configure script will look in PATH/include for headers and in
-#         PATH/lib for the libraries.
-#
-# That should work since we are forcing python package as a dependency
-# earlier in this script.
-#
-# Also, disable building with guile for now (see guile comments earlier in the script).
-#
-PrintRun ./configure --prefix="$INSTALL_DIR" --with-guile=no
-PrintRun make
+cat > test.cpp <<'EOF.test.cpp'
+// -*-mode: c++; indent-tabs-mode: nil; -*-
+#include <iostream>
+#include <vector>
+int main(int argc, char *argv[], char *const envp[])
+{
+  std::vector<std::string> some_strings;
+  some_strings.push_back("one");
+  some_strings.push_back("two");
+  some_strings.push_back("three");
+  for (std::vector<std::string>::iterator cur = some_strings.begin(); cur != some_strings.end(); ++cur)
+  {
+    std::cout << "element: " << *cur << std::endl;
+  }
+  return 0;
+}
+EOF.test.cpp
 
-# --------------------------------------------------------------------------------
-# Install:
-# --------------------------------------------------------------------------------
-echo "Installing ..."
-PrintRun make install
+# Just dump out line numbers for ease of coding up the gdb script breakpoint:
+grep -n '.*' test.cpp
 
+# TODO: Figure out how to enable the pretty printers for std::vector, std::string, etc.
+cat > test.gdb <<'EOF.test.gdb'
+break 14
+  commands
+    print some_strings
+    continue
+  end
+run
+quit
+EOF.test.gdb
 
+/usr/bin/g++  -MD -DDEBUG -g -ggdb -gstabs+ -O0  -fPIC  -Wall -Werror -Wsynth -Wno-comment -Wreturn-type   test.cpp -c -o test.o
+/usr/bin/g++  -MD -DDEBUG -g -ggdb -gstabs+ -O0  -fPIC  -Wall -Werror -Wsynth -Wno-comment -Wreturn-type   test.o -L. -L/usr/lib64 -lstdc++  -o test.exe   
+./test.exe
+# xterm -e gdb ./test.exe
+# exit 0
+gdb -nx -iex "set auto-load off" -batch -x test.gdb ./test.exe
+rm -f test.cpp test.exe test.o test.gdb
 
-
+echo "Note: All installation tests passed. gdb version $actual_installed_version was built and installed."
+exit 0
