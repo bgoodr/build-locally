@@ -230,6 +230,12 @@ EOF.test.cpp
 grep -n '.*' test.cpp
 
 # TODO: Figure out how to enable the pretty printers for std::vector, std::string, etc.
+#
+#   http://stackoverflow.com/a/17595014 implies it is gcc version specific. :(
+#
+#   That is way, way too hard to test here for different compiler
+#   versions. So leaving this as a todo item.
+#   
 cat > test.gdb <<'EOF.test.gdb'
 break 14
   commands
