@@ -89,8 +89,17 @@ echo "Downloading ..."
 version_subdir=guile
 if [ "$CLEAN" = 1 ]
 then
+  if [ -d "$version_subdir" ]
+  then
+    echo "Running uninstall into $version_subdir to remove installed artifacts."
+    PrintRun cd $version_subdir
+    PrintRun make uninstall
+    PrintRun cd ...
+  fi
+  echo "Note: Removing $version_subdir"
   PrintRun rm -rf "$version_subdir"
 fi
+
 if [ ! -d "$version_subdir" ]
 then
   # Using --depth 1 since this is a huge repo and we only need it for building:

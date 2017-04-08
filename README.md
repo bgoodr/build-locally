@@ -118,6 +118,7 @@ The following is a list of packages whose build programs are provided by this pa
 * [example-package](packages/example-package/README.md): An example directory to serve as a template for adding more packages to be built by this project.
 * [flex](packages/flex/README.md): Building the flex package.
 * [freetype](packages/freetype/README.md): Building the freetype package.
+* [gdb](packages/gdb/README.md): Building the gdb package.
 * [gettext](packages/gettext/README.md): Building the gettext package.
 * [git](packages/git/README.md): Building the Git package.
 * [glib](packages/glib/README.md): Building the glib package.
