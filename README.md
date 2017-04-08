@@ -72,7 +72,7 @@ available and built to work with that system.
 Below is an example of what not to do:
 
 The default for the `INSTALL_DIR` variable (in
-[init_vars.bash](../../support-files/init_vars.bash)). So, I rebuilt
+[init_vars.bash](support-files/init_vars.bash)). So, I rebuilt
 autoconf at one point and the `INSTALL_DIR` variable was:
 
     /home/someuser/install/Ubuntu.16.04.1.x86_64
