@@ -26,7 +26,7 @@ This is needed in one or more of the following situations:
   provided package is too old.
 
 - The user has to use multiple operating systems under the same
-  account (see *Warning about renaming INSTALL_DIR* below)
+  account (see [Warning](#warning-about-renaming-install_dir) below)
 
 After building, it is intended that the user prepend to the resulting
 installation bin directory to their PATH. This will override the
@@ -59,25 +59,25 @@ the package to build above.
 Warning about renaming INSTALL_DIR
 ==================================
 
-If you upgrade your system, then it is likely that INSTALL_DIR
+If you upgrade your system, then it is likely that `INSTALL_DIR`
 variable used in all of the scripts will change, and thus you will
-have to rebuild those packages using the new INSTALL_DIR.
+have to rebuild those packages using the new `INSTALL_DIR`.
 
-The reason an INSTALL_DIR has a different value for each different
+The reason an `INSTALL_DIR` has a different value for each different
 system is because, in practice, if you have to work with multiple
 different Linux releases within the same NFS system (e.g., with the
 same HOME directory), you will want all of your packages to be
 available and built to work with that system.
 
-The default for the INSTALL_DIR
-variable (INSTALL_DIR is instantiated in
-[init_vars.bash](../../support-files/init_vars.bash)) was:
+Below is an example of what not to do:
 
-Beloiw is an example of what not to do: I rebuilt autoconf at one point and the INSTALL_DIR was:
+The default for the `INSTALL_DIR` variable (in
+[init_vars.bash](../../support-files/init_vars.bash)). So, I rebuilt
+autoconf at one point and the `INSTALL_DIR` variable was:
 
     /home/someuser/install/Ubuntu.16.04.1.x86_64
 
-Then some time passed, and I upgraded my system such that the default INSTALL_DIR was:
+Then some time passed, and I upgraded my system such that the default `INSTALL_DIR` was:
 
     /home/someuser/install/Ubuntu.16.04.2.x86_64
 
@@ -97,7 +97,7 @@ option.
 You have to rebuild all of the packages I need. Granted, I end up
 just creating symbolic links inside the install directory to bypass
 having to rebuild packages but that defeats the purpose of having
-INSTALL_DIR be as fine-grained as it is.
+`INSTALL_DIR` be as fine-grained as it is.
 
 Also consider that fully qualified values of RPATH are being used in
 executables in many packages.
