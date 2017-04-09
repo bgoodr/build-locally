@@ -7,39 +7,24 @@ dollar0=`which $0`; PACKAGE_DIR=$(cd $(dirname $dollar0); pwd) # NEVER export PA
 # Set defaults for BUILD_DIR and INSTALL_DIR environment variables and
 # utility functions such as BuildDependentPackage:
 . $PACKAGE_DIR/../../../support-files/build_platform_util.bash
-# Define perl utility functions:
-. $PACKAGE_DIR/../../../support-files/perl_util.bash
 
-usage () {
-  cat <<EOF
-USAGE: $0 ... options ...
-
-Options are:
-
-[ -builddir BUILD_DIR ]
-
-  Override the BUILD_DIR default, which is $BUILD_DIR.
-
-[ -installdir INSTALL_DIR ]
-
-  Override the INSTALL_DIR default, which is $INSTALL_DIR.
-
-EOF
-}
-
+CLEAN=0
 while [ $# -gt 0 ]
 do
   if [ "$1" = "-builddir" ]
   then
-    BUILDDIR="$2"
+    BUILD_DIR="$2"
     shift
   elif [ "$1" = "-installdir" ]
   then
-    INSTALLDIR="$2"
+    INSTALL_DIR="$2"
     shift
+  elif [ "$1" = "-clean" ]
+  then
+    CLEAN=1
   elif [ "$1" = "-h" ]
   then
-    usage
+    EmitStandardUsage
     exit 0
   else
     echo "Undefined parameter $1"
