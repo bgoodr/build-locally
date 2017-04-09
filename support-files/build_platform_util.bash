@@ -52,8 +52,13 @@ BuildDependentPackage () {
 
 CreateAndChdirIntoBuildDir () {
   local package="$1"
-  echo "Creating build directory structure ..."
   HEAD_DIR=$BUILD_DIR/$package
+  if [ "$CLEAN" = 1 ]
+  then
+    echo "Note: Cleaning $HEAD_DIR"
+    rm -rf $HEAD_DIR
+  fi
+  echo "Creating build directory structure ..."
   mkdir -p $BUILD_DIR
   mkdir -p $INSTALL_DIR
   mkdir -p $HEAD_DIR
