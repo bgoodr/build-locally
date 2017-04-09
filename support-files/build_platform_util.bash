@@ -314,7 +314,7 @@ ApplyDebianPatches () {
   fi
 }
 
-DownloadExtractBuildAutoconfBasedPackage () {
+DownloadExtractAutoconfBasedPackage () {
   local package="$1"
   local packageURL="$2"
 
@@ -356,6 +356,10 @@ DownloadExtractBuildAutoconfBasedPackage () {
     fi
   fi
   PrintRun cd $HEAD_DIR/$subdir
+}
+
+ConfigureAutoconfBasedPackage () {
+  local configure_options="$1"
 
   # --------------------------------------------------------------------------------
   # Configuring:
@@ -371,7 +375,7 @@ DownloadExtractBuildAutoconfBasedPackage () {
     echo "ASSERTION FAILED: configure file not found"
     exit 1
   fi
-  PrintRun ./configure --prefix="$INSTALL_DIR"
+  PrintRun ./configure $configure_options --prefix="$INSTALL_DIR"
 
   # --------------------------------------------------------------------------------
   # Building:
@@ -386,10 +390,35 @@ DownloadExtractBuildAutoconfBasedPackage () {
   PrintRun make install
 }
 
+BuildAutoconfBasedPackage () {
+  # --------------------------------------------------------------------------------
+  # Building:
+  # --------------------------------------------------------------------------------
+  echo "Building ..."
+  PrintRun make
+
+  # --------------------------------------------------------------------------------
+  # Installing:
+  # --------------------------------------------------------------------------------
+  echo "Installing ..."
+  PrintRun make install
+}
+
+DownloadExtractBuildAutoconfBasedPackage () {
+  local package="$1"
+  local packageURL="$2"
+  local configure_options="$3"
+
+  DownloadExtractAutoconfBasedPackage "$package" "$packageURL"
+  ConfigureAutoconfBasedPackage "$configure_options"
+  BuildAutoconfBasedPackage
+}
+
 DownloadExtractBuildGnuPackage () {
   local package="$1"
+  local configure_options="$2"
   local packageURL="http://ftp.gnu.org/gnu/${package}/"
-  DownloadExtractBuildAutoconfBasedPackage "$package" "$packageURL"
+  DownloadExtractBuildAutoconfBasedPackage "$package" "$packageURL" "$configure_options"
 }
 
 DownloadPackageFromGitRepo () {
