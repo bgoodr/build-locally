@@ -161,6 +161,7 @@ The following is a list of packages whose build programs are provided by this pa
 * [xbindkeys](packages/xbindkeys/README.md): Building the xbindkeys package.
 * [xkeyboard-config](packages/xkeyboard-config/README.md): Building the xkeyboard-config package.
 * [xorg-macros](packages/xorg-macros/README.md): Building the xorg-macros package.
+* [zlib](packages/zlib/README.md): Building the zlib package.
 
 
 Development
