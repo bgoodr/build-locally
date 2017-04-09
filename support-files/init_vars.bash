@@ -45,11 +45,13 @@ if [ -z "$BUILD_DIR" ]
 then
   BUILD_DIR="$HOME/build/$RELEASE_SUBDIR"; export BUILD_DIR
 fi
+echo "Note: Using BUILD_DIR==\"${BUILD_DIR}\""
 
 if [ -z "$INSTALL_DIR" ]
 then
   INSTALL_DIR="$HOME/install/$RELEASE_SUBDIR"; export INSTALL_DIR
 fi
+echo "Note: Using INSTALL_DIR==\"${INSTALL_DIR}\""
 
 # Find the base directory while avoiding subtle variations in $0.
 # Note that the *.bash files also do this; It is extra work, it is ok, just calm down:
