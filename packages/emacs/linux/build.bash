@@ -208,8 +208,10 @@ BuildDependentPackage autoconf bin/autoconf
 BuildDependentPackage automake bin/automake
 BuildDependentPackage texinfo bin/makeinfo
 BuildDependentPackage pkg-config bin/pkg-config
+BuildDependentPackage zlib include/zlib.h
 BuildDependentPackage make bin/make # because GNU make 3.80 that is default in RHEL6 has a buggy (or ...) operator
-echo "TODO: build gtk as a dependency: BuildDependentPackage gtk bin/fixmeforgtk"; exit 1
+# Try building without gtk now that I'm running RHEL 6.8 which should have the gtk headers: 
+###echo "TODO: build gtk as a dependency: BuildDependentPackage gtk bin/fixmeforgtk"; exit 1
 
 # --------------------------------------------------------------------------------
 # Dependent packages will be installed into $INSTALL_DIR/bin so add
@@ -223,11 +225,46 @@ SetupBasicEnvironment
 CreateAndChdirIntoBuildDir emacs
 
 # --------------------------------------------------------------------------------
+# Download and build tarball into the build directory:
+# --------------------------------------------------------------------------------
+export V=1
+# But zlib.h is still not found when compiling decompress.c so I have to hack with this CFLAGS setting:
+export CFLAGS="-I$INSTALL_DIR/include"
+DownloadExtractBuildGnuPackage emacs "--with-png=no --with-gif=no --with-tiff=no"
+
+echo "TODO get ../../zlib/linux/build.bash building it and add zlib as a package dependency above."
+
+
+
+# Experiment with the above using:
+# bash -c '
+# export BUILD_DIR=$HOME/build/RHEL.6.8.x86_64.for_emacs;
+# export INSTALL_DIR=$HOME/install/RHEL.6.8.x86_64.for_emacs;
+# rm -rf $BUILD_DIR/emacs $INSTALL_DIR/emacs;
+# $HOME/bgoodr/build-locally/packages/emacs/linux/build.bash
+# '
+echo debug exit; exit 0
+
+
+
+
+
+
+
+
+# --------------------------------------------------------------------------------
+# OLD STUFF BELOW:
+# My intent is to just get the latest stable release downloaded and not work from top of trunk.
+# The reason is that there is no way to check out a tag from a git repo without downloading all of it (e.g., without using --depth 1).
+# --------------------------------------------------------------------------------
+ 
+# --------------------------------------------------------------------------------
 # Check out the source for emacs into the build directory:
 # --------------------------------------------------------------------------------
 packageSubDir=emacs
 
-DownloadPackageFromGitRepo git://git.savannah.gnu.org/emacs.git $packageSubDir
+echo "TODO: find the latest stable release via some heuristic here"
+DownloadPackageFromGitRepo git://git.savannah.gnu.org/emacs.git $packageSubDir fullcheckout
 
 PrintRun cd $packageSubDir
 
@@ -236,39 +273,50 @@ PrintRun cd $packageSubDir
 # --------------------------------------------------------------------------------
 echo "Configuring ..."
 
-echo "TODO: Rip out the following code that tries to use system supplied gtk libraries as they no longer work on RHEL6 because of this error
-  configure: error: Package 'gobject-2.0', required by 'gdk-pixbuf-2.0', not found
-"; exit 1
-
-# Allow system supplied gtk libraries to also be found by pkg-config
-# versus our locally built pkg-config that does not also read from the
-# system-supplied .pc files. This may also solve problems finding
-# other system-supplied packages that I am choosing not to build in
-# the near term:
-
-# Our local pkg-config PKG_CONFIG_PATH value:
-local_pkg_config_path=$(pkg-config --variable pc_path pkg-config)
-echo "local_pkg_config_path==\"${local_pkg_config_path}\""
-
-# The system-supplied pkg-config PKG_CONFIG_PATH value:
-system_pkg_config_path=$(PATH=$(echo "$PATH" | sed 's%'"$INSTALL_DIR/bin":'%%g'); pkg-config --variable pc_path pkg-config)
-if [ -z "$system_pkg_config_path" ]
+# Disable some code I would like to delete to see if it is still an issue on RHEL 6.8:
+if false
 then
-  # pkg-config on RHEL6 does not return anything. Hack in something that might work and pray:
-  system_pkg_config_path=/usr/lib/pkgconfig:/usr/share/pkgconfig
-  echo "WARNING: System-supplied buggy pkg-config that returns nothing for 'pkg-config --variable pc_path pkg-config'. Hacking around it with: $system_pkg_config_path"
-fi
-echo "system_pkg_config_path==\"${system_pkg_config_path}\""
 
-export PKG_CONFIG_PATH="$local_pkg_config_path:$system_pkg_config_path"
-echo PKG_CONFIG_PATH now is ...
-echo "${PKG_CONFIG_PATH}" | tr : '\012'
+  cat <<EOF
+TODO: Rip out the following code that tries to use system supplied gtk libraries as they no longer work on RHEL6 because of this error
+  configure: error: Package 'gobject-2.0', required by 'gdk-pixbuf-2.0', not found
+EOF
+  exit 1
+
+  # Allow system supplied gtk libraries to also be found by pkg-config
+  # versus our locally built pkg-config that does not also read from the
+  # system-supplied .pc files. This may also solve problems finding
+  # other system-supplied packages that I am choosing not to build in
+  # the near term:
+
+  # Our local pkg-config PKG_CONFIG_PATH value:
+  local_pkg_config_path=$(pkg-config --variable pc_path pkg-config)
+  echo "local_pkg_config_path==\"${local_pkg_config_path}\""
+
+  # The system-supplied pkg-config PKG_CONFIG_PATH value:
+  system_pkg_config_path=$(PATH=$(echo "$PATH" | sed 's%'"$INSTALL_DIR/bin":'%%g'); pkg-config --variable pc_path pkg-config)
+  if [ -z "$system_pkg_config_path" ]
+  then
+    # pkg-config on RHEL6 does not return anything. Hack in something that might work and pray:
+    system_pkg_config_path=/usr/lib/pkgconfig:/usr/share/pkgconfig
+    echo "WARNING: System-supplied buggy pkg-config that returns nothing for 'pkg-config --variable pc_path pkg-config'. Hacking around it with: $system_pkg_config_path"
+  fi
+  echo "system_pkg_config_path==\"${system_pkg_config_path}\""
+
+  export PKG_CONFIG_PATH="$local_pkg_config_path:$system_pkg_config_path"
+  echo PKG_CONFIG_PATH now is ...
+  echo "${PKG_CONFIG_PATH}" | tr : '\012'
+  
+fi
+
+echo debug exit; exit 0
 
 # The distclean command will fail if there the top-level Makefile has not yet been generated:
 if [ -f Makefile ]
 then
   PrintRun make distclean
 fi
+
 
 # Per the GNUmakefile which takes precedence over the Makefile:
 # "This GNUmakefile is for GNU Make.  It is for convenience, so
