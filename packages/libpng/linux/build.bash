@@ -7,39 +7,24 @@ dollar0=`which $0`; PACKAGE_DIR=$(cd $(dirname $dollar0); pwd) # NEVER export PA
 # Set defaults for BUILD_DIR and INSTALL_DIR environment variables and
 # utility functions such as BuildDependentPackage:
 . $PACKAGE_DIR/../../../support-files/build_platform_util.bash
-# Define perl utility functions:
-. $PACKAGE_DIR/../../../support-files/perl_util.bash
 
-usage () {
-  cat <<EOF
-USAGE: $0 ... options ...
-
-Options are:
-
-[ -builddir BUILD_DIR ]
-
-  Override the BUILD_DIR default, which is $BUILD_DIR.
-
-[ -installdir INSTALL_DIR ]
-
-  Override the INSTALL_DIR default, which is $INSTALL_DIR.
-
-EOF
-}
-
+CLEAN=0
 while [ $# -gt 0 ]
 do
   if [ "$1" = "-builddir" ]
   then
-    BUILDDIR="$2"
+    BUILD_DIR="$2"
     shift
   elif [ "$1" = "-installdir" ]
   then
-    INSTALLDIR="$2"
+    INSTALL_DIR="$2"
     shift
+  elif [ "$1" = "-clean" ]
+  then
+    CLEAN=1
   elif [ "$1" = "-h" ]
   then
-    usage
+    EmitStandardUsage
     exit 0
   else
     echo "Undefined parameter $1"
@@ -60,6 +45,7 @@ SetupBasicEnvironment
 BuildDependentPackage autoconf bin/autoconf
 BuildDependentPackage automake bin/automake
 BuildDependentPackage pkg-config bin/pkg-config
+BuildDependentPackage zlib include/zlib.h
 
 # --------------------------------------------------------------------------------
 # Dependent packages will be installed into $INSTALL_DIR/bin so add
@@ -104,7 +90,23 @@ then
   PrintRun ./autogen.sh
 fi
 
-PrintRun ./configure --prefix="$INSTALL_DIR"
+# But zlib.h is still not found when compiling some files so I have to hack with this CFLAGS setting:
+#
+#   export CFLAGS="-I$INSTALL_DIR/include"
+#
+# but no, CFLAGS is not recognized either. It is only via CPPFLAGS
+# (Huh? Whuh? da pain, da pain!)
+#
+# LDFLAGS is needed, too. I thought zlib had some way to communicate
+# via $INSTALL_DIR/lib/pkgconfig/zlib.pc file to downstream configure
+# scripts where it is located, do I don't understand why these hacks
+# were required.
+#
+# Checkin in this version as it works but is it very unsightly.  Next
+# to do after checking this in is to read through
+# https://askubuntu.com/questions/210210/pkg-config-path-environment-variable
+# to see if it is simply due to not setting some central env var.
+PrintRun ./configure --prefix="$INSTALL_DIR" CPPFLAGS="-I$INSTALL_DIR/include" LDFLAGS="-L$INSTALL_DIR/lib"
 
 # --------------------------------------------------------------------------------
 # Build:
