@@ -102,10 +102,14 @@ fi
 # scripts where it is located, do I don't understand why these hacks
 # were required.
 #
-# Checkin in this version as it works but is it very unsightly.  Next
-# to do after checking this in is to read through
-# https://askubuntu.com/questions/210210/pkg-config-path-environment-variable
-# to see if it is simply due to not setting some central env var.
+# Checkin in this version as it works but is it very unsightly.  
+# I do see 
+#
+#   https://askubuntu.com/questions/210210/pkg-config-path-environment-variable
+#
+# but the pkg-config is in the path already at this point, but the
+# autogen.sh and configure scripts in libpng source distribution
+# apparently are not even using them, so this hack has to stay:
 PrintRun ./configure --prefix="$INSTALL_DIR" CPPFLAGS="-I$INSTALL_DIR/include" LDFLAGS="-L$INSTALL_DIR/lib"
 
 # --------------------------------------------------------------------------------
