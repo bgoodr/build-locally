@@ -227,6 +227,9 @@ CreateAndChdirIntoBuildDir emacs
 # --------------------------------------------------------------------------------
 # Download and build tarball into the build directory:
 # --------------------------------------------------------------------------------
+# The V variable referenced by the Emacs configure script to enable
+# verbose output of compile lines, which we need in order to debug
+# compile failures:
 export V=1
 # But zlib.h is still not found when compiling decompress.c so I have to hack with this CFLAGS setting:
 export CFLAGS="-I$INSTALL_DIR/include"
