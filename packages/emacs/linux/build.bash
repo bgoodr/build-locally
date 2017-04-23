@@ -249,7 +249,12 @@ export CFLAGS="-I$INSTALL_DIR/include"
 # Hack in the -L options from libpng which are not recognized by the configure script (bug?):
 libpng_config_options="LDFLAGS=$(libpng-config --L_opts)"
 
-DownloadExtractBuildGnuPackage emacs "--with-gif=no $tiff_config_options $libpng_config_options"
+# Disable libgif for now (why it is listed as an "X" for X11 in the
+# INSTALL file I don't know). Are playing gifs inside Emacs really
+# necessary?
+libgif_config_options="--with-gif=no"
+
+DownloadExtractBuildGnuPackage emacs "$libgif_config_options $tiff_config_options $libpng_config_options"
 
 # Experiment with the above using:
 # bash -c '
