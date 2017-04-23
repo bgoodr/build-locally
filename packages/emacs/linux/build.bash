@@ -79,6 +79,10 @@ SetupBasicEnvironment
 #   them under git under ~/.fonts (they are platform-independent files
 #   anyhow, and I could not find the right CentOS RPM to scavenge them
 #   from!).
+#
+#   Sun Apr 23 09:58:08 PDT 2017: libpng is not on RHEL 6.8 by default
+#   so it is now added as a build dependency below.
+
 
 if ! which git >/dev/null
 then
@@ -193,6 +197,12 @@ then
 else
   # I added --with-tiff=no because on RHEL6.4 tiff is not there. Temporary
   # hack until we decide we need to build it from source.
+  #
+  # Sun Apr 23 12:22:53 PDT 2017: The INSTALL file in the emacs
+  # distribution has a path to a URL that is dead so we will continue
+  # to just not have tiff support if they are going to maintaining it
+  # on a solid server, like GitHub.
+  #
   tiff_config_options="--with-tiff=no"
 fi
 
@@ -209,6 +219,7 @@ BuildDependentPackage automake bin/automake
 BuildDependentPackage texinfo bin/makeinfo
 BuildDependentPackage pkg-config bin/pkg-config
 BuildDependentPackage zlib include/zlib.h
+BuildDependentPackage libpng lib/pkgconfig/libpng\*.pc
 BuildDependentPackage make bin/make # because GNU make 3.80 that is default in RHEL6 has a buggy (or ...) operator
 # Try building without gtk now that I'm running RHEL 6.8 which should have the gtk headers: 
 ###echo "TODO: build gtk as a dependency: BuildDependentPackage gtk bin/fixmeforgtk"; exit 1
@@ -231,20 +242,20 @@ CreateAndChdirIntoBuildDir emacs
 # verbose output of compile lines, which we need in order to debug
 # compile failures:
 export V=1
-# But zlib.h is still not found when compiling decompress.c so I have to hack with this CFLAGS setting:
+
+# zlib.h is still not found when compiling decompress.c, so I have to hack with this CFLAGS setting:
 export CFLAGS="-I$INSTALL_DIR/include"
-DownloadExtractBuildGnuPackage emacs "--with-png=no --with-gif=no $tiff_config_options"
 
-echo "TODO get ../../zlib/linux/build.bash building it and add zlib as a package dependency above."
+# Hack in the -L options from libpng which are not recognized by the configure script (bug?):
+libpng_config_options="LDFLAGS=$(libpng-config --L_opts)"
 
-
+DownloadExtractBuildGnuPackage emacs "--with-gif=no $tiff_config_options $libpng_config_options"
 
 # Experiment with the above using:
 # bash -c '
 # export BUILD_DIR=$HOME/build/RHEL.6.8.x86_64.for_emacs;
 # export INSTALL_DIR=$HOME/install/RHEL.6.8.x86_64.for_emacs;
-# rm -rf $BUILD_DIR/emacs $INSTALL_DIR/emacs;
-# $HOME/bgoodr/build-locally/packages/emacs/linux/build.bash
+# $HOME/bgoodr/build-locally/packages/emacs/linux/build.bash -clean
 # '
 echo debug exit; exit 0
 
