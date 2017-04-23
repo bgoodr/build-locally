@@ -230,7 +230,7 @@ CreateAndChdirIntoBuildDir emacs
 export V=1
 # But zlib.h is still not found when compiling decompress.c so I have to hack with this CFLAGS setting:
 export CFLAGS="-I$INSTALL_DIR/include"
-DownloadExtractBuildGnuPackage emacs "--with-png=no --with-gif=no --with-tiff=no"
+DownloadExtractBuildGnuPackage emacs "--with-png=no --with-gif=no $tiff_config_options"
 
 echo "TODO get ../../zlib/linux/build.bash building it and add zlib as a package dependency above."
 
