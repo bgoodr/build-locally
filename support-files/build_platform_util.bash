@@ -345,7 +345,13 @@ DownloadExtractAutoconfBasedPackage () {
       exit 1
     fi
   fi
-  subdir=`tar tf $tarbasefile 2>/dev/null | sed -n '1{s%/$%%gp; q}'`
+
+  # The top-level directory is not guaranteed to be the first line in
+  # the tar tf output as of Sun Apr 23 09:41:19 PDT 2017 using tar
+  # version tar (GNU tar) 1.23. Maybe it never was guaranteed to be?
+  # No matter; just do this:
+  subdir=$(tar tf $tarbasefile 2>/dev/null | sed -n '/^\([^/][^/]*\)\/.*$/{ s%%\1%g; p; q; }')
+
   if [ ! -d "$subdir" ]
   then
     tar zxvf $tarbasefile
