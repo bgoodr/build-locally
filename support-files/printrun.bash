@@ -8,7 +8,15 @@ PrintRun ()
   echo 
   echo "COMMAND: $*"
   set -e
-  $*
+
+  # These two expressions do not handle embedded whitespace:
+  #
+  #   $*
+  #   $@
+  #
+  # So, instead use this:
+  "$@"
+
   set +e
 }
 
