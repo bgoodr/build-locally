@@ -16,6 +16,13 @@
  3. [ ] Re-enable building with svg. Currently disabled due to its complex
     dependencies.
 
+** Build Notes
+
+ 1. Useful line to add to various places inside the configure script to see what it is doing:
+    #+BEGIN_EXAMPLE
+    { $as_echo "$0:$LINENO: dbg bla bla bla " >&6; }
+    #+END_EXAMPLE
+
 ** TODO Experiment with org-id to see if it renders properly by the corresponding web page in GitHub
    :PROPERTIES:
    :ID:       1a3d366a-92d3-4021-8a7e-351f646aaa93
