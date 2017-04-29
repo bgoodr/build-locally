@@ -19,17 +19,3 @@ PrintRun ()
 
   set +e
 }
-
-TestPrintRun () {
-  local cmd="$1"
-  eval "
-    PrintRun $cmd; \
-    if [ \"\$?\" != \"0\" ]; then \
-        echo \"ERROR: Could not execute $cmd\"; \
-        exit 1; \
-    else \
-        echo \"Test run passed: $cmd\"; \
-    fi;
-    "
-}
-
