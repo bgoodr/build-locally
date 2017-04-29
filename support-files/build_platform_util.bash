@@ -381,7 +381,11 @@ ConfigureAutoconfBasedPackage () {
     echo "ASSERTION FAILED: configure file not found"
     exit 1
   fi
-  PrintRun ./configure $configure_options --prefix="$INSTALL_DIR"
+
+  # Reference: http://stackoverflow.com/a/41305388/257924
+  local -a configure_options_arr
+  IFS=';' read -a configure_options_arr <<< "$configure_options"
+  PrintRun ./configure "${configure_options_arr[@]}" --prefix="$INSTALL_DIR"
 
   # --------------------------------------------------------------------------------
   # Building:
