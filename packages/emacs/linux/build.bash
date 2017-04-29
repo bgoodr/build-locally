@@ -221,7 +221,7 @@ BuildDependentPackage pkg-config bin/pkg-config
 BuildDependentPackage zlib include/zlib.h
 BuildDependentPackage libpng lib/pkgconfig/libpng\*.pc
 BuildDependentPackage make bin/make # because GNU make 3.80 that is default in RHEL6 has a buggy (or ...) operator
-# Try building without gtk now that I'm running RHEL 6.8 which should have the gtk headers: 
+# Try building with gtk now that I'm running RHEL 6.8 which should have the gtk headers: 
 ###echo "TODO: build gtk as a dependency: BuildDependentPackage gtk bin/fixmeforgtk"; exit 1
 
 # --------------------------------------------------------------------------------
@@ -247,117 +247,132 @@ export V=1
 export CFLAGS="-I$INSTALL_DIR/include"
 
 # Hack in the -L options from libpng which are not recognized by the configure script (bug?):
-libpng_config_options="LDFLAGS=$(libpng-config --L_opts)"
+libpng_ldflags="$(libpng-config --L_opts)"
+
+# But libraries like libpng###.so will not be found at runtime unless you use an RPATH:
+#
+#   The reason Linux distributions do not use an RPATH is that they
+#   instead use ld.conf.so. You can see this via 
+#
+#      objdump -x path_to_some_executable | grep RPATH
+#
+#   Emacs on those distributions thus do not have an RPATH. See
+#   https://gcc.gnu.org/ml/gcc-help/2005-12/msg00017.html for details.
+#
+rpath_options="-Wl,-rpath=$INSTALL_DIR/lib"
+
+# Sigh. You cannot pass LDFLAGS to the ./configure command line. It
+# does some weird expansion and trips up on it. So we HAVE to export
+# it as an environment variable:
+export LDFLAGS="$libpng_ldflags $rpath_options"
 
 # Disable libgif for now (why it is listed as an "X" for X11 in the
 # INSTALL file I don't know). Are playing gifs inside Emacs really
 # necessary?
 libgif_config_options="--with-gif=no"
 
-DownloadExtractBuildGnuPackage emacs "$libgif_config_options $tiff_config_options $libpng_config_options"
+DownloadExtractBuildGnuPackage emacs "$libgif_config_options;$tiff_config_options"
 
-# Experiment with the above using:
+# Experiment with:
 # bash -c '
 # export BUILD_DIR=$HOME/build/RHEL.6.8.x86_64.for_emacs;
 # export INSTALL_DIR=$HOME/install/RHEL.6.8.x86_64.for_emacs;
 # $HOME/bgoodr/build-locally/packages/emacs/linux/build.bash -clean
 # '
-echo debug exit; exit 0
 
-
-
-
-
-
-
-
-# --------------------------------------------------------------------------------
-# OLD STUFF BELOW:
-# My intent is to just get the latest stable release downloaded and not work from top of trunk.
-# The reason is that there is no way to check out a tag from a git repo without downloading all of it (e.g., without using --depth 1).
-# --------------------------------------------------------------------------------
- 
-# --------------------------------------------------------------------------------
-# Check out the source for emacs into the build directory:
-# --------------------------------------------------------------------------------
-packageSubDir=emacs
-
-echo "TODO: find the latest stable release via some heuristic here"
-DownloadPackageFromGitRepo git://git.savannah.gnu.org/emacs.git $packageSubDir fullcheckout
-
-PrintRun cd $packageSubDir
-
-# --------------------------------------------------------------------------------
-# Configure
-# --------------------------------------------------------------------------------
-echo "Configuring ..."
-
-# Disable some code I would like to delete to see if it is still an issue on RHEL 6.8:
+# Skip code I plan on deleting eventually:
 if false
 then
+  # --------------------------------------------------------------------------------
+  # OLD STUFF BELOW:
+  # My intent is to just get the latest stable release downloaded and not work from top of trunk.
+  # The reason is that there is no way to check out a tag from a git repo without downloading all of it (e.g., without using --depth 1).
+  # --------------------------------------------------------------------------------
+  
+  # --------------------------------------------------------------------------------
+  # Check out the source for emacs into the build directory:
+  # --------------------------------------------------------------------------------
+  packageSubDir=emacs
 
-  cat <<EOF
+  echo "TODO: find the latest stable release via some heuristic here"
+  DownloadPackageFromGitRepo git://git.savannah.gnu.org/emacs.git $packageSubDir fullcheckout
+
+  PrintRun cd $packageSubDir
+
+  # --------------------------------------------------------------------------------
+  # Configure
+  # --------------------------------------------------------------------------------
+  echo "Configuring ..."
+
+  # Disable some code I would like to delete to see if it is still an issue on RHEL 6.8:
+  if false
+  then
+
+    cat <<EOF
 TODO: Rip out the following code that tries to use system supplied gtk libraries as they no longer work on RHEL6 because of this error
   configure: error: Package 'gobject-2.0', required by 'gdk-pixbuf-2.0', not found
 EOF
-  exit 1
+    exit 1
 
-  # Allow system supplied gtk libraries to also be found by pkg-config
-  # versus our locally built pkg-config that does not also read from the
-  # system-supplied .pc files. This may also solve problems finding
-  # other system-supplied packages that I am choosing not to build in
-  # the near term:
+    # Allow system supplied gtk libraries to also be found by pkg-config
+    # versus our locally built pkg-config that does not also read from the
+    # system-supplied .pc files. This may also solve problems finding
+    # other system-supplied packages that I am choosing not to build in
+    # the near term:
 
-  # Our local pkg-config PKG_CONFIG_PATH value:
-  local_pkg_config_path=$(pkg-config --variable pc_path pkg-config)
-  echo "local_pkg_config_path==\"${local_pkg_config_path}\""
+    # Our local pkg-config PKG_CONFIG_PATH value:
+    local_pkg_config_path=$(pkg-config --variable pc_path pkg-config)
+    echo "local_pkg_config_path==\"${local_pkg_config_path}\""
 
-  # The system-supplied pkg-config PKG_CONFIG_PATH value:
-  system_pkg_config_path=$(PATH=$(echo "$PATH" | sed 's%'"$INSTALL_DIR/bin":'%%g'); pkg-config --variable pc_path pkg-config)
-  if [ -z "$system_pkg_config_path" ]
-  then
-    # pkg-config on RHEL6 does not return anything. Hack in something that might work and pray:
-    system_pkg_config_path=/usr/lib/pkgconfig:/usr/share/pkgconfig
-    echo "WARNING: System-supplied buggy pkg-config that returns nothing for 'pkg-config --variable pc_path pkg-config'. Hacking around it with: $system_pkg_config_path"
+    # The system-supplied pkg-config PKG_CONFIG_PATH value:
+    system_pkg_config_path=$(PATH=$(echo "$PATH" | sed 's%'"$INSTALL_DIR/bin":'%%g'); pkg-config --variable pc_path pkg-config)
+    if [ -z "$system_pkg_config_path" ]
+    then
+      # pkg-config on RHEL6 does not return anything. Hack in something that might work and pray:
+      system_pkg_config_path=/usr/lib/pkgconfig:/usr/share/pkgconfig
+      echo "WARNING: System-supplied buggy pkg-config that returns nothing for 'pkg-config --variable pc_path pkg-config'. Hacking around it with: $system_pkg_config_path"
+    fi
+    echo "system_pkg_config_path==\"${system_pkg_config_path}\""
+
+    export PKG_CONFIG_PATH="$local_pkg_config_path:$system_pkg_config_path"
+    echo PKG_CONFIG_PATH now is ...
+    echo "${PKG_CONFIG_PATH}" | tr : '\012'
+    
   fi
-  echo "system_pkg_config_path==\"${system_pkg_config_path}\""
 
-  export PKG_CONFIG_PATH="$local_pkg_config_path:$system_pkg_config_path"
-  echo PKG_CONFIG_PATH now is ...
-  echo "${PKG_CONFIG_PATH}" | tr : '\012'
+  echo debug exit; exit 0
+
+  # The distclean command will fail if there the top-level Makefile has not yet been generated:
+  if [ -f Makefile ]
+  then
+    PrintRun make distclean
+  fi
+
+
+  # Per the GNUmakefile which takes precedence over the Makefile:
+  # "This GNUmakefile is for GNU Make.  It is for convenience, so
+  # that one can run 'make' in an unconfigured source tree.  In such
+  # a tree, ....". Therefore, build the configure script using that
+  # GNUmakefile first:
+  PrintRun make configure
+
+  # Run configure:
+  PrintRun ./configure --prefix="$INSTALL_DIR" --with-x-toolkit $xft_option $svg_config_options $gif_config_options $tiff_config_options 
+
+  # --------------------------------------------------------------------------------
+  # Build:
+  # --------------------------------------------------------------------------------
+  echo "Building ..."
+  PrintRun make
+
+  # --------------------------------------------------------------------------------
+  # Install:
+  # --------------------------------------------------------------------------------
+  echo "Installing ..."
+  PrintRun make install
+
   
 fi
-
-echo debug exit; exit 0
-
-# The distclean command will fail if there the top-level Makefile has not yet been generated:
-if [ -f Makefile ]
-then
-  PrintRun make distclean
-fi
-
-
-# Per the GNUmakefile which takes precedence over the Makefile:
-# "This GNUmakefile is for GNU Make.  It is for convenience, so
-# that one can run 'make' in an unconfigured source tree.  In such
-# a tree, ....". Therefore, build the configure script using that
-# GNUmakefile first:
-PrintRun make configure
-
-# Run configure:
-PrintRun ./configure --prefix="$INSTALL_DIR" --with-x-toolkit $xft_option $svg_config_options $gif_config_options $tiff_config_options 
-
-# --------------------------------------------------------------------------------
-# Build:
-# --------------------------------------------------------------------------------
-echo "Building ..."
-PrintRun make
-
-# --------------------------------------------------------------------------------
-# Install:
-# --------------------------------------------------------------------------------
-echo "Installing ..."
-PrintRun make install
 
 # --------------------------------------------------------------------------------
 # Testing:
@@ -380,14 +395,15 @@ then
 fi
 
 # Determine the actual version we built:
-actual_emacs_version=$($emacsExe --batch --quick --eval '(prin1 emacs-version t)' | tr -d '"')
+actual_emacs_version=$($emacsExe --batch --quick --eval '(prin1 emacs-version t)')
 
-# Trim off the final number. That last number gets tacked on by
+# Use the first two numbers of the version. The 3rd and subsequent numbers gets added by
 # something in the build (how? the makefiles are obfuscated) and we
 # don't care about that. And if you run make then make install, that
 # number gets bumped again.
-echo "Original actual_emacs_version is \"${actual_emacs_version}\" but we are ripping off the last number which gets incremented in each local build."
-actual_emacs_version=$(echo "$actual_emacs_version" | sed 's%^\([0-9]*.[0-9]*.[0-9]*\).[0-9]*$%\1%g')
+echo "Original actual_emacs_version is \"${actual_emacs_version}\"."
+actual_emacs_version=$(echo "$actual_emacs_version" | sed -e 's/"//g' -e 's%^\([0-9]*\.[0-9]*\).*$%\1%g' )
+echo "Trimmed actual_emacs_version is \"${actual_emacs_version}\"."
 
 # Now compare:
 if [ "$expected_emacs_version" != "$actual_emacs_version" ]
