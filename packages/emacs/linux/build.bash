@@ -7,6 +7,7 @@ dollar0=`which $0`; PACKAGE_DIR=$(cd $(dirname $dollar0); pwd) # NEVER export PA
 # Set defaults for BUILD_DIR and INSTALL_DIR environment variables and
 # utility functions such as BuildDependentPackage:
 . $PACKAGE_DIR/../../../support-files/build_platform_util.bash
+. $PACKAGE_DIR/../../../support-files/pkg_config_util.bash
 
 CLEAN=0
 while [ $# -gt 0 ]
@@ -272,46 +273,12 @@ export LDFLAGS="$libpng_ldflags $rpath_options"
 # necessary?
 libgif_config_options="--with-gif=no"
 
-# Allow system supplied gtk libraries to also be found by pkg-config
-# versus our locally built pkg-config that does not also read from the
-# system-supplied .pc files. This may also solve problems finding
-# other system-supplied packages that I am choosing not to build in
-# the near term:
+# Add system-defined directories to PKG_CONFIG_PATH:
 #
-#   Specifically, this is to pick up fontconfig which is needed by xft
-#   which is needed in order to display better fonts.
+#   This is needed in order to find xft and fontconfig packages (maybe
+#   more than that):
 #
-#   The alternative is to build both xft and all of its dependencies
-#   but let's see if we can get by with this approach first:
-#
-# Our local pkg-config PKG_CONFIG_PATH value:
-local_pkg_config_path=$(pkg-config --variable pc_path pkg-config)
-echo "local_pkg_config_path==\"${local_pkg_config_path}\""
-
-# The system-supplied pkg-config PKG_CONFIG_PATH value:
-system_pkg_config_path=$(/usr/bin/pkg-config --variable pc_path pkg-config)
-if [ -z "$system_pkg_config_path" ]
-then
-  # pkg-config on RHEL6 does not return anything. Try to extract the
-  # path by forcing the buggy pkg-config on RHEL6 to give us the value
-  # of "pc_path"
-  system_pkg_config_path=$(/usr/bin/pkg-config --debug 2>&1 | \
-    sed -n "s%Will find package '[^']*' in file '\([^']*\)'%\1%gp" | \
-    xargs -n1 dirname | \
-    uniq | \
-    tr '\012' :)
-  echo "WARNING: System-supplied buggy pkg-config that returns nothing for 'pkg-config --variable pc_path pkg-config'. Hacking around it with: $system_pkg_config_path"
-fi
-echo "system_pkg_config_path==\"${system_pkg_config_path}\""
-
-export PKG_CONFIG_PATH="$local_pkg_config_path:$system_pkg_config_path"
-echo "PKG_CONFIG_PATH now is ... ${PKG_CONFIG_PATH}"
-# set -x
-# which pkg-config
-# pkg-config --exists --print-errors "xft >= 0.13.0"
-# echo exitcode $?
-# pkg-config --cflags "xft >= 0.13.0"
-# echo "debug exit"; exit 1
+Add_System_Defined_PKG_CONFIG_PATH
 
 DownloadExtractBuildGnuPackage emacs "$libgif_config_options;$tiff_config_options;$xft_option"
 
