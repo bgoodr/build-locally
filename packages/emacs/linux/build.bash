@@ -96,26 +96,27 @@ then
   echo "       On Ubuntu, maybe the package is x11proto-core-dev"
 fi
 
-svg_config_options="--without-rsvg"
-if [ "$DO_SVG" = 1 ]
-then
-  svg_config_options=""
-  # From http://linux.derkeiler.com/Mailing-Lists/Debian/2008-12/msg02185.html
-  # we see:
-  #
-  #  Assuming that you have a suitable deb-src line in your sources.list, you
-  #  can simply use "apt-get build-dep emacs22" to install the needed
-  #  packages. You also may want to install librsvg2-dev and libdbus-1-dev
-  #  for SVG and Dbus support that is new in Emacs 23.
-  files=`ls -d /usr/include/librsvg*/librsvg/rsvg.h 2>/dev/null`
-  if [ -z "$files" ]
-  then
-    echo "ERROR: rsvg.h header is missing from the system."
-    echo "       On Debian, maybe the package is librsvg2-dev"
-    echo "       On RHEL, maybe the package is librsvg2-devel"
-    exit 1
-  fi
-fi
+# Disabled svg_config_options code for now as it does not seem to adversely impact the build:
+# svg_config_options="--without-rsvg"
+# if [ "$DO_SVG" = 1 ]
+# then
+#   svg_config_options=""
+#   # From http://linux.derkeiler.com/Mailing-Lists/Debian/2008-12/msg02185.html
+#   # we see:
+#   #
+#   #  Assuming that you have a suitable deb-src line in your sources.list, you
+#   #  can simply use "apt-get build-dep emacs22" to install the needed
+#   #  packages. You also may want to install librsvg2-dev and libdbus-1-dev
+#   #  for SVG and Dbus support that is new in Emacs 23.
+#   files=`ls -d /usr/include/librsvg*/librsvg/rsvg.h 2>/dev/null`
+#   if [ -z "$files" ]
+#   then
+#     echo "ERROR: rsvg.h header is missing from the system."
+#     echo "       On Debian, maybe the package is librsvg2-dev"
+#     echo "       On RHEL, maybe the package is librsvg2-devel"
+#     exit 1
+#   fi
+# fi
 
 if [ ! -f /usr/include/dbus-1.0/dbus/dbus.h ]
 then
@@ -271,7 +272,48 @@ export LDFLAGS="$libpng_ldflags $rpath_options"
 # necessary?
 libgif_config_options="--with-gif=no"
 
-DownloadExtractBuildGnuPackage emacs "$libgif_config_options;$tiff_config_options"
+# Allow system supplied gtk libraries to also be found by pkg-config
+# versus our locally built pkg-config that does not also read from the
+# system-supplied .pc files. This may also solve problems finding
+# other system-supplied packages that I am choosing not to build in
+# the near term:
+#
+#   Specifically, this is to pick up fontconfig which is needed by xft
+#   which is needed in order to display better fonts.
+#
+#   The alternative is to build both xft and all of its dependencies
+#   but let's see if we can get by with this approach first:
+#
+# Our local pkg-config PKG_CONFIG_PATH value:
+local_pkg_config_path=$(pkg-config --variable pc_path pkg-config)
+echo "local_pkg_config_path==\"${local_pkg_config_path}\""
+
+# The system-supplied pkg-config PKG_CONFIG_PATH value:
+system_pkg_config_path=$(/usr/bin/pkg-config --variable pc_path pkg-config)
+if [ -z "$system_pkg_config_path" ]
+then
+  # pkg-config on RHEL6 does not return anything. Try to extract the
+  # path by forcing the buggy pkg-config on RHEL6 to give us the value
+  # of "pc_path"
+  system_pkg_config_path=$(/usr/bin/pkg-config --debug 2>&1 | \
+    sed -n "s%Will find package '[^']*' in file '\([^']*\)'%\1%gp" | \
+    xargs -n1 dirname | \
+    uniq | \
+    tr '\012' :)
+  echo "WARNING: System-supplied buggy pkg-config that returns nothing for 'pkg-config --variable pc_path pkg-config'. Hacking around it with: $system_pkg_config_path"
+fi
+echo "system_pkg_config_path==\"${system_pkg_config_path}\""
+
+export PKG_CONFIG_PATH="$local_pkg_config_path:$system_pkg_config_path"
+echo "PKG_CONFIG_PATH now is ... ${PKG_CONFIG_PATH}"
+# set -x
+# which pkg-config
+# pkg-config --exists --print-errors "xft >= 0.13.0"
+# echo exitcode $?
+# pkg-config --cflags "xft >= 0.13.0"
+# echo "debug exit"; exit 1
+
+DownloadExtractBuildGnuPackage emacs "$libgif_config_options;$tiff_config_options;$xft_option"
 
 # Experiment with:
 # bash -c '
