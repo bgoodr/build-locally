@@ -7,6 +7,7 @@ dollar0=`which $0`; PACKAGE_DIR=$(cd $(dirname $dollar0); pwd) # NEVER export PA
 # Set defaults for BUILD_DIR and INSTALL_DIR environment variables and
 # define utility functions such as BuildDependentPackage:
 . $PACKAGE_DIR/../../../support-files/build_platform_util.bash
+. $PACKAGE_DIR/../../../support-files/pkg_config_util.bash
 
 CLEAN=0
 while [ $# -gt 0 ]
@@ -104,6 +105,34 @@ PrintRun cd $packageSubDir
 # --------------------------------------------------------------------------------
 echo "Configuring ..."
 
+# Add system-defined directories to PKG_CONFIG_PATH:
+#
+#   This is needed in order to find xft and fontconfig packages (maybe
+#   more than that):
+#
+Add_System_Defined_PKG_CONFIG_PATH
+
+# HACK: Some system administrator or something moved some things aside in
+# /usr/include on my RHEL machines so apply some hacks for now until I
+# can figure out why that was done:
+add_hacked_include=0
+if [ ! -d /usr/include/openssl -a -d /usr/include/openssl.ORIG ]
+then
+  mkdir -p hacked.include
+  ln -s /usr/include/openssl.ORIG hacked.include/openssl
+  add_hacked_include=1
+fi
+if [ ! -f /usr/include/zlib.h -a -f /usr/include/zlib.h.ORIG ]
+then
+  mkdir -p hacked.include
+  ln -s /usr/include/zlib.h.ORIG hacked.include/zlib.h
+  add_hacked_include=1
+fi
+if [ $add_hacked_include = 1 ]
+then
+  export CFLAGS+=" -I$(pwd)/hacked.include"
+fi
+
 PrintRun make configure
 if [ ! -f ./configure ]
 then
@@ -116,6 +145,10 @@ PrintRun ./configure --prefix="$INSTALL_DIR"
 # Build:
 # --------------------------------------------------------------------------------
 echo "Building ..."
+
+# Emit the compiler command lines:
+export V=1
+
 PrintRun make all doc info
 
 # --------------------------------------------------------------------------------
