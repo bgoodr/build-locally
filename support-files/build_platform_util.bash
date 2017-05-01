@@ -386,18 +386,6 @@ ConfigureAutoconfBasedPackage () {
   local -a configure_options_arr
   IFS=';' read -a configure_options_arr <<< "$configure_options"
   PrintRun ./configure "${configure_options_arr[@]}" --prefix="$INSTALL_DIR"
-
-  # --------------------------------------------------------------------------------
-  # Building:
-  # --------------------------------------------------------------------------------
-  echo "Building ..."
-  PrintRun make
-
-  # --------------------------------------------------------------------------------
-  # Installing:
-  # --------------------------------------------------------------------------------
-  echo "Installing ..."
-  PrintRun make install
 }
 
 BuildAutoconfBasedPackage () {
