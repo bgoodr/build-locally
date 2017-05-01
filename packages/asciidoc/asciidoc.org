@@ -1,0 +1,152 @@
+* Build notes for asciidoc
+
+ 1. direct link:
+    https://downloads.sourceforge.net/project/asciidoc/asciidoc/8.6.9/asciidoc-8.6.9.tar.gz?r=https%3A%2F%2Fsourceforge.net%2Fprojects%2Fasciidoc%2F%3Fsource%3Dtyp_redirect&ts=1493597618&use_mirror=pilotfiber
+ 2. trimmed:
+    https://downloads.sourceforge.net/project/asciidoc/asciidoc/8.6.9/asciidoc-8.6.9.tar.gz
+ 3. [X] https://unix.stackexchange.com/questions/86971/how-do-i-download-from-sourceforge-with-wget
+    #+BEGIN_EXAMPLE
+    You have a %22 (") at the end of the URL. I had no problems with wget 'http://downloads.sourceforge.net/project/romfs/genromfs/0.5‌​.2/genromfs-0.5.2.ta‌​r.gz' – Matteo Feb 15 at 10:05 
+    #+END_EXAMPLE
+ 4. [X] curl command gotten from the browser:
+    #+NAME: 6264fff1-3edf-4851-8846-45492706cf21
+    #+BEGIN_SRC bash :results verbatim
+      uuid=6264fff1-3edf-4851-8846-45492706cf21
+      exec 2>&1
+nn      curl \
+        --header 'Host: managedway.dl.sourceforge.net' \
+        --header 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0' \
+        --header 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' \
+        --header 'Accept-Language: en-US,en;q=0.5' \
+        --header 'Referer: https://sourceforge.net/projects/asciidoc/files/latest/download' \
+        --header 'Cookie: _ga=GA1.2.1780494571.1488820387; _gat=1' \
+        --header 'Connection: keep-alive' \
+        --header 'Upgrade-Insecure-Requests: 1' 'https://managedway.dl.sourceforge.net/project/asciidoc/asciidoc/8.6.9/asciidoc-8.6.9.tar.gz' \
+        -o 'asciidoc-8.6.9.tar.gz' -L
+      exit 0
+    #+END_SRC
+ 5. [X] try to download the web page to find the latest version:
+    #+NAME: 38276bd0-98a4-4969-a00c-5e8295bc77c9
+    #+BEGIN_SRC bash :results verbatim
+    uuid=38276bd0-98a4-4969-a00c-5e8295bc77c9
+    exec 2>&1
+    wget -O - 'https://sourceforge.net/projects/asciidoc/?source=typ_redirect' 2>&1 | grep -C3 '\.zip'
+    exit 0
+    #+END_SRC
+
+    #+RESULTS: 38276bd0-98a4-4969-a00c-5e8295bc77c9
+    #+begin_example
+
+
+
+    <a href="/projects/asciidoc/files/latest/download?source=typ_redirect" title="Download /asciidoc/8.6.9/asciidoc-8.6.9.zip from SourceForge  - 1.4 MB" class="sfdl ">
+
+            <span>
+                <b>Download</b>
+                <small >asciidoc-8.6.9.zip</small>
+            </span>
+
+    </a>
+    #+end_example
+
+ 6. [X] experiment with sed to scrape out the version:
+    #+NAME: cbfef3ab-a5e0-40bb-a117-b7954aee5460
+    #+BEGIN_SRC bash :results verbatim
+    uuid=cbfef3ab-a5e0-40bb-a117-b7954aee5460
+    exec 2>&1
+    echo '    <a href="/projects/asciidoc/files/latest/download?source=typ_redirect" title="Download /asciidoc/8.6.9/asciidoc-8.6.9.zip from SourceForge  - 1.4 MB" class="sfdl "> ' | \
+    sed -n 's%^.*/asciidoc/\([0-9.]*\)/.*$%\1%gp'
+    exit 0
+    #+END_SRC
+
+    #+RESULTS: cbfef3ab-a5e0-40bb-a117-b7954aee5460
+    : 8.6.9
+
+ 7. [X] scrape the version directly
+    #+NAME: 8cdb3a7c-9dcf-44b5-9046-92b697c1f943
+    #+BEGIN_SRC bash :results verbatim
+    uuid=8cdb3a7c-9dcf-44b5-9046-92b697c1f943
+    exec 2>&1
+    wget -O - 'https://sourceforge.net/projects/asciidoc/?source=typ_redirect' 2>&1 | sed -n 's%^.*/asciidoc/\([0-9.]*\)/.*$%\1%gp'
+    exit 0
+    #+END_SRC
+
+    #+RESULTS: 8cdb3a7c-9dcf-44b5-9046-92b697c1f943
+    : 8.6.9
+
+ 8. [X] download:
+    #+NAME: de0d0931-c07c-4401-ae59-22e86fa3d754
+    #+BEGIN_SRC bash :results verbatim
+    uuid=de0d0931-c07c-4401-ae59-22e86fa3d754
+    exec 2>&1
+    version=$(wget -O - 'https://sourceforge.net/projects/asciidoc/?source=typ_redirect' 2>&1 | sed -n 's%^.*/asciidoc/\([0-9.]*\)/.*$%\1%gp')
+    wget -O /tmp/thefile.tar.gz https://downloads.sourceforge.net/project/asciidoc/asciidoc/$version/asciidoc-$version.tar.gz
+    ls -ld /tmp/thefile.tar.gz
+    exit 0
+    #+END_SRC
+
+    #+RESULTS: de0d0931-c07c-4401-ae59-22e86fa3d754
+    #+begin_example
+    --2017-04-30 17:29:21--  https://downloads.sourceforge.net/project/asciidoc/asciidoc/8.6.9/asciidoc-8.6.9.tar.gz
+    Resolving downloads.sourceforge.net... 216.34.181.59
+    Connecting to downloads.sourceforge.net|216.34.181.59|:443... connected.
+    HTTP request sent, awaiting response... 302 Found
+    Location: https://cytranet.dl.sourceforge.net/project/asciidoc/asciidoc/8.6.9/asciidoc-8.6.9.tar.gz [following]
+    --2017-04-30 17:29:22--  https://cytranet.dl.sourceforge.net/project/asciidoc/asciidoc/8.6.9/asciidoc-8.6.9.tar.gz
+    Resolving cytranet.dl.sourceforge.net... 74.82.59.181
+    Connecting to cytranet.dl.sourceforge.net|74.82.59.181|:443... connected.
+    HTTP request sent, awaiting response... 200 OK
+    Length: 907253 (886K) [application/x-gzip]
+    Saving to: “/tmp/thefile.tar.gz”
+
+         0K .......... .......... .......... .......... ..........  5% 2.24M 0s
+        50K .......... .......... .......... .......... .......... 11% 2.31M 0s
+       100K .......... .......... .......... .......... .......... 16% 29.5M 0s
+       150K .......... .......... .......... .......... .......... 22% 2.22M 0s
+       200K .......... .......... .......... .......... .......... 28% 3.80M 0s
+       250K .......... .......... .......... .......... .......... 33% 9.79M 0s
+       300K .......... .......... .......... .......... .......... 39% 2.79M 0s
+       350K .......... .......... .......... .......... .......... 45% 2.33M 0s
+       400K .......... .......... .......... .......... .......... 50% 2.39M 0s
+       450K .......... .......... .......... .......... .......... 56% 2.39M 0s
+       500K .......... .......... .......... .......... .......... 62% 36.4M 0s
+       550K .......... .......... .......... .......... .......... 67% 2.29M 0s
+       600K .......... .......... .......... .......... .......... 73% 2.44M 0s
+       650K .......... .......... .......... .......... .......... 79% 19.5M 0s
+       700K .......... .......... .......... .......... .......... 84% 2.61M 0s
+       750K .......... .......... .......... .......... .......... 90% 2.40M 0s
+       800K .......... .......... .......... .......... .......... 95% 2.40M 0s
+       850K .......... .......... .......... .....                100% 60.9M=0.3s
+
+    2017-04-30 17:29:22 (3.22 MB/s) - “/tmp/thefile.tar.gz” saved [907253/907253]
+
+    -rw-rw-r-- 1 brentg calengr 907253 Nov  8  2013 /tmp/thefile.tar.gz
+    #+end_example
+
+ 9. [X] Verify it is a tar file:
+    #+NAME: ba3f4463-c083-48e7-adbb-52684d12469a
+    #+BEGIN_SRC bash :results verbatim
+      uuid=ba3f4463-c083-48e7-adbb-52684d12469a
+      exec 2>&1
+      version=$(wget -O - 'https://sourceforge.net/projects/asciidoc/?source=typ_redirect' 2>&1 | sed -n 's%^.*/asciidoc/\([0-9.]*\)/.*$%\1%gp')
+      # wget -O /tmp/thefile.tar.gz https://downloads.sourceforge.net/project/asciidoc/asciidoc/$version/asciidoc-$version.tar.gz
+      tar tvf /tmp/thefile.tar.gz | head
+      exit 0
+    #+END_SRC
+
+      #+RESULTS: ba3f4463-c083-48e7-adbb-52684d12469a
+      #+begin_example
+      -rwxrwxr-x srackham/srackham 36995 2013-11-05 16:31 asciidoc-8.6.9/a2x.py
+      -rwxrwxr-x srackham/srackham 254202 2013-11-06 13:33 asciidoc-8.6.9/asciidoc.py
+      -rw-rw-r-- srackham/srackham   8424 2012-09-27 16:34 asciidoc-8.6.9/asciidocapi.py
+      -rw-r--r-- srackham/srackham   1145 2013-11-05 19:05 asciidoc-8.6.9/BUGS
+      -rw-rw-r-- srackham/srackham    785 2012-09-27 16:34 asciidoc-8.6.9/BUGS.txt
+      -rw-rw-r-- srackham/srackham   1739 2012-12-30 16:48 asciidoc-8.6.9/MANIFEST
+      -rw-r--r-- srackham/srackham   2745 2011-02-16 11:03 asciidoc-8.6.9/main.aap
+      -rw-rw-r-- srackham/srackham    124 2013-11-05 16:28 asciidoc-8.6.9/common.aap
+      -rw-r--r-- srackham/srackham 179857 2013-11-05 19:05 asciidoc-8.6.9/CHANGELOG
+      -rw-rw-r-- srackham/srackham 153265 2013-11-05 16:29 asciidoc-8.6.9/CHANGELOG.txt
+      #+end_example
+
+
+
