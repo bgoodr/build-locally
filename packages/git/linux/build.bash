@@ -49,8 +49,12 @@ VerifyOperatingSystemPackageContainingFile 'Debian|Ubuntu' libexpat1-dev /usr/in
 VerifyOperatingSystemPackageContainingFile 'Debian|Ubuntu' gettext /usr/bin/msgcat
 VerifyOperatingSystemPackageContainingFile 'Debian|Ubuntu' libssl-dev /usr/include/openssl/ssl.h
 VerifyOperatingSystemPackageContainingFile 'Debian|Ubuntu' zlib1g-dev /usr/include/zlib.h
-VerifyOperatingSystemPackageContainingFile 'Debian|Ubuntu' asciidoc /usr/bin/asciidoc
 VerifyOperatingSystemPackageContainingFile 'Debian|Ubuntu' docbook2x /usr/bin/docbook2x-texi
+
+# --------------------------------------------------------------------------------
+# Build required dependent packages:
+# --------------------------------------------------------------------------------
+BuildDependentPackage asciidoc bin/asciidoc.py
 
 # --------------------------------------------------------------------------------
 # Create build directory structure:
