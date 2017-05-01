@@ -371,10 +371,14 @@ ConfigureAutoconfBasedPackage () {
   # Configuring:
   # --------------------------------------------------------------------------------
   echo "Configuring ..."
-  # The distclean command will fail if there the top-level Makefile has not yet been generated:
+  # The distclean command will fail if the top-level Makefile has not yet been generated:
   if [ -f Makefile ]
   then
-    PrintRun make distclean
+    # But don't trip up over Makefiles that do not have the distclean rule defined:
+    if grep distclean Makefile >/dev/null
+    then
+      PrintRun make distclean
+    fi
   fi
   if [ ! -f configure ]
   then
