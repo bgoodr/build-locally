@@ -13,7 +13,7 @@
     #+BEGIN_SRC bash :results verbatim
       uuid=6264fff1-3edf-4851-8846-45492706cf21
       exec 2>&1
-nn      curl \
+      curl \
         --header 'Host: managedway.dl.sourceforge.net' \
         --header 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0' \
         --header 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' \
