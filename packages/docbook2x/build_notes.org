@@ -32,7 +32,7 @@
       make: *** [Makefile:255: check-recursive] Error 1
     #+END_EXAMPLE
     So I disabled it in linux/build.bash with the hope that this works well enough to allow the git package to build.
- 4. [-] But then later on I still got the error during git builds of:
+ 4. [X] But then later on I still got the error during git builds of:
     #+BEGIN_EXAMPLE
       mv user-manual.texi+ user-manual.texi
       /bin/sh: line 1: docbook2x-texi: command not found
@@ -42,7 +42,7 @@
     #+END_EXAMPLE
       So what I built here is not what git was needing.
     reading on the web it looks like it is a complete mess. Found https://linuxfollies.blogspot.com/2015/11/docbook2x-texi.html that suggests changing the git build logic to point to a new version.
-    1. [-] Try:
+    1. [X] Try:
        #+NAME: ae8d7cd4-5ba0-4a3a-b80b-242d71ddef81
        #+BEGIN_SRC bash :results verbatim
          uuid=ae8d7cd4-5ba0-4a3a-b80b-242d71ddef81
@@ -75,6 +75,6 @@
        1. [X] Searches for that turn up fixes involving creating some
           xmlcatalog. I give up. This is way WAY too complex.
 
-       2. [ ] Just disable that build rule from inside the git builds
+       2. [X] Just disable that build rule from inside the git builds
           just so we can get past it.
 
