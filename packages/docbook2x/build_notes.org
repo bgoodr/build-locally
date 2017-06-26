@@ -32,3 +32,49 @@
       make: *** [Makefile:255: check-recursive] Error 1
     #+END_EXAMPLE
     So I disabled it in linux/build.bash with the hope that this works well enough to allow the git package to build.
+ 4. [-] But then later on I still got the error during git builds of:
+    #+BEGIN_EXAMPLE
+      mv user-manual.texi+ user-manual.texi
+      /bin/sh: line 1: docbook2x-texi: command not found
+      make[1]: *** [Makefile:363: user-manual.texi] Error 127
+      make[1]: Leaving directory '/home/theuser/build/RHEL.6.8.x86_64/git/git-2.9.4/Documentation'
+      make: *** [Makefile:2059: info] Error 2
+    #+END_EXAMPLE
+      So what I built here is not what git was needing.
+    reading on the web it looks like it is a complete mess. Found https://linuxfollies.blogspot.com/2015/11/docbook2x-texi.html that suggests changing the git build logic to point to a new version.
+    1. [-] Try:
+       #+NAME: ae8d7cd4-5ba0-4a3a-b80b-242d71ddef81
+       #+BEGIN_SRC bash :results verbatim
+         uuid=ae8d7cd4-5ba0-4a3a-b80b-242d71ddef81
+         exec 2>&1
+         # ./Documentation/Makefile:120:DOCBOOK2X_TEXI = docbook2x-texi
+         # ./Documentation/Makefile:364:	$(DOCBOOK2X_TEXI) user-manual.xml --encoding=UTF-8 --to-stdout >$@++ && \
+
+         export INSTALL_DIR=$HOME/install/RHEL.6.8.x86_64.for_emacs
+         export PATH="$INSTALL_DIR/bin:/usr/bin:$PATH"
+         export BUILD_DIR=$HOME/build/RHEL.6.8.x86_64.for_emacs
+         export V=1
+
+         cd ~/build/RHEL.6.8.x86_64.for_emacs/git/git-2.9.4/Documentation
+         # ls -ld user-manual.xml
+         # make user-manual.texi
+         # docbook2x-texi user-manual.xml --encoding=UTF-8 --to-stdout >user-manual.texi++
+         # ls -ld $HOME/install/RHEL.6.8.x86_64.for_emacs/bin/doc*
+         # which docbook2texi
+         docbook2texi user-manual.xml --encoding=UTF-8 --to-stdout >tmp.user-manual.texi++
+         exit 0
+       #+END_SRC
+
+         #+RESULTS: ae8d7cd4-5ba0-4a3a-b80b-242d71ddef81
+         : I/O error : Attempt to load network entity http://docbook2x.sf.net/latest/xslt/texi/docbook.xsl
+         : warning: failed to load external entity "http://docbook2x.sf.net/latest/xslt/texi/docbook.xsl"
+         : cannot parse http://docbook2x.sf.net/latest/xslt/texi/docbook.xsl
+         : Empty Stream at /usr/lib64/perl5/XML/LibXML/SAX.pm line 80
+         :  at /home/theuser/install/RHEL.6.8.x86_64.for_emacs/bin/db2x_texixml line 2156
+
+       1. [X] Searches for that turn up fixes involving creating some
+          xmlcatalog. I give up. This is way WAY too complex.
+
+       2. [ ] Just disable that build rule from inside the git builds
+          just so we can get past it.
+

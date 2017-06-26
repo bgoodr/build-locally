@@ -54,7 +54,8 @@ VerifyOperatingSystemPackageContainingFile 'Debian|Ubuntu' zlib1g-dev /usr/inclu
 # Build required dependent packages:
 # --------------------------------------------------------------------------------
 BuildDependentPackage asciidoc bin/asciidoc.py
-BuildDependentPackage docbook2x bin/docbook2texi
+# Disable building info pages because docbook2x is buggy:
+#  BuildDependentPackage docbook2x bin/docbook2texi
 
 # --------------------------------------------------------------------------------
 # Create build directory structure:
@@ -144,6 +145,24 @@ then
   exit 1
 fi
 PrintRun ./configure --prefix="$INSTALL_DIR"
+
+# --------------------------------------------------------------------------------
+# Disable building info pages because the docbook2texi
+# (../../docbook2x/) we can build from source from sourceforge gives
+# some strange error which is incredibly difficult to fix:
+# --------------------------------------------------------------------------------
+pushd Documentation
+if [ ! -f Makefile.orig ]
+then
+  cp Makefile Makefile.orig
+fi
+info_content="DISABLED INFO PAGE CONSTRUCTION DUE TO IMPOSSIBLE TO FIX docbook2texi error: Attempt to load network entity http://docbook2x.sf.net/latest/xslt/texi/docbook.xsl"
+sed \
+  -e 's%^git.info: %git.info: # %g' \
+  -e 's%^gitman.info: %gitman.info: # %g' \
+  -e '/^	\$(QUIET_MAKEINFO)/s%^%	echo "'"$info_content"'" > $@    #%g' \
+  < Makefile.orig > Makefile
+popd
 
 # --------------------------------------------------------------------------------
 # Build:
