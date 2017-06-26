@@ -1,0 +1,34 @@
+* Build notes for docbook2x
+
+ 1. [X] Find build instructions:
+    1. Home page: http://docbook2x.sourceforge.net
+       1. http://docbook2x.sourceforge.net/latest/doc/install.html
+          1. http://docbook2x.sourceforge.net/latest/doc/dependencies.html
+          2. Official download link: http://downloads.sourceforge.net/docbook2x/docbook2X-0.8.8.tar.gz
+ 2. [X] Building a side build for testing using:
+    #+BEGIN_EXAMPLE
+      #!/bin/bash
+
+      PATH="/usr/bin:$PATH" \
+        INSTALL_DIR=$HOME/install/RHEL.6.8.x86_64.for_emacs \
+        BUILD_DIR=$HOME/build/RHEL.6.8.x86_64.for_emacs \
+        $HOME/bgoodr/build-locally/packages/docbook2x/linux/build.bash -clean
+    #+END_EXAMPLE
+    I had to insert /usr/bin into the PATH as my systems have an
+    old Perl that doesn't have the packages that are needed, and I
+    cannot remove that old Perl yet.
+ 3. [X] The "make check" fails with:
+    #+BEGIN_EXAMPLE
+      /usr/bin/perl ../../perl/db2x_texixml --utf8trans-program=../../utf8trans/utf8trans --utf8trans-map=../../charmaps/texi.charmap xml-catalogs-spec.txml
+      makeinfo --no-split at1.texi
+      at1.texi:4: warning: @settitle missing argument
+      at1.texi:6: warning: empty menu entry name in `* : (at1).                      '
+      at1.texi:874: raising the section level of @unnumberedsubsubsec which is too low
+      make[2]: *** [Makefile:354: at1.info] Error 1
+      rm dbtotexi.txml xml-catalogs-spec.txml at1.txml
+      make[2]: Leaving directory '/home/theuser/build/RHEL.6.8.x86_64/docbook2x/docbook2X-0.8.8/test/complete-manuals'
+      make[1]: *** [Makefile:214: check-recursive] Error 1
+      make[1]: Leaving directory '/home/theuser/build/RHEL.6.8.x86_64/docbook2x/docbook2X-0.8.8/test'
+      make: *** [Makefile:255: check-recursive] Error 1
+    #+END_EXAMPLE
+    So I disabled it in linux/build.bash with the hope that this works well enough to allow the git package to build.
