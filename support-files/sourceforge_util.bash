@@ -142,7 +142,6 @@ DownloadExtractSourceForgePackage () {
       #
       downloadURL="https://sourceforge.net/projects/$package/files/latest/download?source=typ_redirect"
       echo "Note: Downloading package from \"$downloadURL\""
-      echo "downloadURL==\"${downloadURL}\""
       set -o pipefail # http://unix.stackexchange.com/a/73180
       wget -O tmp_downloaded_file "$downloadURL" 2>&1 | tee download.log
       if [ $? != 0 ]
@@ -183,7 +182,6 @@ DownloadExtractSourceForgePackage () {
   # Get the subdir from the compressed_base_file:
   #
   subdir=$(apply_on_all_compressed_file_types get_extracted_subdir_from_compressed_file "$compressed_base_file")
-  echo "subdir==\"${subdir}\""
   if [ ! -d "$subdir" ]
   then
     apply_on_compressed_file_type extract_compressed_file "$compressed_base_file"
