@@ -8,9 +8,10 @@ ApplyPatch () {
   local toBePatchedFile=""
   for toBePatchedFile in $toBePatchedFiles
   do
+    echo "Note: Applying patchFile \"$patchFile\""
     if [ ! -f "$toBePatchedFile" ]
     then
-      echo "ASSERTION FAILED: toBePatchedFile $toBePatchedFile does not exist as expected (cwd is `pwd`) ."
+      echo "ASSERTION FAILED: patchFile \"$patchFile\" refers to a toBePatchedFile of \"$toBePatchedFile\" which does not exist as expected (cwd is `pwd`)."
       exit 1
     fi
     # Save off the original and apply it each time through, to allow re-execution:
