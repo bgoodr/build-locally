@@ -76,10 +76,11 @@ CreateAndChdirIntoBuildDir rdesktop
 
 echo "Note: Determining downloadable tarball URL ..."
 
-homePageURL='http://www.rdesktop.org/#download'
+homePageURL='https://github.com/rdesktop/rdesktop/releases/latest'
 homePageURLFile=""
 DownloadURLIntoLocalFile "$homePageURL" homePageURLFile
-downloadURL=$(cat $homePageURLFile | sed -n '/latest/,/http.*tar.gz/{ s/^.*href="\(.*\)".*$/\1/gp }')
+downloadBasePath=$(cat $homePageURLFile | sed -n '/tar.gz/{ s/^.*href="\([^"]*\)".*$/\1/gp }')
+downloadURL="https://github.com$downloadBasePath"
 if [ -z "$downloadURL" ]
 then
   echo "ERROR: Could not find download URL to latest stable release of rdesktop from $homePageURL"
@@ -97,7 +98,7 @@ then
   exit 1
 fi
 echo "version: ${version}"
-versionSubdir=$(echo "$tarballBase" | sed 's%\.tar\.gz$%%g')
+versionSubdir=$(tar tf $tarballBase | sed -n '/\//{ s%^\([^/]*\)/.*$%\1%gp; q; }')
 echo "versionSubdir==\"${versionSubdir}\""
 if [ -z "$versionSubdir" ]
 then
