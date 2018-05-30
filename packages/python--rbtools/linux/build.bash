@@ -35,6 +35,8 @@ do
   shift
 done
 
+echo "DISABLED: I no longer try to build rbtools from source but I just use Conda-based Python now"
+exit 1
 
 # --------------------------------------------------------------------------------
 # Build required dependent packages:
