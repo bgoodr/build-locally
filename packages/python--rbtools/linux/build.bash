@@ -35,6 +35,7 @@ do
   shift
 done
 
+
 # --------------------------------------------------------------------------------
 # Build required dependent packages:
 # --------------------------------------------------------------------------------
@@ -49,10 +50,12 @@ CreateAndChdirIntoBuildDir python--rbtools
 if [ "$CLEAN" = 1 ]
 then
   find $INSTALL_DIR/lib/python*/site-packages -name 'RBTools*' | xargs -n5 rm -rf
-  rm -f $INSTALL_DIR/RHEL.6.4.x86_64/bin"
+  ##### No, we do not want to do this at all --> rm -f $INSTALL_DIR/RHEL.6.4.x86_64/bin
+  
   # TODO: During the install, we see "Adding RBTools 0.6.2 to
   # easy-install.pth file". So how do we remove the egg from the .pth
   # file cleanly?
+  
 fi
 
 # Avoid installing into the system defined Python (which cannot work
