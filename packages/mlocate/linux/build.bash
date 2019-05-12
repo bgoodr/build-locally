@@ -1,9 +1,6 @@
 #!/bin/bash
 # -*-mode: Shell-script; indent-tabs-mode: nil; sh-basic-offset: 2 -*-
 
-echo "ERROR: This does not work yet. The build instructions for mlocate are nonfunctional as of Sun May 12 12:42:28 PDT 2019"
-exit 1
-
 # Find the base directory while avoiding subtle variations in $0:
 dollar0=`which $0`; PACKAGE_DIR=$(cd $(dirname $dollar0); pwd) # NEVER export PACKAGE_DIR
 
@@ -53,6 +50,34 @@ BuildDependentPackage automake bin/automake
 # Create build directory structure:
 # --------------------------------------------------------------------------------
 CreateAndChdirIntoBuildDir mlocate
+
+# --------------------------------------------------------------------------------
+# Download and build tarball into the build directory:
+# --------------------------------------------------------------------------------
+GetDebianSourcePackageTarBalls mlocate testing tarballs
+
+debianFiles=""
+ExtractDebianSourcePackageTarBall "$tarballs" '.*debian\.tar\.gz$' '^debian$' debianFiles
+
+origFiles=""
+ExtractDebianSourcePackageTarBall "$tarballs" '.*orig\.tar\.gz$' '^mlocate-[0-9.]*$' origFiles
+
+wwwFiles=""
+ExtractDebianSourcePackageTarBall "$tarballs" '.*orig-www\.tar\.gz$' '^www$' wwwFiles
+
+# --------------------------------------------------------------------------------
+# Applying Debian patches:
+# --------------------------------------------------------------------------------
+ApplyDebianPatches "$debianFiles" "$origFiles"
+
+# At this point, I discovered that https://salsa.debian.org/tfheen/mlocate exists so I might be able to use that.
+# So I'm checking in what I have right now and trying that instead of using the "Debian" stuff above. 
+echo pwd is $(pwd)
+exit 1
+
+
+
+
 
 # --------------------------------------------------------------------------------
 # Check out the source:
