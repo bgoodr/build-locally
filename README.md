@@ -140,6 +140,7 @@ The following is a list of packages whose build programs are provided by this pa
 * [libunistring](packages/libunistring/README.md): Building the libunistring package.
 * [libxkbcommon](packages/libxkbcommon/README.md): Building the libxkbcommon package.
 * [make](packages/make/README.md): Building the make package.
+* [mlocate](packages/mlocate/README.md): Building the mlocate package.
 * [numdiff](packages/numdiff/README.md): Building the numdiff package.
 * [pango](packages/pango/README.md): Building the pango package.
 * [patchelf](packages/patchelf/README.md): Building the patchelf package.
