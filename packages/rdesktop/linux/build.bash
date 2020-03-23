@@ -76,10 +76,11 @@ CreateAndChdirIntoBuildDir rdesktop
 
 echo "Note: Determining downloadable tarball URL ..."
 
-homePageURL='http://www.rdesktop.org/#download'
+homePageURL='https://github.com/rdesktop/rdesktop/releases/latest'
 homePageURLFile=""
 DownloadURLIntoLocalFile "$homePageURL" homePageURLFile
-downloadURL=$(cat $homePageURLFile | sed -n '/latest/,/http.*tar.gz/{ s/^.*href="\(.*\)".*$/\1/gp }')
+downloadBasePath=$(cat $homePageURLFile | sed -n '/tar.gz/{ s/^.*href="\([^"]*\)".*$/\1/gp; q; }')
+downloadURL="https://github.com$downloadBasePath"
 if [ -z "$downloadURL" ]
 then
   echo "ERROR: Could not find download URL to latest stable release of rdesktop from $homePageURL"
@@ -97,7 +98,7 @@ then
   exit 1
 fi
 echo "version: ${version}"
-versionSubdir=$(echo "$tarballBase" | sed 's%\.tar\.gz$%%g')
+versionSubdir=$(tar tf $tarballBase | sed -n '/\//{ s%^\([^/]*\)/.*$%\1%gp; q; }')
 echo "versionSubdir==\"${versionSubdir}\""
 if [ -z "$versionSubdir" ]
 then
@@ -183,43 +184,4 @@ else
 fi
 
 PrintRun make
-PrintRun make install
-
-echo "debug exit -- remember to remove qt crap below"; exit 1
-
-
-
-
-# http://qt-project.org/doc/qt-4.8/install-x11.html
-PrintRun cd "$versionSubdir"
-if [ ! -f ./configure ]
-then
-  echo "ASSERTION FAILED: we should have seen a ./configure file inside $(pwd) by now."
-  exit 1
-fi
-
-# Mandate fully-automated builds by saying yes to the prompts:
-sed -i 's%read acceptance%acceptance=y%g' ./configure
-
-# Hack around https://bugs.webkit.org/show_bug.cgi?id=89312 that leads to
-#    g++: error: unrecognized command line option ‘-fuse-ld=gold’
-# when building webkit:
-sed -i \
-    -e 's%\(^[ 	]*QMAKE_LFLAGS+=-fuse-ld=gold\)%#\1%g' \
-    -e 's%\(^[ 	]*message(Using gold linker)\)%#\1%g' \
-    src/3rdparty/webkit/Source/common.pri
-
-echo "Note: Running ./configure ..."
-PrintRun ./configure -prefix-install -prefix "$INSTALL_DIR" $CONFIGURE_OPTIONS
-
-# --------------------------------------------------------------------------------
-# Build:
-# --------------------------------------------------------------------------------
-echo "Note: Building ..."
-PrintRun make
-
-# --------------------------------------------------------------------------------
-# Install:
-# --------------------------------------------------------------------------------
-echo "Note: Installing ..."
 PrintRun make install
