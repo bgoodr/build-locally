@@ -67,70 +67,23 @@ done
 # --------------------------------------------------------------------------------
 SetupBasicEnvironment
 
-# --------------------------------------------------------------------------------
-# Build required dependent packages:
-# --------------------------------------------------------------------------------
-BuildDependentPackage texinfo bin/makeinfo
-BuildDependentPackage autoconf bin/autoconf
-BuildDependentPackage automake bin/automake
+# # --------------------------------------------------------------------------------
+# # Build required dependent packages:
+# # --------------------------------------------------------------------------------
+# BuildDependentPackage autoconf bin/autoconf
+# BuildDependentPackage automake bin/automake
 
 # --------------------------------------------------------------------------------
 # Create build directory structure:
 # --------------------------------------------------------------------------------
-CreateAndChdirIntoBuildDir idutils
+CreateAndChdirIntoBuildDir w3m
 
 # --------------------------------------------------------------------------------
-# Download the source into the build directory:
+# Check out the source into the build directory:
 # --------------------------------------------------------------------------------
-echo "Downloading ..."
-version_subdir=idutils
-if [ "$CLEAN" = 1 ]
-then
-  PrintRun rm -rf "$version_subdir"
-fi
-if [ ! -d "$version_subdir" ]
-then
-  PrintRun cvs -d:pserver:anonymous@cvs.savannah.gnu.org:/sources/idutils co idutils
-  if [ ! -d "$version_subdir" ]
-  then
-    echo "ERROR: Failed to checkout sources"
-    exit 1
-  fi
-else
-  echo "$version_subdir already exists."
-fi
-if [ -z "$version_subdir" ]
-then
-  echo "ASSERTION FAILED: version_subdir was not not initialized."
-  exit 1
-fi
-if [ ! -d "$version_subdir" ]
-then
-  echo "ASSERTION FAILED: $version_subdir should exist as a directory by now but does not."
-  exit 1
-fi
-
-# --------------------------------------------------------------------------------
-# Patch:
-# --------------------------------------------------------------------------------
-echo "Patching ..."
-PrintRun cd $version_subdir
-echo bgdbg1
-echo "version_subdir==\"${version_subdir}\""
-echo bgdbg2
-# Apply a patch to build logic files to make it just work!:
-# Reference http://mail-archives.apache.org/mod_mbox/qpid-dev/200812.mbox/<87fxko4gfy.fsf@rho.meyering.net>
-ApplyPatch $PACKAGE_DIR/hack_old_AC_USE_SYSTEM_EXTENSIONS_def_patch.patch
-echo bgdbg3
-# Apply a patch to allow skipping of certain files/directories in
-# the build environment.  TODO: This should not be here. It, or an
-# equivalent change, should be applied upstream to the idutils
-# source:
-ApplyPatch $PACKAGE_DIR/exclude_files.patch
-echo bgdbg4
-# Apply a patch so that the Info manual can be generated properly:
-ApplyPatch $PACKAGE_DIR/idutils_texinfo.patch
-echo bgdbg5
+packageSubDir=w3m
+DownloadPackageFromGitRepo   https://salsa.debian.org/debian/$packageSubDir.git $packageSubDir
+PrintRun cd $packageSubDir
 
 # --------------------------------------------------------------------------------
 # Build:
@@ -138,15 +91,26 @@ echo bgdbg5
 echo "Building ..."
 if [ ! -f ./configure ]
 then
-  echo "Creating ./configure file ..."
-  PrintRun ./autogen.sh
-  if [ ! -f ./configure ]
-  then
-    echo "ERROR: Could not create ./configure file. autoconf must have failed."
-    exit 1
-  fi
+  # echo "Creating ./configure file ..."
+  # PrintRun ./autogen.sh
+  # if [ ! -f ./configure ]
+  # then
+  #   echo "ERROR: Could not create ./configure file. autoconf must have failed."
+  #   exit 1
+  # fi
+  echo "ERROR: ./configure should be in Git, so what happened?"
+  exit 1
 fi
-PrintRun ./configure --enable-maintainer-mode --prefix="$INSTALL_DIR"
+PrintRun ./configure --prefix="$INSTALL_DIR"
+
+echo "ERROR: I get an error on Ubuntu 19.10 in the above configure script of"
+cat <<'EOF'
+COMMAND: ./configure --prefix=/home/brentg/install/Ubuntu.19.10.x86_64
+./configure: line 528: 0: Bad file descriptor
+EOF
+echo "It might have something to do with stdin now but not sure"
+exit 1
+
 PrintRun make
 
 # --------------------------------------------------------------------------------
@@ -154,11 +118,6 @@ PrintRun make
 # --------------------------------------------------------------------------------
 echo "Installing ..."
 PrintRun make install
-
-# Note: The install-info called from the above "make install" step
-# will update the $INSTALL_DIR/share/info/dir file if it already
-# exists, and will splice in the info for this package into that dir
-# file.
 
 # --------------------------------------------------------------------------------
 # Testing:
