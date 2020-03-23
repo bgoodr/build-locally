@@ -101,16 +101,15 @@ then
   echo "ERROR: ./configure should be in Git, so what happened?"
   exit 1
 fi
-PrintRun ./configure --prefix="$INSTALL_DIR"
-
-echo "ERROR: I get an error on Ubuntu 19.10 in the above configure script of"
-cat <<'EOF'
-COMMAND: ./configure --prefix=/home/brentg/install/Ubuntu.19.10.x86_64
-./configure: line 528: 0: Bad file descriptor
-EOF
-echo "It might have something to do with stdin now but not sure"
-exit 1
-
+# Pipe in /dev/null to stdin of ./configure:
+#
+#   This hacks around this very strange error:
+#   
+#      ./configure: line 528: 0: Bad file descriptor
+#   
+#   I'm puzzled as to why this would now (2020-03-23_15-24-57-0700) be required.
+#
+PrintRun ./configure --prefix="$INSTALL_DIR" </dev/null
 PrintRun make
 
 # --------------------------------------------------------------------------------
