@@ -70,6 +70,7 @@ SetupBasicEnvironment
 # --------------------------------------------------------------------------------
 # Build required dependent packages:
 # --------------------------------------------------------------------------------
+VerifyOperatingSystemPackageContainingFile 'Debian|Ubuntu' cvs /usr/bin/cvs
 BuildDependentPackage texinfo bin/makeinfo
 BuildDependentPackage autoconf bin/autoconf
 BuildDependentPackage automake bin/automake
