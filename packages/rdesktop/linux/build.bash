@@ -79,7 +79,7 @@ echo "Note: Determining downloadable tarball URL ..."
 homePageURL='https://github.com/rdesktop/rdesktop/releases/latest'
 homePageURLFile=""
 DownloadURLIntoLocalFile "$homePageURL" homePageURLFile
-downloadBasePath=$(cat $homePageURLFile | sed -n '/tar.gz/{ s/^.*href="\([^"]*\)".*$/\1/gp }')
+downloadBasePath=$(cat $homePageURLFile | sed -n '/tar.gz/{ s/^.*href="\([^"]*\)".*$/\1/gp; q; }')
 downloadURL="https://github.com$downloadBasePath"
 if [ -z "$downloadURL" ]
 then
