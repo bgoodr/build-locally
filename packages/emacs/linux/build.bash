@@ -154,7 +154,7 @@ fi
 if [ ! -f /usr/include/ncurses.h ]
 then
   echo "ERROR: ncurses.h is missing from the system."
-  echo "       On Debian, maybe the package is ncurses-devel"
+  echo "       On Debian, maybe the package is libncurses-dev"
   echo "       On RHEL, maybe the package to install is libncurses5-dev"
   exit 1
 fi
