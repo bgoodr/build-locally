@@ -1,21 +1,6 @@
 #!/bin/bash
 # -*-mode: Shell-script; indent-tabs-mode: nil; sh-basic-offset: 2 -*-
 
-
-# Block execution due to an incomprehensible error:
-lsb_release -i | grep -q Ubuntu && {
-  lsb_release -r | grep -q 20.04 && {
-    echo "ASSERTION FAILED: Do not use $0 on Ubuntu 20.04 as it fails with the following incomprehensible error:"
-    cat <<'EOF'
-  /bin/bash ../../libtool  --tag=CC   --mode=link x86_64-linux-gnu-gcc    -no-undefined   -o libgnu.la  xsize.lo asnprintf.lo printf-args.lo printf-parse.lo vasnprintf.lo 
-  ../../libtool: line 3017: 0: Bad file descriptor
-  make[7]: *** [Makefile:960: libgnu.la] Error 1
-  make[7]: Leaving directory '..../build/Ubuntu.20.04.3.x86_64/texinfo/texinfo-6.8/tp/Texinfo/XS/gnulib/lib'
-EOF
-    exit 1
-  }
-}
-
 # Find the base directory while avoiding subtle variations in $0:
 dollar0=`which $0`; PACKAGE_DIR=$(cd $(dirname $dollar0); pwd) # NEVER export PACKAGE_DIR
 
@@ -71,6 +56,11 @@ done
 # that directory to the PATH:
 # --------------------------------------------------------------------------------
 SetupBasicEnvironment
+
+# --------------------------------------------------------------------------------
+# Build required dependent packages:
+# --------------------------------------------------------------------------------
+BuildDependentPackage libtool bin/libtool
 
 # --------------------------------------------------------------------------------
 # Create build directory structure:
