@@ -53,7 +53,10 @@ CreateAndChdirIntoBuildDir zlib
 # Download the source into the build directory:
 # --------------------------------------------------------------------------------
 downloadURL=http://zlib.net
-tarballBase=$(curl -L $downloadURL 2>/dev/null | sed -n 's%^.*href="\(zlib-.*\.tar\.gz\)".*$%\1%gip' )
+# Do not use curl here. It is not installed by default on Ubuntu 20.04:
+# But wget is installed by default:
+### tarballBase=$(curl -L $downloadURL 2>/dev/null | sed -n 's%^.*href="\(zlib-.*\.tar\.gz\)".*$%\1%gip')
+tarballBase=$(wget -O - $downloadURL 2>/dev/null | sed -n 's%^.*href="\(zlib-.*\.tar\.gz\)".*$%\1%gip')
 echo "tarballBase==\"${tarballBase}\""
 if [ -z "$tarballBase" ]
 then
@@ -71,12 +74,7 @@ if [ ! -d "$versionSubdir" ]
 then
   if [ ! -f $tarballBase ]
   then
-    PrintRun curl -L -o $tarballBase $tarballURL
-    if [ ! -f $tarballBase ]
-    then
-      echo "ERROR: Failed to download"
-      exit 1
-    fi
+    PrintRun wget $tarballURL
     if [ ! -f $tarballBase ]
     then
       echo "ERROR: Download from $tarballURL failed as $tarballBase does not exist"
