@@ -40,9 +40,15 @@ done
 SetupBasicEnvironment
 
 # --------------------------------------------------------------------------------
-# Build required dependent packages:
+# Require dependent system packages:
 # --------------------------------------------------------------------------------
-# No known dependent packages.
+
+which m4 >/dev/null || {
+  echo "ERROR: You must install m4"
+  echo "       On Ubuntu, maybe the package is m4"
+  echo "       On RHEL, maybe the package is ????"
+  exit 1
+}
 
 # --------------------------------------------------------------------------------
 # Create build directory structure:
