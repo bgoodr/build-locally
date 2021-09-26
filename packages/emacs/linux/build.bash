@@ -41,171 +41,217 @@ done
 SetupBasicEnvironment
 
 # --------------------------------------------------------------------------------
-# Verify the system-supplied prerequisites:
+# Verify or build the system-supplied prerequisites:
 # --------------------------------------------------------------------------------
 
-# For RHEL6, I think I need these packages installed which I now have
-# to ask the admins to do:
-#
-#   librsvg2-devel
-#   dbus
-#   atk-devel
-#   cairo-devel
-#   libXi-devel
-#   pango-devel
-#   gtk2-devel
-#   ncurses-devel
-#   libXpm-devel
-#   giflib-devel
-#   libtiff-devel
-#   bitstream-vera-fonts <-- not any more; see git controlled .fonts directory
-#
-# But here is what the admins actually found on 2012-10-19:
-#
-#   All of the packages below were on the RHEL6 system by default, except for:
-#   
-#   giflib-devel
-#   libtiff-devel
-#   bitstream-vera-fonts
-#   
-#   libtiff-devel is part of the distribution, the admin will have to
-#   add that to the system.
-#   
-#   giflib-devel is no longer part of the ISO distribution but RedHat
-#   does carry it in one of the repositories on their site, so the
-#   admin will have to install it on the system.
-#   
-#   bitstream-vera-fonts is not available for RHEL6, but my hackaround
-#   was to just copy them from a Debian wheezy/sid release and store
-#   them under git under ~/.fonts (they are platform-independent files
-#   anyhow, and I could not find the right CentOS RPM to scavenge them
-#   from!).
-#
-#   Sun Apr 23 09:58:08 PDT 2017: libpng is not on RHEL 6.8 by default
-#   so it is now added as a build dependency below.
+function install_packages_ubuntu {
+
+  # Use the apt system to get the build dependencies.
+  #
+  #   This is what worked as of 2021-09-26.08-29-40 on Ubuntu 20.04
+  #   
+  
+  # I don't want to have to do this as it requires a prompt for passwords, but I don't know of any other way to just get the @#$% dependencies already:
+  xterm -fn 9x15 -title 'Getting Emacs dependent packages' -e '
+    set -x
+
+    # https://emacs.stackexchange.com/questions/60062/ubuntu-27-1-install-needs-x-libraries#comment94341_60070
+    sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev gnutls-dev libgtk-3-dev
+
+    echo Press return to continue the build:
+    read dummy
+    '
+}
+
+function install_packages_rhel {
+
+  # This is what worked on RHEL8 that does not use the apt system, AFAIK.
+
+  # For RHEL6, I think I need these packages installed which I now have
+  # to ask the admins to do:
+  #
+  #   librsvg2-devel
+  #   dbus
+  #   atk-devel
+  #   cairo-devel
+  #   libXi-devel
+  #   pango-devel
+  #   gtk2-devel
+  #   ncurses-devel
+  #   libXpm-devel
+  #   giflib-devel
+  #   libtiff-devel
+  #   bitstream-vera-fonts <-- not any more; see git controlled .fonts directory
+  #
+  # But here is what the admins actually found on 2012-10-19:
+  #
+  #   All of the packages below were on the RHEL6 system by default, except for:
+  #   
+  #   giflib-devel
+  #   libtiff-devel
+  #   bitstream-vera-fonts
+  #   
+  #   libtiff-devel is part of the distribution, the admin will have to
+  #   add that to the system.
+  #   
+  #   giflib-devel is no longer part of the ISO distribution but RedHat
+  #   does carry it in one of the repositories on their site, so the
+  #   admin will have to install it on the system.
+  #   
+  #   bitstream-vera-fonts is not available for RHEL6, but my hackaround
+  #   was to just copy them from a Debian wheezy/sid release and store
+  #   them under git under ~/.fonts (they are platform-independent files
+  #   anyhow, and I could not find the right CentOS RPM to scavenge them
+  #   from!).
+  #
+  #   Sun Apr 23 09:58:08 PDT 2017: libpng is not on RHEL 6.8 by default
+  #   so it is now added as a build dependency below.
 
 
-if ! which git >/dev/null
-then
-  echo "ERROR: git executable not found in the PATH."
-fi
-
-if [ ! -f /usr/include/X11/X.h ]
-then
-  echo "ERROR: You must install development headers for X"
-  echo "       On Debian, maybe the package is libx11-dev"
-  echo "       On Ubuntu, maybe the package is x11proto-core-dev"
-fi
-
-# Disabled svg_config_options code for now as it does not seem to adversely impact the build:
-# svg_config_options="--without-rsvg"
-# if [ "$DO_SVG" = 1 ]
-# then
-#   svg_config_options=""
-#   # From http://linux.derkeiler.com/Mailing-Lists/Debian/2008-12/msg02185.html
-#   # we see:
-#   #
-#   #  Assuming that you have a suitable deb-src line in your sources.list, you
-#   #  can simply use "apt-get build-dep emacs22" to install the needed
-#   #  packages. You also may want to install librsvg2-dev and libdbus-1-dev
-#   #  for SVG and Dbus support that is new in Emacs 23.
-#   files=`ls -d /usr/include/librsvg*/librsvg/rsvg.h 2>/dev/null`
-#   if [ -z "$files" ]
-#   then
-#     echo "ERROR: rsvg.h header is missing from the system."
-#     echo "       On Debian, maybe the package is librsvg2-dev"
-#     echo "       On RHEL, maybe the package is librsvg2-devel"
-#     exit 1
-#   fi
-# fi
-
-if [ ! -f /usr/include/dbus-1.0/dbus/dbus.h ]
-then
-  echo "ERROR: dbus.h is missing from the system."
-  echo "       On Debian, maybe the package is libdbus-1-dev"
-  echo "       On RHEL, maybe the package is dbus"
-  exit 1
-fi
-
-# About this error that can occur:
-#
-#    configure: error: No package 'gtk+-3.0' found
-#    No package 'glib-2.0' found
-#
-# See later on where we include both system and locally built
-# directories into the value of PKG_CONFIG_PATH that pkg-config sees
-# during ./configure execution.
-# 
-# Therefore, test for the existence of GTK headers. Here, we are using
-# either GTK2 or GTK3 headers. Note ./configure searches for GTK3
-# headers first, then GTK2 headers, when --with-x-toolkit is specified
-# (versus us specifying --with-x-toolkit=gtk3). we look for both GTK2
-# and GTK3 because ideally we would not have to request admins to
-# install gtk3 on RHEL6 systems if we can avoid it (and it is not
-# apparent if gtk3 is needed on RHEL6 for Emacs).
-if [ -z "$(ls -d /usr/include/gtk-[23].0/gtk/gtk.h 2>/dev/null)" ]
-then
-  echo "ERROR: gtk.h is missing from the system."
-  echo "       On Debian, maybe the package is libgtk-3-dev"
-  echo "       On RHEL, maybe the packages to install are: atk-devel cairo-devel libXi-devel pango-devel gtk3-devel"
-  exit 1
-fi
-
-if [ ! -f /usr/include/ncurses.h ]
-then
-  echo "ERROR: ncurses.h is missing from the system."
-  echo "       On Debian, maybe the package is libncurses-dev"
-  echo "       On RHEL, maybe the package to install is libncurses5-dev"
-  exit 1
-fi
-
-if [ ! -f /usr/include/X11/xpm.h ]
-then
-  echo "ERROR: xpm.h is missing from the system."
-  echo "       On Debian, maybe the package is libxpm-dev"
-  echo "       On RHEL, maybe the package to install is libXpm-devel"
-  exit 1
-fi
-
-gif_config_options=""
-if [ "$WITH_GIF" = 1 ]
-then
-  if [ ! -e /usr/lib64/libungif.so -a ! -e /usr/lib/libungif.so ]
+  if ! which git >/dev/null
   then
-    echo "ERROR: gif libraries are missing from the system."
-    echo "       On Debian, maybe the package is libgif-dev"
-    echo "       On RHEL, maybe the package to install is giflib-devel"
+    echo "ERROR: git executable not found in the PATH."
+  fi
+
+  if [ ! -f /usr/include/X11/X.h ]
+  then
+    echo "ERROR: You must install development headers for X"
+    echo "       On Debian, maybe the package is libx11-dev"
+    echo "       On Ubuntu, maybe the package is x11proto-core-dev"
+  fi
+
+  # Disabled svg_config_options code for now as it does not seem to adversely impact the build:
+  # svg_config_options="--without-rsvg"
+  # if [ "$DO_SVG" = 1 ]
+  # then
+  #   svg_config_options=""
+  #   # From http://linux.derkeiler.com/Mailing-Lists/Debian/2008-12/msg02185.html
+  #   # we see:
+  #   #
+  #   #  Assuming that you have a suitable deb-src line in your sources.list, you
+  #   #  can simply use "apt-get build-dep emacs22" to install the needed
+  #   #  packages. You also may want to install librsvg2-dev and libdbus-1-dev
+  #   #  for SVG and Dbus support that is new in Emacs 23.
+  #   files=`ls -d /usr/include/librsvg*/librsvg/rsvg.h 2>/dev/null`
+  #   if [ -z "$files" ]
+  #   then
+  #     echo "ERROR: rsvg.h header is missing from the system."
+  #     echo "       On Debian, maybe the package is librsvg2-dev"
+  #     echo "       On RHEL, maybe the package is librsvg2-devel"
+  #     exit 1
+  #   fi
+  # fi
+
+  if [ ! -f /usr/include/dbus-1.0/dbus/dbus.h ]
+  then
+    echo "ERROR: dbus.h is missing from the system."
+    echo "       On Debian, maybe the package is libdbus-1-dev"
+    echo "       On RHEL, maybe the package is dbus"
     exit 1
   fi
-else
-  # I added --without-gif because on RHEL6.4 gif is not there. Temporary
-  # hack until we decide we need to build it from source.
-  gif_config_options="--without-gif"
-fi
 
-tiff_config_options=""
-if [ "$WITH_TIFF" = 1 ]
-then
-  files=`ls -d /usr/lib/x86_64-linux-gnu/libtiff.so /usr/lib64/libtiff.so 2>/dev/null`
-  if [ -z "$files" ]
+  # About this error that can occur:
+  #
+  #    configure: error: No package 'gtk+-3.0' found
+  #    No package 'glib-2.0' found
+  #
+  # See later on where we include both system and locally built
+  # directories into the value of PKG_CONFIG_PATH that pkg-config sees
+  # during ./configure execution.
+  # 
+  # Therefore, test for the existence of GTK headers. Here, we are using
+  # either GTK2 or GTK3 headers. Note ./configure searches for GTK3
+  # headers first, then GTK2 headers, when --with-x-toolkit is specified
+  # (versus us specifying --with-x-toolkit=gtk3). we look for both GTK2
+  # and GTK3 because ideally we would not have to request admins to
+  # install gtk3 on RHEL6 systems if we can avoid it (and it is not
+  # apparent if gtk3 is needed on RHEL6 for Emacs).
+  if [ -z "$(ls -d /usr/include/gtk-[23].0/gtk/gtk.h 2>/dev/null)" ]
   then
-    echo "ERROR: libtiff headers are missing from the system."
-    echo "       On Debian, maybe the package is libtiff4-dev"
-    echo "       On RHEL, maybe the package to install is libtiff-devel"
+    echo "ERROR: gtk.h is missing from the system."
+    echo "       On Debian, maybe the package is libgtk-3-dev"
+    echo "       On RHEL, maybe the packages to install are: atk-devel cairo-devel libXi-devel pango-devel gtk3-devel"
     exit 1
-    # rpm -q --whatprovides libtiff-devel
-    # rpm -q -l libtiff-devel-3.9.4-1.el6_0.3.x86_64
   fi
+
+  if [ ! -f /usr/include/ncurses.h ]
+  then
+    echo "ERROR: ncurses.h is missing from the system."
+    echo "       On Debian, maybe the package is libncurses-dev"
+    echo "       On RHEL, maybe the package to install is libncurses5-dev"
+    exit 1
+  fi
+
+  if [ ! -f /usr/include/X11/xpm.h ]
+  then
+    echo "ERROR: xpm.h is missing from the system."
+    echo "       On Debian, maybe the package is libxpm-dev"
+    echo "       On RHEL, maybe the package to install is libXpm-devel"
+    exit 1
+  fi
+
+  gif_config_options=""
+  if [ "$WITH_GIF" = 1 ]
+  then
+    if [ ! -e /usr/lib64/libungif.so -a ! -e /usr/lib/libungif.so ]
+    then
+      echo "ERROR: gif libraries are missing from the system."
+      echo "       On Debian, maybe the package is libgif-dev"
+      echo "       On RHEL, maybe the package to install is giflib-devel"
+      exit 1
+    fi
+  else
+    # I added --without-gif because on RHEL6.4 gif is not there. Temporary
+    # hack until we decide we need to build it from source.
+    gif_config_options="--without-gif"
+  fi
+
+  tiff_config_options=""
+  if [ "$WITH_TIFF" = 1 ]
+  then
+    files=`ls -d /usr/lib/x86_64-linux-gnu/libtiff.so /usr/lib64/libtiff.so 2>/dev/null`
+    if [ -z "$files" ]
+    then
+      echo "ERROR: libtiff headers are missing from the system."
+      echo "       On Debian, maybe the package is libtiff4-dev"
+      echo "       On RHEL, maybe the package to install is libtiff-devel"
+      exit 1
+      # rpm -q --whatprovides libtiff-devel
+      # rpm -q -l libtiff-devel-3.9.4-1.el6_0.3.x86_64
+    fi
+  else
+    # I added --with-tiff=no because on RHEL6.4 tiff is not there. Temporary
+    # hack until we decide we need to build it from source.
+    #
+    # Sun Apr 23 12:22:53 PDT 2017: The INSTALL file in the emacs
+    # distribution has a path to a URL that is dead so we will continue
+    # to just not have tiff support if they are going to maintaining it
+    # on a solid server, like GitHub.
+    #
+    tiff_config_options="--with-tiff=no"
+  fi
+
+  BuildDependentPackage autoconf bin/autoconf
+  BuildDependentPackage automake bin/automake
+  BuildDependentPackage texinfo bin/makeinfo
+  BuildDependentPackage pkg-config bin/pkg-config
+  BuildDependentPackage zlib include/zlib.h
+  BuildDependentPackage libpng lib/pkgconfig/libpng\*.pc
+  BuildDependentPackage make bin/make # because GNU make 3.80 that is default in RHEL6 has a buggy (or ...) operator
+  # Try building with gtk now that I'm running RHEL 6.8 which should have the gtk headers: 
+  ###echo "TODO: build gtk as a dependency: BuildDependentPackage gtk bin/fixmeforgtk"; exit 1
+
+}
+
+if lsb_release -i | grep -q Ubuntu
+then
+  install_packages_ubuntu
+elif lsb_release -i | grep -q RHEL
+then
+  install_packages_rhel
 else
-  # I added --with-tiff=no because on RHEL6.4 tiff is not there. Temporary
-  # hack until we decide we need to build it from source.
-  #
-  # Sun Apr 23 12:22:53 PDT 2017: The INSTALL file in the emacs
-  # distribution has a path to a URL that is dead so we will continue
-  # to just not have tiff support if they are going to maintaining it
-  # on a solid server, like GitHub.
-  #
-  tiff_config_options="--with-tiff=no"
+  echo "ASSERTION FAILED: Unknown release: $(lsb_release -i)"
+  exit 1
 fi
 
 # The xft stuff may have problems on older Linux systems but require
@@ -213,24 +259,6 @@ fi
 # Emacs:
 xft_option="--with-xft"
 
-# --------------------------------------------------------------------------------
-# Build required dependent packages:
-# --------------------------------------------------------------------------------
-BuildDependentPackage autoconf bin/autoconf
-BuildDependentPackage automake bin/automake
-BuildDependentPackage texinfo bin/makeinfo
-BuildDependentPackage pkg-config bin/pkg-config
-BuildDependentPackage zlib include/zlib.h
-BuildDependentPackage libpng lib/pkgconfig/libpng\*.pc
-BuildDependentPackage make bin/make # because GNU make 3.80 that is default in RHEL6 has a buggy (or ...) operator
-# Try building with gtk now that I'm running RHEL 6.8 which should have the gtk headers: 
-###echo "TODO: build gtk as a dependency: BuildDependentPackage gtk bin/fixmeforgtk"; exit 1
-
-# --------------------------------------------------------------------------------
-# Dependent packages will be installed into $INSTALL_DIR/bin so add
-# that directory to the PATH:
-# --------------------------------------------------------------------------------
-SetupBasicEnvironment
 
 # --------------------------------------------------------------------------------
 # Create build directory structure:
