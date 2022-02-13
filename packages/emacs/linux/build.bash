@@ -58,6 +58,20 @@ function install_packages_ubuntu {
     # https://emacs.stackexchange.com/questions/60062/ubuntu-27-1-install-needs-x-libraries#comment94341_60070
     sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev gnutls-dev libgtk-3-dev
 
+    # Compile with native JSON:
+    #
+    #   Per https://www.reddit.com/r/emacs/comments/gzoicx/comment/ftirn3q/?utm_source=share&utm_medium=web2x&context=3: "If you want to try the builtin json parsing youll need to install libjansson". 
+    #
+    #   From https://www.masteringemacs.org/article/speed-up-emacs-libjansson-native-elisp-compilation#:~:text=heavy%20user%20of%20lsp%2Dmode :
+    #
+    #     If you’re a heavy user of lsp-mode or eglot then I highly recommend you upgrade for that reason alone.
+    #
+    #   You can manually verify that the build has the native JSON using:
+    #   https://www.masteringemacs.org/article/speed-up-emacs-libjansson-native-elisp-compilation#:~:text=is%20*not*%20available%22))-,And%20for%20the%20JSON,-%3A
+    #
+    # It turns out that there does not need to be a ./configure flag of --with-json as it seems to use it by default if the libjansson-dev package is installed.
+    sudo apt install libjansson-dev
+
     echo Press return to continue the build:
     read dummy
     '
