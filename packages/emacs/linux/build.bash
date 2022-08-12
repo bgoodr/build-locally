@@ -260,7 +260,7 @@ function install_packages_rhel {
 if lsb_release -i | grep -q Ubuntu
 then
   install_packages_ubuntu
-elif lsb_release -i | grep -q RHEL
+elif lsb_release -i | grep -q RedHatEnterprise
 then
   install_packages_rhel
 else
