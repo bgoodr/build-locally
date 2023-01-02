@@ -113,7 +113,27 @@ function install_packages_ubuntu {
   # Ideally, we would get libxdo-dev from xdotool that is built in
   # ../../xdotool/linux/build.bash but we are cheating for now as this
   # is used only on Ubuntu-based Linux:
-  sudo apt-get install libcairo2-dev libxinerama-dev libxdo-dev
+
+  # Only install the packages that are not yet installed:
+  #
+  #   To avoid interactive prompting for password via sudo unless it
+  #   is absolutely necessary, because it is a speedbump for repeated
+  #   compilation such as for doing development work on a copy in the
+  #   BUILD_DIR.
+  #
+  local packages_to_install=""
+  for package in libcairo2-dev libxinerama-dev libxdo-dev
+  do
+    is_installed=$(apt-cache policy "$package" | grep Installed: | grep -c -v '(none)')
+    test "$is_installed" = 0 && {
+      packages_to_install="$packages_to_install $package"
+    }
+  done
+
+  test -n "$packages_to_install" && {
+    # Launch an xterm for the prompt for the password:
+    PrintRun xterm -e sudo apt-get install $packages_to_install
+  }
 }
 
 if lsb_release -i | grep -q Ubuntu
