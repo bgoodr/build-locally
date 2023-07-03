@@ -118,6 +118,7 @@ The following is a list of packages whose build programs are provided by this pa
 * [docbook2x](packages/docbook2x/README.md): Building the docbook2x package.
 * [emacs](packages/emacs/README.md): Building the emacs package.
 * [example-package](packages/example-package/README.md): An example directory to serve as a template for adding more packages to be built by this project.
+* [flameshot](packages/flameshot/README.md): Building the flameshot package.
 * [flex](packages/flex/README.md): Building the flex package.
 * [freetype](packages/freetype/README.md): Building the freetype package.
 * [gdb](packages/gdb/README.md): Building the gdb package.
