@@ -122,7 +122,7 @@ function install_packages_ubuntu {
   #   BUILD_DIR.
   #
   local packages_to_install=""
-  for package in libcairo2-dev libxinerama-dev libxdo-dev
+  for package in libcairo2-dev libxinerama-dev libxdo-dev libxrandr-dev
   do
     is_installed=$(apt-cache policy "$package" | grep Installed: | grep -c -v '(none)')
     test "$is_installed" = 0 && {
