@@ -109,7 +109,16 @@ EOF
     cat > $tmpscript <<EOF
 #!/bin/bash
 
-# Hack around the mystery of why parenthesis are not scoping the "set -e": https://stackoverflow.com/q/76607149/257924 :
+# Execute the sudo commands, bailing out immediately:
+#
+#   The use of the Bash script, fed to the xterm, allows the prompt
+#   for a password for the sudo calls. But if the sudo fails (mistyped
+#   password), or whatever the failure is caused by, we need to abort
+#   the entire script.
+#
+#   Although, the following construct is cumbersome, but does exactly
+#   what is required.  Reference: https://stackoverflow.com/q/76607149/257924
+#
 bash -c '
 
   set -x -e
@@ -130,12 +139,12 @@ bash -c '
   #   But modified to use "-y" option to avoid the evil of annoying questions.
   #
   # --------------------------------------------------------------------------------
-  sudo apt install -y g++ $needed_packages
+  sudo apt install -y $needed_packages
 ' || {
   touch $tmperrors
 }
 
-echo Press return to continue the build:
+echo Press return to continue:
 read dummy
 EOF
 
@@ -143,7 +152,7 @@ EOF
     rm -f $tmperrors
     export tmperrors
 
-    # I don't want to have to do this as it requires a prompt for passwords, but I don't know of any other way to just get the @#$% dependencies already:
+    # Execute $tmpscript inside an xterm so as to allow for the sudo to prompt for the password:
     xterm -fn 9x15 -title 'Getting flameshot dependent packages' -e $tmpscript
     test -f $tmperrors && {
       echo "$0:$LINENO: ERROR: Errors occurred during apt package installation. Exiting."
