@@ -164,7 +164,20 @@ EOF
 # --------------------------------------------------------------------------------
 # Check out the source for flameshot into the build directory:
 # --------------------------------------------------------------------------------
-DownloadPackageFromGitRepo git@github.com:flameshot-org/flameshot.git flameshot 
+# Remove previous version and do not use git pull as then you'll get
+# yet again royally hassled with a prompt (see
+# 4ad73fdf_d70b_4c3e_82c3_6beef191a53c):
+rm -rf flameshot
+# Do not do this:
+#
+#   DownloadPackageFromGitRepo git@github.com:flameshot-org/flameshot.git flameshot
+#
+# because it prompts for personal access tokens and that is a royal
+# hassle (4ad73fdf_d70b_4c3e_82c3_6beef191a53c) if you are not doing development, but just want to build and
+# use the tool.
+#
+DownloadPackageFromGitRepo https://github.com/flameshot-org/flameshot.git flameshot
+
 PrintRun cd flameshot
 
 # --------------------------------------------------------------------------------
