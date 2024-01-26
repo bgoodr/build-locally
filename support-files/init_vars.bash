@@ -11,21 +11,51 @@
 
 if [ -z "$RELEASE_SUBDIR" -o -z "$PLATFORM" ]
 then
+  #
+  # The /etc/issue contains useless crap on RHEL7 and Rocky
+  # so detect it:
+  #
   issueFile="/etc/issue"
+  crap_sniffer=$(sed -n '1s/^\\S$/crap/gp' $issueFile)
+  if [ "$crap_sniffer" = "crap" ]
+  then
+    issueFile="/etc/redhat-release"
+  fi
+
   if [ -r "$issueFile" ]
   then
     PLATFORM=linux; export PLATFORM
-    spec=`sed -n '
-    s/^Red Hat Enterprise Linux \(Client\|WS\|Workstation\) release \([0-9.]*\) ([^) ]*)$/release_type=RHEL; release_num="\2"; /gp;
-    s/^Red Hat Enterprise Linux \(Client\|WS\|Workstation\) release \([0-9.]*\) ([^ ]* Update \([0-9]*\))$/release_type=RHEL; release_num="\2.\3"; /gp;
-    s/^CentOS release \([0-9.]*\) ([^) ]*)$/release_type=CentOS; release_num="\1"; /gp;
-    # Replace wheezy/sid with wheezy_sid on Debian so that release_num does not have slashes in it because it will be used in directory filenames:
-    /Debian/s%/%_%g;
-    s/^Debian GNU.Linux \([^ ]*\) .n .l$/release_type=Debian; release_num="\1"; /gp;
-    s/^Ubuntu \([^ ]*\) .*$/release_type=Ubuntu; release_num="\1"; /gp;
-      ' $issueFile 2>/dev/null`
+    release_type=""
+    release_num=""
+    spec=$(
+      sed -E -n '
+
+        # RHEL:
+        s/^Red Hat Enterprise Linux (Client |WS |Workstation |)release ([0-9.]*) [^ ]*$/release_type=RHEL; release_num="\2"; /gp;
+        s/^Red Hat Enterprise Linux (Client |WS |Workstation |)release ([0-9.]*) ([^ ]* Update ([0-9]*))$/release_type=RHEL; release_num="\2.\3"; /gp;
+
+        # Rocky:
+        s%^Rocky Linux release ([0-9.]+) .*$%release_type=Rocky; release_num="\1"; %gp;
+
+        # For "CentOS Linux release 7.9.2009 (Core)" we do not care about the "(Core)" part:
+        s/^CentOS (Linux |)release ([0-9.-]*).*$/release_type=CentOS; release_num="\2"; /gp;
+
+        # Ubuntu detection:
+        #
+        #   We do not want full release_num values like "20.04.5"
+        #   because the "5" part seems to keep changing on regular
+        #   updates. If we allow for that, then we keep having to
+        #   rebuild our local tools repeatedly for no good reason.
+        #
+        s/^Ubuntu ([0-9]+\.[0-9]+)\.[0-9]+.*$/release_type=Ubuntu; release_num="\1"; /gp;
+
+        # Replace wheezy/sid with wheezy_sid on Debian so that release_num does not have slashes in it because it will be used in directory filenames:
+        /Debian/s%/%_%g;
+        s/^Debian GNU.Linux ([^ ]*) .n .l$/release_type=Debian; release_num="\1"; /gp;
+        s/^.*SUSE Linux Enterprise Server ([0-9]*) SP([0-9]*) .*/release_type=SUSE; release_num="\1.\2"; /gp;
+      ' $issueFile 2>/dev/null)
     eval "$spec"
-    if [ "$release_type" != "RHEL" -a "$release_type" != "CentOS" -a "$release_type" != "Debian" -a "$release_type" != "Ubuntu" ]
+    if [ -z "$release_type" ]
     then
       echo "WARNING: $0: Unrecognized Linux release type \"$release_type\" on host `uname -n`."
     fi
