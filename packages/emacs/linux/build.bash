@@ -56,7 +56,7 @@ function install_packages_ubuntu {
     set -x
 
     # https://emacs.stackexchange.com/questions/60062/ubuntu-27-1-install-needs-x-libraries#comment94341_60070
-    sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev gnutls-dev libgtk-3-dev
+    sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev gnutls-dev libgtk-3-dev libxml2-dev
 
     # Compile with native JSON:
     #
