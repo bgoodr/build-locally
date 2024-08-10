@@ -47,7 +47,7 @@ then
         #   updates. If we allow for that, then we keep having to
         #   rebuild our local tools repeatedly for no good reason.
         #
-        s/^Ubuntu ([0-9]+\.[0-9]+)\.[0-9]+.*$/release_type=Ubuntu; release_num="\1"; /gp;
+        s/^Ubuntu ([0-9]+(\.[0-9]+)+).*$/release_type=Ubuntu; release_num="\1"; /gp;
 
         # Replace wheezy/sid with wheezy_sid on Debian so that release_num does not have slashes in it because it will be used in directory filenames:
         /Debian/s%/%_%g;
