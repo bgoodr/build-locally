@@ -91,6 +91,8 @@ EOF
       grep -v -E '^ *#|^ *$' |
       # Break them up into words, one word per package:
       tr ' ' '\012' |
+      # Get rid of blank lines again after the above tr:
+      grep -v -E '^ *#|^ *$' |
       # Loop through the packages:
       while read package
       do
@@ -98,7 +100,9 @@ EOF
         apt list $package |& grep -q -F '[installed]' || {
           echo $package
         }
-      done
+      done |
+      # Back to spaces for injection into the bash script below:
+      tr '\012' ' '
     ) 
 
   test -n "$needed_packages" && {
