@@ -116,22 +116,17 @@ fi
 # --------------------------------------------------------------------------------
 echo "Patching ..."
 PrintRun cd $version_subdir
-echo bgdbg1
 echo "version_subdir==\"${version_subdir}\""
-echo bgdbg2
 # Apply a patch to build logic files to make it just work!:
 # Reference http://mail-archives.apache.org/mod_mbox/qpid-dev/200812.mbox/<87fxko4gfy.fsf@rho.meyering.net>
 ApplyPatch $PACKAGE_DIR/hack_old_AC_USE_SYSTEM_EXTENSIONS_def_patch.patch
-echo bgdbg3
 # Apply a patch to allow skipping of certain files/directories in
 # the build environment.  TODO: This should not be here. It, or an
 # equivalent change, should be applied upstream to the idutils
 # source:
 ApplyPatch $PACKAGE_DIR/exclude_files.patch
-echo bgdbg4
 # Apply a patch so that the Info manual can be generated properly:
 ApplyPatch $PACKAGE_DIR/idutils_texinfo.patch
-echo bgdbg5
 
 # --------------------------------------------------------------------------------
 # Build:
