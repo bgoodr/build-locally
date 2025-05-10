@@ -125,6 +125,7 @@ The following is a list of packages whose build programs are provided by this pa
 * [gettext](packages/gettext/README.md): Building the gettext package.
 * [git](packages/git/README.md): Building the Git package.
 * [glib](packages/glib/README.md): Building the glib package.
+* [rust](packages/rust/README.md): Building the rust package.
 * [global](packages/global/README.md): Building the global package.
 * [gmp](packages/gmp/README.md): Building the gmp package.
 * [gnome-common](packages/gnome-common/README.md): Building the gnome-common package.
