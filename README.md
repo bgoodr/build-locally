@@ -125,7 +125,6 @@ The following is a list of packages whose build programs are provided by this pa
 * [gettext](packages/gettext/README.md): Building the gettext package.
 * [git](packages/git/README.md): Building the Git package.
 * [glib](packages/glib/README.md): Building the glib package.
-* [rust](packages/rust/README.md): Building the rust package.
 * [global](packages/global/README.md): Building the global package.
 * [gmp](packages/gmp/README.md): Building the gmp package.
 * [gnome-common](packages/gnome-common/README.md): Building the gnome-common package.
@@ -163,6 +162,8 @@ The following is a list of packages whose build programs are provided by this pa
 * [qt](packages/qt/README.md): Building the Qt framework.
 * [ragel](packages/ragel/README.md): Building the ragel package.
 * [rdesktop](packages/rdesktop/README.md): Building the rdesktop package.
+* [ripgrep](packages/ripgrep/README.md): Building the ripgrep package.
+* [rust](packages/rust/README.md): Building the rust package.
 * [sqlite3](packages/sqlite3/README.md): Building the sqlite3 package.
 * [texinfo](packages/texinfo/README.md): Building the texinfo package.
 * [universal-ctags](packages/universal-ctags/README.md): Building the universal-ctags package.
