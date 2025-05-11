@@ -120,5 +120,16 @@ then
   exit 1
 fi
 
+# $BUILD_DIR/ripgrep/ripgrep/FAQ.md says this is how the man page is generated:
+# and from what can be ascertained, their build logic does not do this automatically:
+man_path_dir="$INSTALL_DIR/share/man"
+PrintRun mkdir -p $man_path_dir/man1
+PrintRun bash -c "rg --generate man > $man_path_dir/man1/rg.1"
+num_man_output_lines=$(MANPATH="$man_path_dir" man rg | col -b | wc -l)
+test "$num_man_output_lines" -gt 0 || {
+  echo "ERROR: Could not generate rg man page." 1>&2
+  exit 1
+}
+
 echo "Note: All installation tests passed."
 exit 0
