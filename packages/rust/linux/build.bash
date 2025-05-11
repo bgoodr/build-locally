@@ -59,7 +59,7 @@ SetupBasicEnvironment
 env_file="$INSTALL_DIR/rust/cargo/env"
 test -f "$env_file" || {
   echo "Installing ..."
-  CARGO_HOME=$INSTALL_DIR/rust/cargo RUSTUP_HOME=$INSTALL_DIR/rust/rustup bash -c '
+  PrintRun CARGO_HOME=$INSTALL_DIR/rust/cargo RUSTUP_HOME=$INSTALL_DIR/rust/rustup bash -c '
   curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 '
 }
@@ -68,6 +68,28 @@ test -f "$env_file" || {
   echo "${BASH_SOURCE[0]}:${LINENO}: ERROR: Failed to install rust as $env_file does not exist as a file." 1>&2
   exit 1
 }
+
+source $env_file
+
+# https://www.rust-lang.org/tools/install
+# says run this to see if it fails:
+#
+#   PrintRun rustc --version
+#
+# yes sure enough, it does:
+#
+#   COMMAND: rustc --version
+#   error: rustup could not choose a version of rustc to run, because one wasn't specified explicitly, and no default is configured.
+#   help: run 'rustup default stable' to download the latest stable release of Rust and set it as your default toolchain.
+#
+# So we must download the stable release, as follows:
+PrintRun rustup default stable
+
+# --------------------------------------------------------------------------------
+# Testing:
+# --------------------------------------------------------------------------------
+echo "Testing ..."
+PrintRun rustc --version
 
 echo "Note: Rust installation succeeded. Update your startup files to source $env_file"
 exit 0
