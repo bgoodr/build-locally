@@ -419,7 +419,7 @@ DownloadExtractBuildAutoconfBasedPackage () {
 DownloadExtractBuildGnuPackage () {
   local package="$1"
   local configure_options="$2"
-  local packageURL="http://ftp.gnu.org/gnu/${package}/"
+  local packageURL="https://ftpmirror.gnu.org/${package}/"
   DownloadExtractBuildAutoconfBasedPackage "$package" "$packageURL" "$configure_options"
 }
 
