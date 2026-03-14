@@ -59,9 +59,13 @@ SetupBasicEnvironment
 env_file="$INSTALL_DIR/rust/cargo/env"
 test -f "$env_file" || {
   echo "Installing ..."
-  PrintRun CARGO_HOME=$INSTALL_DIR/rust/cargo RUSTUP_HOME=$INSTALL_DIR/rust/rustup bash -c '
-  curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-'
+  PrintRun bash -c "
+    export CARGO_HOME=\"$INSTALL_DIR/rust/cargo\"
+    export RUSTUP_HOME=\"$INSTALL_DIR/rust/rustup\"
+    "'
+    mkdir -p "$CARGO_HOME"
+    curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+    '
 }
 
 test -f "$env_file" || {
