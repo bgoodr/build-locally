@@ -322,24 +322,24 @@ DownloadExtractAutoconfBasedPackage () {
   # Downloading:
   # --------------------------------------------------------------------------------
   echo "Downloading ..."
-  tarbasefile=$(wget $packageURL -O - | \
-    grep 'href=' | \
-    grep '\.tar\.gz"' | \
-    tr '"' '\012' | \
-    grep "^${package}" | \
-    sed 's%-%-.%g' | \
-    sort -t. -k 1,1n -k 2,2n -k 3,3n -k 4,4n | \
-    sed 's%-\.%-%g' | \
-    tail -1)
+  tarbasefile=$(wget "$packageURL" -O - \
+    | grep 'href=' \
+    | grep '\.tar\.gz"' \
+    | tr '"' '\012' \
+    | grep "^${package}" \
+    | sed 's%-%-.%g' \
+    | sort -t. -k 1,1n -k 2,2n -k 3,3n -k 4,4n \
+    | sed 's%-\.%-%g' \
+    | tail -1)
   if [ -z "$tarbasefile" ]
   then
     echo "ASSERTION FAILED: Could not automatically determine download file from $packageURL"
     exit 1
   fi
-  if [ ! -f $tarbasefile ]
+  if [ ! -f "$tarbasefile" ]
   then
-    wget $packageURL$tarbasefile
-    if [ ! -f $tarbasefile ]
+    wget "$packageURL$tarbasefile"
+    if [ ! -f "$tarbasefile" ]
     then
       echo "ERROR: Could not retrieve $tarbasefile"
       exit 1
@@ -350,18 +350,18 @@ DownloadExtractAutoconfBasedPackage () {
   # the tar tf output as of Sun Apr 23 09:41:19 PDT 2017 using tar
   # version tar (GNU tar) 1.23. Maybe it never was guaranteed to be?
   # No matter; just do this:
-  subdir=$(tar tf $tarbasefile 2>/dev/null | sed -n '/^\([^/][^/]*\)\/.*$/{ s%%\1%g; p; q; }')
+  subdir=$(tar tf "$tarbasefile" 2>/dev/null | sed -n '/^\([^/][^/]*\)\/.*$/{ s%%\1%g; p; q; }')
 
   if [ ! -d "$subdir" ]
   then
     tar zxvf $tarbasefile
     if [ ! -d "$subdir" ]
     then
-      echo "ERROR: Could not extract `pwd`/$tarbasefile"
+      echo "ERROR: Could not extract $(pwd)/$tarbasefile"
       exit 1
     fi
   fi
-  PrintRun cd $HEAD_DIR/$subdir
+  PrintRun cd "$HEAD_DIR/$subdir"
 }
 
 ConfigureAutoconfBasedPackage () {
