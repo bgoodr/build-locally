@@ -73,66 +73,12 @@ then
   PrintRun mkdir -p $HEAD_DIR
 fi
 
+# --------------------------------------------------------------------------------
+# Create build directory structure:
+# --------------------------------------------------------------------------------
+CreateAndChdirIntoBuildDir texinfo
 
 # --------------------------------------------------------------------------------
-# Download the source into the build directory:
+# Download and build tarball into the build directory:
 # --------------------------------------------------------------------------------
-echo "Downloading ..."
-# Determine the most recent tarball file:
-tarbasefile=$(wget http://ftp.gnu.org/gnu/texinfo/ -O - \
-  | grep 'href=' \
-  | grep '\.tar\.gz"' \
-  | tr '"' '\012' \
-  | grep '^texinfo' \
-  | sed 's%-%-.%g' \
-  | sort -t. -k 1,1n -k 2,2n -k 3,3n -k 4,4n \
-  | sed 's%-\.%-%g' \
-  | tail -1)
-if [ ! -f "$tarbasefile" ]
-then
-  PrintRun wget http://ftp.gnu.org/gnu/texinfo/$tarbasefile
-  if [ ! -f "$tarbasefile" ]
-  then
-    echo "ERROR: Could not retrieve $tarbasefile"
-    exit 1
-  fi
-fi
-
-# --------------------------------------------------------------------------------
-# Extracting:
-# --------------------------------------------------------------------------------
-echo "Extracting ..."
-subdir=`tar tf $tarbasefile 2>/dev/null \
-  | sed -n '1{s%/$%%gp; q}'`
-if [ ! -d "$subdir" ]
-then
-  PrintRun tar zxvf $tarbasefile
-  if [ ! -d "$subdir" ]
-  then
-    echo "ERROR: Could not extract `pwd`/$tarbasefile"
-    exit 1
-  fi
-fi
-
-# --------------------------------------------------------------------------------
-# Build:
-# --------------------------------------------------------------------------------
-echo "Building and installing ..."
-PrintRun cd $HEAD_DIR/$subdir
-if [ ! -f configure ]
-then
-  echo "ASSERTION FAILED: configure file not found"
-  exit 1
-fi
-PrintRun ./configure --prefix="$INSTALL_DIR"
-PrintRun make
-
-# --------------------------------------------------------------------------------
-# Install:
-# --------------------------------------------------------------------------------
-echo "Installing ..."
-PrintRun make install
-
-
-
-
+DownloadExtractBuildGnuPackage texinfo
